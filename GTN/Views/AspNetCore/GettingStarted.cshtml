@@ -1,0 +1,143 @@
+@{
+    ViewData["Title"] = "Getting Started";
+    ViewData["PageName"] = "aspnetcore_getting_started";
+    ViewData["Heading"] = "<i class='fal fa-folder-open'></i> Getting Started: <span class='fw-300'>How it works</span>";
+    ViewData["Category1"] = "Solution Overview";
+}
+<div class="alert alert-primary alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">
+            <i class="fal fa-times"></i>
+        </span>
+    </button>
+    <div class="d-flex flex-start w-100">
+        <div class="mr-2 hidden-sm-down">
+            <span class="icon-stack icon-stack-lg">
+                <i class="base-14 icon-stack-3x color-primary-400"></i>
+                <i class="base-14 icon-stack-2x color-primary-600 opacity-70"></i>
+                <i class="fal fa-newspaper icon-stack-1x text-white opacity-90"></i>
+            </span>
+        </div>
+        <div class="d-flex flex-fill">
+            <div class="flex-fill">
+                <span class="h5">Documentation</span>
+                <br />
+                <p>You can always find the latest version of this document on the <a href="https://bitbucket.org/GlobalTeamNetwork-next/GlobalTeamNetworkcore/wiki/getting-started" rel="nofollow">Getting Started</a> instructions in the <a href="https://bitbucket.org/GlobalTeamNetwork-next/GlobalTeamNetworkcore/wiki/home" rel="nofollow">GlobalTeamNetwork for ASP.NET Core Wiki</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="panel">
+            <div class="panel-hdr">
+                <h2>Using Visual Studio 2019 to load the Solution</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <section>
+                        <ol class="list-spaced">
+                            <li>
+                                <span class="fw-500 color-success-700">Navigate to the folder containing the extracted project package and double-click the <code>GlobalTeamNetworkCore.sln</code> file</span>
+                                <ul>
+                                    <li><strong>Note:</strong> You should also be able to use Visual Studio 2017, but for working with .NET Core 2.2 we highly recommend using Visual Studio 2019.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">Once the project is loaded press <code>CTRL+F5</code> to launch the website using <strong>IIS Express</strong>.</span>
+                                <ul>
+                                    <li>The site has been configured to use SSL/HTTPS by default.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">You should be presented with the <strong>Login</strong> page, press <strong>Secure Login</strong> to enter the website.</span>
+                                <ul>
+                                    <li>The default credentials should be pre-filled for you already.</li>
+                                    <li>If you are presented with an <strong>Invalid login</strong> error then please click <strong>Register</strong> to add the default account.</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="panel">
+            <div class="panel-hdr">
+                <h2>Use the following instructions to setup a local server running GlobalTeamNetwork 4.0</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    <section>
+                        <ol class="list-spaced">
+                            <li>
+                                <span class="fw-500 color-success-700">Download and install the <strong>ASP.NET Core 2.2 SDK</strong> here: <a href="https://dotnet.microsoft.com/download/dotnet-core/2.2" rel="nofollow">https://dotnet.microsoft.com/download/dotnet-core/2.2</a></span>
+                                <ul>
+                                    <li>You can verify the installation by opening a command line tool of your choice and running the following command: <code class="bg-fusion-500">dotnet --info</code></li>
+                                    <li>If you get a message similar to: <code>dotnet is not recognized as an internal command</code>, then please try downloading the <code>32-bit</code> version of the ASP.NET Core 2.2 SDK</li>
+                                    <li>You can find it here: <a href="https://dotnet.microsoft.com/download/dotnet-core/2.2" rel="nofollow">https://dotnet.microsoft.com/download/dotnet-core/2.2</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">@ViewBag.App for @ViewBag.AppFlavor comes built-in with <strong>SqlLite</strong> as part of EntityFramework Core. No additional installation is required to use this as your data store.</span>
+                                <ul>
+                                    <li><strong>Note:</strong> You can download and install <strong>SQL Server Express</strong> here: <a href="https://go.microsoft.com/fwlink/?linkid=853017" rel="nofollow">https://go.microsoft.com/fwlink/?linkid=853017</a>.</li>
+                                    <li><strong>Note:</strong> You can also install <strong>LocalDB</strong> as part of Visual Studio. During Visual Studio installation, select the <strong>.NET desktop development</strong> workload, which includes SQL Server Express LocalDB.</li>
+                                    <li>If you are going to use SQL Express then the default connection string <em>value</em> in <code>appSettings.json</code> will need to be adjusted</li>
+                                    <li>The value and instructions are written in <code>Startup.cs</code> but also listed here for your convenience:</li>
+                                    <li>
+                                        <code>"Server=localhost\\SQLEXPRESS;Database=aspnet-GlobalTeamNetwork;Trusted_Connection=True;MultipleActiveResultSets=true"</code>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">Open a command prompt and ensure you are inside the directory containing the <strong>ASP.NET Core 2.2 project sources</strong> of GlobalTeamNetwork 4.0</span>
+                                <ul>
+                                    <li>This is the directory containing the <code>GlobalTeamNetworkCore.sln</code> file</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">Run the following commands (in order) using the command line tool of your choice:</span>
+                                <ul>
+                                    <li>
+                                        <code class="bg-fusion-500">dotnet build</code>
+                                    </li>
+                                    <li>
+                                        <code class="bg-fusion-500">dotnet publish</code> <em>(optional for localhost only deployment)</em>
+                                    </li>
+                                    <li>
+                                        <code class="bg-fusion-500">dotnet run --project ./src/GlobalTeamNetwork/GlobalTeamNetwork.csproj</code>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">Launch your favorite browser and enter the following URL: <a href="https://localhost:5001" rel="nofollow">https://localhost:5001</a>, and try to login using the provided credentials</span>
+                                <ul>
+                                    <li>You may get a page mentioning that: 'Applying the existing migrations may resolve this issue'</li>
+                                    <li>Go ahead and click on the blue <code class="bg-info-300">Apply Migrations</code> button</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="fw-500 color-success-700">If you receive a message stating: 'Invalid login attempt' then go ahead and Register the user</span>
+                                <ul>
+                                    <li>The username and password should be pre-filled for demo purposes</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        <div class="alert alert-warning">
+                            <strong>Note:</strong> You might get a security warning when browsing to your website, as the default <code>localhost</code> server will typically not have a trusted <strong>localhost</strong> SSL certificate!
+                        </div>
+                        <div class="alert alert-success">
+                            Also check out the <a href="https://www.microsoft.com/net" rel="nofollow">.NET Homepage</a> for released versions of .NET, getting started guides, and learning resources.
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
