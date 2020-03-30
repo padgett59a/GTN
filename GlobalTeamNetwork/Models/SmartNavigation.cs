@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -57,6 +58,7 @@ namespace GlobalTeamNetwork.Models
         public bool Disabled { get; set; }
         public List<ListItem> Items { set; get; } = new List<ListItem>();
         public Span Span { get; set; } = new Span();
+        public string Environment { get; set; } = "dev";
     }
 
     public sealed class Span

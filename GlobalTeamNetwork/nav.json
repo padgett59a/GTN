@@ -2,6 +2,30 @@
   "version": "4",
   "lists": [
     {
+      "title": "Users",
+      "href": "aspnetcore_getting_started",
+      "icon": "fal fa-user",
+      "environment": "production"
+    },
+    {
+      "title": "Courses",
+      "href": "aspnetcore_getting_started",
+      "icon": "fal fa-book",
+      "environment": "production"
+    },
+    {
+      "title": "Languages",
+      "href": "aspnetcore_getting_started",
+      "icon": "fal fa-book",
+      "environment": "production"
+    },
+    {
+      "title": "Payments",
+      "href": "aspnetcore_getting_started",
+      "icon": "fal fa-money-bill",
+      "environment": "production"
+    },
+    {
       "title": "My Application Intel",
       "icon": "fal fa-info-circle",
       "items": [
