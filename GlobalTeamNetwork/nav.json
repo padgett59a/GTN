@@ -3,24 +3,30 @@
   "lists": [
     {
       "title": "Users",
-      "href": "aspnetcore_getting_started",
+      "href": "admin_users",
       "icon": "fal fa-user",
       "environment": "production"
     },
     {
       "title": "Courses",
-      "href": "aspnetcore_getting_started",
+      "href": "admin_courses",
       "icon": "fal fa-book",
       "environment": "production"
     },
     {
       "title": "Languages",
-      "href": "aspnetcore_getting_started",
+      "href": "admin_languages",
       "icon": "fal fa-book",
       "environment": "production"
     },
     {
       "title": "Payments",
+      "href": "admin_payments",
+      "icon": "fal fa-money-bill",
+      "environment": "production"
+    },
+    {
+      "title": "Getting Started",
       "href": "aspnetcore_getting_started",
       "icon": "fal fa-money-bill",
       "environment": "production"
