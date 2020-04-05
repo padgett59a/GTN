@@ -5,7 +5,6 @@
     <UserSecretsId>aspnet-GlobalTeamNetwork-44228020-21C8-4F0F-8FA5-E7983D119E08</UserSecretsId>
   </PropertyGroup>
 
-
   <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>

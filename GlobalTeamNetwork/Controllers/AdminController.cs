@@ -6,7 +6,7 @@ namespace GlobalTeamNetwork.Controllers
     {
         public IActionResult Users() => View();
 
-        public IActionResult Courses() => View();
+        public IActionResult Semesters() => View();
 
         public IActionResult Languages() => View();
 

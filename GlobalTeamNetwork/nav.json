@@ -2,20 +2,60 @@
   "version": "4",
   "lists": [
     {
-      "title": "Users",
-      "href": "admin_users",
-      "icon": "fal fa-user",
-      "environment": "production"
+      "title": "Admin",
+      "icon": "fal fa-info-circle",
+      "environment": "production",
+      "items": [
+        {
+          "title": "Languages",
+          "showOnSeed": false,
+          "href": "admin_languages"
+        },
+        {
+          "title": "Translation Steps",
+          "showOnSeed": false,
+          "href": "intel_marketing_dashboard.html"
+        },
+        {
+          "title": "Media Types",
+          "href": "intel_introduction.html"
+        }
+      ]
     },
     {
-      "title": "Courses",
-      "href": "admin_courses",
+      "title": "Users",
+      "icon": "fal fa-user",
+      "environment": "production",
+      "items": [
+        {
+          "title": "Admins",
+          "showOnSeed": false,
+          "href": "users_admins"
+        },
+        {
+          "title": "Translators",
+          "showOnSeed": false,
+          "href": "users_tranlators"
+        },
+        {
+          "title": "Masterers",
+          "href": "users_masterers"
+        },
+        {
+          "title": "Archivers",
+          "href": "users_archivers"
+        }
+      ]
+    },
+    {
+      "title": "Semesters",
+      "href": "admin_semesters",
       "icon": "fal fa-book",
       "environment": "production"
     },
     {
-      "title": "Languages",
-      "href": "admin_languages",
+      "title": "Customers",
+      "href": "customers_list",
       "icon": "fal fa-book",
       "environment": "production"
     },
@@ -26,10 +66,13 @@
       "environment": "production"
     },
     {
+      "title": "DEV MENU - Design Options"
+    },
+    {
       "title": "Getting Started",
       "href": "aspnetcore_getting_started",
       "icon": "fal fa-money-bill",
-      "environment": "production"
+      "environment": "dev"
     },
     {
       "title": "My Application Intel",
