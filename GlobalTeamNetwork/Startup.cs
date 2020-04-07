@@ -31,8 +31,12 @@ namespace GlobalTeamNetwork
                 options.CheckConsentNeeded = context => true; 
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.Configure<ApplicationDbContext>(o =>
+            {
+                // Make sure the identity database is created
+                o.Database.Migrate();
+            });
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

@@ -2,7 +2,7 @@
     var menu = NavigationModel.Full;
 }
     <ul id="js-nav-menu" class="nav-menu">
-        @foreach (var group in menu.Lists.Where(x => x.Environment == "production" || x.Environment == "production"))
+        @foreach (var group in menu.Lists.Where(x => x.Environment == "dev" || x.Environment == "production"))
             {
                 @if (group.Items.Any())
                 {
