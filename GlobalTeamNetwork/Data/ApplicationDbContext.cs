@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GlobalTeamNetwork.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,5 +13,8 @@ namespace GlobalTeamNetwork.Data
             : base(options)
         {
         }
+
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<TranslationStep> TranslationSteps { get; set; }
     }
 }

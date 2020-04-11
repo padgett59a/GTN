@@ -47,6 +47,8 @@ namespace GlobalTeamNetwork
                 options.Filters.Add<ViewBagFilter>();
             });
 
+            services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddRazorPages();
         }
 

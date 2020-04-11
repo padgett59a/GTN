@@ -1,12 +1,12 @@
-﻿@model IEnumerable<Language>
+﻿@model IEnumerable<TranslationStep>
 @{
-    ViewData["Title"] = "Languages";
-    ViewData["PageName"] = "admin_languages";
+    ViewData["Title"] = "Translation Steps";
+    ViewData["PageName"] = "admin_TranslationSteps";
 }
 
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="fal fa-th-list text-primary"></i>  Languages
+        <i class="fal fa-th-list text-primary"></i>  Translation Steps
     </h1>
 </div>
 <div class="row">
@@ -20,32 +20,35 @@
                     <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
                         <thead>
                             <tr>
-                                <th style="width:10%">langId</th>
-                                <th style="width:10%">Name</th>
-                                <th style="width:60%">Notes</th>
+                                <th style="width:10%">tsID</th>
+                                <th style="width:30%">Step</th>
+                                <th style="width:10%">Default Pay</th>
+                                <th style="width:30%">Notes</th>
                                 <th style="width:20%">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var lang in Model)
+                            @foreach (var step in Model)
                             {
-                                <tr>
-                                    <td>@lang.LangId</td>
-                                    <td>@lang.LangName</td>
-                                    <td>@lang.Notes</td>
-                                    <td>
-                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button> 
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>@step.tsID</td>
+                                <td>@step.Step</td>
+                                <td>@step.DefaultPayDollars</td>
+                                <td>@step.Notes</td>
+                                <td>
+                                    <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button> 
+                                </td>
+                            </tr>
                             }
 
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>langId</th>
-                                <th>Name</th>
-                                <th>Notes</th>
-                                <th>Actions</th>
+                                <th style="width:10%">tsID</th>
+                                <th style="width:10%">Step</th>
+                                <th style="width:10%">Default Pay</th>
+                                <th style="width:50%">Notes</th>
+                                <th style="width:20%">Actions</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -14,11 +14,16 @@
         {
           "title": "Translation Steps",
           "showOnSeed": false,
-          "href": "intel_marketing_dashboard.html"
+          "href": "admin_translationsteps"
+        },
+        {
+          "title": "Mastering Steps",
+          "showOnSeed": false,
+          "href": "admin_masteringsteps"
         },
         {
           "title": "Media Types",
-          "href": "intel_introduction.html"
+          "href": "admin_mediatypes"
         }
       ]
     },
