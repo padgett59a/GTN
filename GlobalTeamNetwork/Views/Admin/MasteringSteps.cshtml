@@ -1,12 +1,12 @@
-﻿@model IEnumerable<TranslationStep>
+﻿@model IEnumerable<MasteringStep>
 @{
-    ViewData["Title"] = "Translation Steps";
-    ViewData["PageName"] = "admin_translationsteps";
+    ViewData["Title"] = "Mastering Steps";
+    ViewData["PageName"] = "admin_masteringsteps";
 }
 
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="fal fa-th-list text-primary"></i>  Translation Steps
+        <i class="fal fa-th-list text-primary"></i>  Mastering Steps
     </h1>
 </div>
 <div class="row">
@@ -14,13 +14,10 @@
         <div id="panel-1" class="panel">
             <div class="panel-container show">
                 <div class="panel-content">
-                    @*<div class="panel-tag">
-                            This example shows DataTables and the Responsive extension being used with the Bootstrap framework providing the styling. The DataTables / Bootstrap integration provides seamless integration for DataTables to be used in a Bootstrap page. <strong>Note</strong> that the <code>.dt-responsive</code> class is used to indicate to the extension that it should be enabled on this page, as responsive has special meaning in Bootstrap. The responsive option could also be used if required
-                        </div>*@
                     <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
                         <thead>
                             <tr>
-                                <th style="width:10%">tsID</th>
+                                <th style="width:10%">msID</th>
                                 <th style="width:30%">Step</th>
                                 <th style="width:10%">Default Pay</th>
                                 <th style="width:30%">Notes</th>
@@ -31,7 +28,7 @@
                             @foreach (var step in Model)
                             {
                             <tr>
-                                <td>@step.tsID</td>
+                                <td>@step.msID</td>
                                 <td>@step.Step</td>
                                 <td>@step.DefaultPayDollars</td>
                                 <td>@step.Notes</td>

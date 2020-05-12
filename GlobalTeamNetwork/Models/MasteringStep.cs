@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace GlobalTeamNetwork.Models
 {
-    public class TranslationStep
+    public class MasteringStep
     {
         [Key]
-        public int tsID { get; set; }
+        public int msID { get; set; }
         public string Step { get; set; }
 
         [Column(TypeName = "decimal(19,2)")]

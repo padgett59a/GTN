@@ -29,7 +29,7 @@ namespace GlobalTeamNetwork.Models
                 controller.ViewBag.User = "GTN Admin";
                 controller.ViewBag.Email = "gtnadmin@ckwyand.com";
                 controller.ViewBag.Twitter = "";
-                controller.ViewBag.Avatar = "avatar-admin.png";
+                controller.ViewBag.Avatar = "avatar-m.png";
                 controller.ViewBag.Version = "4.0.2";
                 controller.ViewBag.Bs4v = "4.3";
                 controller.ViewBag.Logo = "";

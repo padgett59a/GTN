@@ -16,5 +16,6 @@ namespace GlobalTeamNetwork.Data
 
         public DbSet<Language> Languages { get; set; }
         public DbSet<TranslationStep> TranslationSteps { get; set; }
+        public DbSet<MasteringStep> MasteringSteps { get; set; }
     }
 }

@@ -24,6 +24,12 @@
         {
           "title": "Media Types",
           "href": "admin_mediatypes"
+        },
+        {
+          "title": "Payments",
+          "href": "admin_payments",
+          "icon": "fal fa-money-bill",
+          "environment": "production"
         }
       ]
     },
@@ -62,12 +68,6 @@
       "title": "Customers",
       "href": "customers_list",
       "icon": "fal fa-book",
-      "environment": "production"
-    },
-    {
-      "title": "Payments",
-      "href": "admin_payments",
-      "icon": "fal fa-money-bill",
       "environment": "production"
     },
     {

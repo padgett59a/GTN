@@ -7,11 +7,14 @@ namespace GlobalTeamNetwork.Controllers
     {
         private readonly ILanguageRepository _languageRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
+        private readonly IMasteringStepRepository _masteringStepRepository;
 
-        public AdminController(ILanguageRepository languageRepository, ITranslationStepRepository tranlationStepRepository)
+        public AdminController(ILanguageRepository languageRepository, ITranslationStepRepository tranlationStepRepository, IMasteringStepRepository masteringStepRepository)
         {
             _languageRepository = languageRepository;
             _translationStepRepository = tranlationStepRepository;
+            _masteringStepRepository = masteringStepRepository;
+
         }
 
         public IActionResult Users() => View();
@@ -29,8 +32,16 @@ namespace GlobalTeamNetwork.Controllers
             var translationSteps = _translationStepRepository.AllTranslationSteps;
             return View(translationSteps);
         }
+        public IActionResult MasteringSteps()
+        {
+            var masteringSteps = _masteringStepRepository.AllMasteringSteps;
+            return View(masteringSteps);
+        }
 
-        public IActionResult Payments() => View();
 
+        public IActionResult Payments()
+        {
+            return View();
+        }
     }
 }

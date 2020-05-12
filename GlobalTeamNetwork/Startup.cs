@@ -49,6 +49,7 @@ namespace GlobalTeamNetwork
 
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
+            services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddRazorPages();
         }
 
@@ -78,7 +79,7 @@ namespace GlobalTeamNetwork
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Admin}/{action=Users}");
+                    pattern: "{controller=admin}/{action=languages}");
                 endpoints.MapRazorPages();
             });
         }

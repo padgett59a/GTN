@@ -8,6 +8,6 @@ namespace GlobalTeamNetwork.Models
     public interface ITranslationStepRepository
     {
         IEnumerable<TranslationStep> AllTranslationSteps { get; }
-        TranslationStep GetTranslationStepById(int langId);
+        TranslationStep GetTranslationStepById(int tsId);
     }
 }
