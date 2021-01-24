@@ -17,9 +17,15 @@ namespace GlobalTeamNetwork.Controllers
 
         }
 
-        public IActionResult Users() => View();
+        public IActionResult Users()
+        {
+            return View();
+        }
 
-        public IActionResult Semesters() => View();
+        public IActionResult Semesters()
+        {
+            return View();
+        }
 
         public IActionResult Languages()
         {
@@ -38,8 +44,12 @@ namespace GlobalTeamNetwork.Controllers
             return View(masteringSteps);
         }
 
-
         public IActionResult Payments()
+        {
+            return View();
+        }
+
+        public IActionResult MediaTypes()
         {
             return View();
         }
