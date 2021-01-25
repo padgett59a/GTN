@@ -27,28 +27,28 @@
                     <span class="invalid-feedback" asp-validation-for="Input.FirstName">Sorry, you missed this one.</span>
                 </div>
                 <div class="col-6 pl-1">
-                    <input type="text" asp-for="Input.LastName" class="form-control" placeholder="First Name" />
+                    <input type="text" asp-for="Input.LastName" class="form-control" placeholder="Last Name" />
                     <span class="invalid-feedback" asp-validation-for="Input.LastName">Sorry, you missed this one.</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label" asp-for="Input.Email">Email will be needed for verification and account recovery</label>
-                <input type="email" asp-for="Input.Email" class="form-control" placeholder="Email for verification" value="drlantern@gotbootstrap.com" required="required" />
+                <input type="email" asp-for="Input.Email" class="form-control" placeholder="Email for verification" value="" required="required" />
                 <span class="invalid-feedback" asp-validation-for="Input.Email">Sorry, you missed this one.</span>
                 <div class="help-block">Your email will also be your username</div>
             </div>
             <div class="form-group">
                 <label class="form-label" asp-for="Input.Password">Please pick a password</label>
-                <input type="password" asp-for="Input.Password" class="form-control" placeholder="Email for verification (minimum 6 characters)" value="Password123!" required="required" />
+                <input type="password" asp-for="Input.Password" class="form-control" placeholder="(minimum 6 characters)" value="" required="required" />
                 <span class="invalid-feedback" asp-validation-for="Input.Password">Sorry, you missed this one.</span>
                 <div class="help-block">Your password must be 6-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emojis.</div>
             </div>
             <div class="form-group">
                 <label class="form-label" asp-for="Input.ConfirmPassword">Please confirm your password</label>
-                <input type="password" asp-for="Input.ConfirmPassword" class="form-control" placeholder="Email for verification (minimum 6 characters)" value="Password123!" required="required" />
+                <input type="password" asp-for="Input.ConfirmPassword" class="form-control" placeholder="(minimum 6 characters)" value="" required="required" />
                 <span class="invalid-feedback" asp-validation-for="Input.ConfirmPassword">Sorry, you missed this one.</span>
             </div>
-            <div class="form-group demo">
+            @*<div class="form-group demo">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" asp-for="Input.AgreeToTerms" />
                     <label class="custom-control-label" asp-for="Input.AgreeToTerms">I agree to terms & conditions</label>
@@ -58,7 +58,7 @@
                     <input type="checkbox" class="custom-control-input" asp-for="Input.SignUp" />
                     <label class="custom-control-label" asp-for="Input.SignUp">Sign up for newsletters (don't worry, we won't send that many)</label>
                 </div>
-            </div>
+            </div>*@
             <div class="row no-gutters">
                 <div class="col-md-6 ml-auto text-right">
                     <button id="js-login-btn" type="submit" class="btn btn-block btn-danger btn-lg mt-3">Send verification</button>

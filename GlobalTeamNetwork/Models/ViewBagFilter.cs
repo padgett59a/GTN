@@ -26,8 +26,8 @@ namespace GlobalTeamNetwork.Models
                 controller.ViewBag.AppName = "Global Team Network";
                 controller.ViewBag.AppFlavor = "ASP.NET Core 3.1";
                 controller.ViewBag.AppFlavorSubscript = "";
-                controller.ViewBag.User = "GTN Admin";
-                controller.ViewBag.Email = "gtnadmin@ckwyand.com";
+                //controller.ViewBag.User = "GTN Admin";
+                //controller.ViewBag.Email = "gtnadmin@ckwyand.com";
                 controller.ViewBag.Twitter = "";
                 controller.ViewBag.Avatar = "avatar-m.png";
                 controller.ViewBag.Version = "4.0.2";
