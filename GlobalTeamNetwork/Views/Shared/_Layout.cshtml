@@ -1,41 +1,117 @@
 <!DOCTYPE html>
-<partial name="_CopyrightHeader"/>
+<partial name="_CopyrightHeader" />
 <html lang="en">
-	<head>
-		<partial name="_Head"/>
-		@RenderSection("HeadBlock", required: false)
-	</head>
-	<body class="mod-bg-1 mod-nav-link @ViewBag.PreemptiveClass">
-		<partial name="_ScriptsLoadingSaving"/>
-		<div class="page-wrapper">
-			<div class="page-inner">
-				<partial name="_LeftPanel"/>
-				<div class="page-content-wrapper">
-					<partial name="_PageHeader"/>
-                    <main id="js-page-content" role="main" class="page-content">
-                        @if (ViewBag.PreemptiveClass?.Length > 0)
-{
-                        } else {
-                            <partial name="_PageBreadcrumb"/>
-                            <div class="subheader">
-                                <partial name="_PageHeading"/>
-                                @RenderSection("SubheaderBlock", required: false)
-                            </div>
-                        }
-                        @RenderBody()
-                    </main>
-					<partial name="_PageContentOverlay"/>
-					<partial name="_PageFooter"/>
-					<partial name="_ShortcutModal"/>
-					<partial name="_ColorProfileReference"/>
-				</div>
-			</div>
-		</div>
-		@*<partial name="_ShortcutMenu"/>*@
-		<partial name="_ShortcutMessenger"/>
-		<partial name="_PageSettings"/>
-		<partial name="_GoogleAnalytics"/>
-		<partial name="_ScriptsBasePlugins"/>
-		@RenderSection("ScriptsBlock", required: false)
-	</body>
+<head>
+    <partial name="_Head" />
+    @RenderSection("HeadBlock", required: false)
+</head>
+<body class="mod-bg-1 mod-nav-link @ViewBag.PreemptiveClass">
+    <partial name="_ScriptsLoadingSaving" />
+    <div class="page-wrapper">
+        <div class="page-inner">
+            <partial name="_LeftPanel" />
+            <div class="page-content-wrapper">
+                <partial name="_PageHeader" />
+                <main id="js-page-content" role="main" class="page-content">
+                    @if (ViewBag.PreemptiveClass?.Length > 0)
+                    {
+                    }
+                    else
+                    {
+        <partial name="_PageBreadcrumb" />
+                        <div class="subheader">
+                            <partial name="_PageHeading" />
+                            @RenderSection("SubheaderBlock", required: false)
+                        </div>}
+                    @RenderBody()
+                </main>
+                <partial name="_PageContentOverlay" />
+                <partial name="_PageFooter" />
+                <partial name="_ShortcutModal" />
+                <partial name="_ColorProfileReference" />
+            </div>
+        </div>
+    </div>
+    <partial name="_ShortcutMenu"/>
+    <partial name="_ShortcutMessenger" />
+    <partial name="_PageSettings" />
+    <partial name="_GoogleAnalytics" />
+    <partial name="_ScriptsBasePlugins" />
+    @RenderSection("ScriptsBlock", required: false)
+</body>
 </html>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+
+<script>
+    /* demo scripts for change table color */
+    /* change background */
+    $(document).ready(function () {
+        $('#dt-basic-example').dataTable({
+            pageLength:50,
+            responsive: true,
+            lengthChange: false,
+            dom:
+                /*	--- Layout Structure
+                    --- Options
+                    l	-	length changing input control
+                    f	-	filtering input
+                    t	-	The table!
+                    i	-	Table information summary
+                    p	-	pagination control
+                    r	-	processing display element
+                    B	-	buttons
+                    R	-	ColReorder
+                    S	-	Select
+                    --- Markup
+                    < and >				- div element
+                    <"class" and >		- div with a class
+                    <"#id" and >		- div with an ID
+                    <"#id.class" and >	- div with an ID and a class
+                    --- Further reading
+                    https://datatables.net/reference/option/dom
+                    --------------------------------------
+                 */
+                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                /*{
+                    extend:    'colvis',
+                    text:      'Column Visibility',
+                    titleAttr: 'Col visibility',
+                    className: 'mr-sm-3'
+                },*/
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    titleAttr: 'Generate PDF',
+                    className: 'btn-outline-danger btn-sm mr-1'
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    titleAttr: 'Generate Excel',
+                    className: 'btn-outline-success btn-sm mr-1'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    titleAttr: 'Generate CSV',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'copyHtml5',
+                    text: 'Copy',
+                    titleAttr: 'Copy to clipboard',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    titleAttr: 'Print Table',
+                    className: 'btn-outline-primary btn-sm'
+                }
+            ]
+        });
+    });</script>

@@ -3,6 +3,10 @@
     ViewData["Title"] = "Languages";
     ViewData["PageName"] = "admin_languages";
 }
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
+
 
 <div class="subheader">
     <h1 class="subheader-title">
@@ -31,7 +35,7 @@
                                     <td>@lang.LangName</td>
                                     <td>@lang.Notes</td>
                                     <td>
-                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button> 
+                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button>
                                     </td>
                                 </tr>
                             }

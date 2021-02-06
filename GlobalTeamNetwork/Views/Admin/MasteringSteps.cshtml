@@ -3,6 +3,9 @@
     ViewData["Title"] = "Mastering Steps";
     ViewData["PageName"] = "admin_masteringsteps";
 }
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
 
 <div class="subheader">
     <h1 class="subheader-title">
@@ -17,35 +20,35 @@
                     <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
                         <thead>
                             <tr>
-                                <th style="width:10%">msID</th>
-                                <th style="width:30%">Step</th>
-                                <th style="width:10%">Default Pay</th>
-                                <th style="width:30%">Notes</th>
-                                <th style="width:20%">Actions</th>
+                                <th>msID</th>
+                                <th>Step</th>
+                                <th>Default Pay</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var step in Model)
                             {
-                            <tr>
-                                <td>@step.msID</td>
-                                <td>@step.Step</td>
-                                <td>@step.DefaultPayDollars</td>
-                                <td>@step.Notes</td>
-                                <td>
-                                    <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button> 
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>@step.msID</td>
+                                    <td>@step.Step</td>
+                                    <td>@step.DefaultPayDollars</td>
+                                    <td>@step.Notes</td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button>
+                                    </td>
+                                </tr>
                             }
 
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th style="width:10%">tsID</th>
-                                <th style="width:10%">Step</th>
-                                <th style="width:10%">Default Pay</th>
-                                <th style="width:50%">Notes</th>
-                                <th style="width:20%">Actions</th>
+                                <th>tsID</th>
+                                <th>Step</th>
+                                <th>Default Pay</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -54,3 +57,22 @@
         </div>
     </div>
 </div>
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script>
+        /* demo scripts for change table color */
+        /* change background */
+        $(document).ready(function () {
+
+            $('.js-thead-colors a').on('click', function () {
+                var theadColor = $(this).attr("data-bg");
+                console.log(theadColor);
+                $('#dt-basic-example thead').removeClassPrefix('bg-').addClass(theadColor);
+            });
+            $('.js-tbody-colors a').on('click', function () {
+                var theadColor = $(this).attr("data-bg");
+                console.log(theadColor);
+                $('#dt-basic-example').removeClassPrefix('bg-').addClass(theadColor);
+            });
+        });</script>
+}
