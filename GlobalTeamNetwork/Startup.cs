@@ -25,12 +25,12 @@ namespace GlobalTeamNetwork
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddRazorRuntimeCompilation(); 
-            
+            services.AddMvc().AddRazorRuntimeCompilation();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true; 
+                options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.Configure<ApplicationDbContext>(o =>
@@ -47,11 +47,12 @@ namespace GlobalTeamNetwork
                 options.Filters.Add(new AuthorizeFilter(policy));
                 options.Filters.Add<ViewBagFilter>();
             });
-
+            services.AddRazorPages();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
-            services.AddRazorPages();
+            services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

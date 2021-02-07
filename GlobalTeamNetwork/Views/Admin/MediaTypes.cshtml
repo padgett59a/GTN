@@ -3,6 +3,9 @@
     ViewData["Title"] = "Media Types";
     ViewData["PageName"] = "admin_mediatypes";
 }
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+}
 
 <div class="subheader">
     <h1 class="subheader-title">
@@ -17,8 +20,9 @@
                     <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
                         <thead>
                             <tr>
-                                <th style="width:10%">Id</th>
-                                <th style="width:10%">Name</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,7 +32,7 @@
                                     <td>@mediaType.MediaTypeId</td>
                                     <td>@mediaType.MediaTypeName</td>
                                     <td>
-                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button> 
+                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button>
                                     </td>
                                 </tr>
                             }

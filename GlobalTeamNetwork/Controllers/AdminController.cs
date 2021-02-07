@@ -8,12 +8,15 @@ namespace GlobalTeamNetwork.Controllers
         private readonly ILanguageRepository _languageRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
         private readonly IMasteringStepRepository _masteringStepRepository;
+        private readonly IMediaTypeRepository _mediaTypeRepository;
 
-        public AdminController(ILanguageRepository languageRepository, ITranslationStepRepository tranlationStepRepository, IMasteringStepRepository masteringStepRepository)
+        public AdminController(ILanguageRepository languageRepository, ITranslationStepRepository tranlationStepRepository, 
+            IMasteringStepRepository masteringStepRepository, IMediaTypeRepository mediaTypeRepository)
         {
             _languageRepository = languageRepository;
             _translationStepRepository = tranlationStepRepository;
             _masteringStepRepository = masteringStepRepository;
+            _mediaTypeRepository  = mediaTypeRepository;
 
         }
 
@@ -51,7 +54,8 @@ namespace GlobalTeamNetwork.Controllers
 
         public IActionResult MediaTypes()
         {
-            return View();
+            var mediaTypes = _mediaTypeRepository.AllMediaTypes;
+            return View(mediaTypes);
         }
     }
 }
