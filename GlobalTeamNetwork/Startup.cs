@@ -36,7 +36,7 @@ namespace GlobalTeamNetwork
             services.Configure<ApplicationDbContext>(o =>
             {
                 // Make sure the identity database is created
-                o.Database.Migrate();
+                //o.Database.Migrate();
             });
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ApplicationDbContext>();
@@ -52,6 +52,7 @@ namespace GlobalTeamNetwork
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
 
         }
 

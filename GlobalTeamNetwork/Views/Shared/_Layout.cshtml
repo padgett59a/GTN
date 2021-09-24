@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-    <partial name="_ShortcutMenu"/>
+    <partial name="_ShortcutMenu" />
     <partial name="_ShortcutMessenger" />
     <partial name="_PageSettings" />
     <partial name="_GoogleAnalytics" />
@@ -40,15 +40,14 @@
     @RenderSection("ScriptsBlock", required: false)
 </body>
 </html>
-<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
-<script src="~/js/datagrid/datatables/datatables.export.js"></script>
-
+<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="/js/datagrid/datatables/datatables.export.js"></script>
 <script>
     /* demo scripts for change table color */
     /* change background */
     $(document).ready(function () {
         $('#dt-basic-example').dataTable({
-            pageLength:50,
+            pageLength: 50,
             responsive: true,
             lengthChange: false,
             dom:
@@ -72,7 +71,7 @@
                     https://datatables.net/reference/option/dom
                     --------------------------------------
                  */
-                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             buttons: [

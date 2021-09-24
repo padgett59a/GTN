@@ -18,5 +18,6 @@ namespace GlobalTeamNetwork.Data
         public DbSet<TranslationStep> TranslationSteps { get; set; }
         public DbSet<MasteringStep> MasteringSteps { get; set; }
         public DbSet<MediaType> MediaTypes {get; set; }
+        public DbSet<Person> Persons {get; set; }
     }
 }

@@ -39,6 +39,11 @@
       "environment": "production",
       "items": [
         {
+          "title": "All Persons",
+          "showOnSeed": false,
+          "href": "users_persons"
+        },
+        {
           "title": "Admins",
           "showOnSeed": false,
           "href": "users_admins"
