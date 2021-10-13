@@ -1,0 +1,47 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCore>
+
+@{
+    ViewData["Title"] = "SemesterCores";
+}
+
+<h1>SemesterCores</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SemesterName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurriculumName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfVideoSessions)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SemesterName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurriculumName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfVideoSessions)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SemesterCode">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SemesterCode">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SemesterCode">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

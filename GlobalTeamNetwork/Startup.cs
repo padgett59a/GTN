@@ -49,6 +49,7 @@ namespace GlobalTeamNetwork
             });
             services.AddRazorPages();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<ISemesterCoreRepository, SemesterCoreRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();

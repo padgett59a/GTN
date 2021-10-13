@@ -5,19 +5,25 @@ namespace GlobalTeamNetwork.Controllers
 {
     public class AdminController : Controller
     {
+
+        private readonly ISemesterCoreRepository _semesterCoreRepository;
         private readonly ILanguageRepository _languageRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
         private readonly IMasteringStepRepository _masteringStepRepository;
         private readonly IMediaTypeRepository _mediaTypeRepository;
 
-        public AdminController(ILanguageRepository languageRepository, ITranslationStepRepository tranlationStepRepository, 
-            IMasteringStepRepository masteringStepRepository, IMediaTypeRepository mediaTypeRepository)
+        public AdminController(
+            ILanguageRepository languageRepository, 
+            ITranslationStepRepository tranlationStepRepository, 
+            IMasteringStepRepository masteringStepRepository,
+            ISemesterCoreRepository semesterCoreRepository,
+            IMediaTypeRepository mediaTypeRepository)
         {
             _languageRepository = languageRepository;
             _translationStepRepository = tranlationStepRepository;
             _masteringStepRepository = masteringStepRepository;
-            _mediaTypeRepository  = mediaTypeRepository;
-
+            _semesterCoreRepository = semesterCoreRepository;
+            _mediaTypeRepository = mediaTypeRepository;
         }
 
         public IActionResult Users()
@@ -25,9 +31,10 @@ namespace GlobalTeamNetwork.Controllers
             return View();
         }
 
-        public IActionResult Semesters()
+        public IActionResult SemesterCores()
         {
-            return View();
+            var semesterCores = _semesterCoreRepository.AllSemesterCores;
+            return View(semesterCores);
         }
 
         public IActionResult Languages()

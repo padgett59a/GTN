@@ -65,7 +65,7 @@
     },
     {
       "title": "Semesters",
-      "href": "admin_semesters",
+      "href": "admin_semesterCores",
       "icon": "fal fa-book",
       "environment": "production"
     },
