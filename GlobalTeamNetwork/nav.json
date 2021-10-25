@@ -65,13 +65,13 @@
     },
     {
       "title": "Semesters",
-      "href": "admin_semesterCores",
+      "href": "admin_semestercores",
       "icon": "fal fa-book",
       "environment": "production"
     },
     {
       "title": "Customers",
-      "href": "customers_list",
+      "href": "admin_organizations",
       "icon": "fal fa-book",
       "environment": "production"
     },

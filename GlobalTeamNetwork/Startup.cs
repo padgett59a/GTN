@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using GlobalTeamNetwork.Models;
+//using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 
 namespace GlobalTeamNetwork
 {
@@ -49,11 +51,30 @@ namespace GlobalTeamNetwork
             });
             services.AddRazorPages();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ISemesterCoreRepository, SemesterCoreRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
+
+
+            //services.AddControllers()
+            //JSON Serializer
+            //services.AddControllers().AddNewtonsoftJson(options =>
+            //{
+            //    options.SerializerSettings.ReferenceLoopHandling =
+            //       Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            //    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            //});
+
+            //services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions SerializationSettings.ContractReslover = new DefaultContractResolver())
+            //services.AddControllers().AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            //    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            //    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConveter());
+            //});
 
         }
 

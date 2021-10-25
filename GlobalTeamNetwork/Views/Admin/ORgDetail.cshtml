@@ -1,0 +1,77 @@
+﻿@model GlobalTeamNetwork.Models.Organization
+
+@{
+    ViewData["Title"] = "Organizations";
+}
+
+    <!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Organization</title>
+</head>
+    <body>
+
+        <h2>Details</h2>
+
+        <div>
+            <h4>Customer</h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    Customer Name
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.OrgName)
+                </dd>
+
+                <dt>
+                    Customer Location
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.OrgLocation)
+                </dd>
+                <dt>
+                    Semesters Delivered [In Work]
+                </dt>
+                <dd>
+                    This will show a list of the Semesters delivered to this Customer, including: <br>
+                    Semester<br>
+                    Languauge<br>
+                    Media Format<br>
+                    Etc.<br>
+                    [Date Delivered?]
+                </dd>
+                <dd>
+                    Sample Listing:
+                    <ul>
+                        <li>Christian Apologetics, Hindi, DVD
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                        <li>Christian Apologetics, Hindi, MP3
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                        <li>Christian Apologetics, Hindi, PDF
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                        <li>Christian Apologetics, Hindi, DVD
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                        <li>Foundations Track Sem 1, Hindi, MP3
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                        <li>Foundations Track Sem 1, PDF
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <p>
+            @Html.ActionLink("Back to List", "Organizations")
+        </p>
+    </body>
+</html>
