@@ -43,7 +43,6 @@
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
     <Folder Include="Migrations\old\" />
-    <Folder Include="Views\Organizations\" />
   </ItemGroup>
 
   <ItemGroup>

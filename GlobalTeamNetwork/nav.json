@@ -71,7 +71,7 @@
     },
     {
       "title": "Customers",
-      "href": "admin_organizations",
+      "href": "org_organizations",
       "icon": "fal fa-book",
       "environment": "production"
     },

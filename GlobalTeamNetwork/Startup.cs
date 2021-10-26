@@ -50,6 +50,8 @@ namespace GlobalTeamNetwork
                 options.Filters.Add<ViewBagFilter>();
             });
             services.AddRazorPages();
+
+            //Add scoped repositories
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ISemesterCoreRepository, SemesterCoreRepository>();
@@ -57,24 +59,6 @@ namespace GlobalTeamNetwork
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
-
-
-            //services.AddControllers()
-            //JSON Serializer
-            //services.AddControllers().AddNewtonsoftJson(options =>
-            //{
-            //    options.SerializerSettings.ReferenceLoopHandling =
-            //       Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            //    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-            //});
-
-            //services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions SerializationSettings.ContractReslover = new DefaultContractResolver())
-            //services.AddControllers().AddJsonOptions(options =>
-            //{
-            //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            //    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-            //    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConveter());
-            //});
 
         }
 

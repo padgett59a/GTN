@@ -42,7 +42,7 @@
                     </td>
                     <td>
                         <a onclick="editOrg(@item.orgID)" href="javascript:void(0)" id="@item.orgID">Edit</a> |
-                        <a asp-controller="Admin" asp-action="OrgDetail" asp-route-id="@item.orgID">Details</a> |
+                        <a asp-controller="Org" asp-action="OrgDetail" asp-route-id="@item.orgID">Details</a> |
                         <a onclick="deleteOrg(@item.orgID, this)" href="javascript:void(0)" id="@item.orgID">Delete</a>
                     </td>
                 </tr>
@@ -66,7 +66,7 @@
 
         $("body").on("click", "#btnCancel", function () {
             //Refresh the page
-            var url = '@Url.Action("Organizations", "Admin")';
+            var url = '@Url.Action("Organizations", "Org")';
             window.location.href = url;
         });
 
@@ -79,7 +79,7 @@
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
         });
 
-        var delayMils = 500;
+        var delayMils = 900;
 
         const buttonType = {
             SAVECHANGES: 0,
@@ -179,7 +179,7 @@
             //Send the JSON array to Controller using AJAX.
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("InsertOrgs","Admin")',
+                url: '@Url.Action("InsertOrgs","Org")',
                 data: JSON.stringify(orgs),
                 dataType: 'JSON',
                 cache: false,
@@ -194,7 +194,7 @@
             waitSeconds(delayMils);
 
             //Refresh the page
-            var url = '@Url.Action("Organizations", "Admin")';
+            var url = '@Url.Action("Organizations", "Org")';
             window.location.href = url;
         });
 
@@ -211,7 +211,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("DeleteOrgs","Admin")',
+                    url: '@Url.Action("DeleteOrgs","Org")',
                     data: JSON.stringify(orgArray),
                     dataType: 'JSON',
                     cache: false,
@@ -225,7 +225,7 @@
                 //Give the db a minute to recognize the new records
                 waitSeconds(delayMils);
                 //Refresh the page
-                var url = '@Url.Action("Organizations", "Admin")';
+                var url = '@Url.Action("Organizations", "Org")';
                 window.location.href = url;
             }
         }
@@ -267,7 +267,7 @@
             org.orgID = parseInt($("#btnSaveEdit").attr("data-id"));
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("UpdateOrg","Admin")',
+                url: '@Url.Action("UpdateOrg","Org")',
                 data: JSON.stringify(org),
                 dataType: 'JSON',
                 cache: false,
@@ -281,7 +281,7 @@
             //Give the db a minute to recognize the new records
             waitSeconds(delayMils);
             //Refresh the page
-            var url = '@Url.Action("Organizations", "Admin")';
+            var url = '@Url.Action("Organizations", "Org")';
             window.location.href = url;
         });
 
