@@ -15,6 +15,7 @@ namespace GlobalTeamNetwork.Data
         }
 
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Curriculum> Curriculums { get; set; }
         public DbSet<SemesterCore> SemesterCores { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<TranslationStep> TranslationSteps { get; set; }

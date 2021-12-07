@@ -16,6 +16,7 @@
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
     <Compile Remove="Data\Migrations\ApplicationDbContextModelSnapshot.cs" />
+    <Compile Remove="Models\CurriculumCoreRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>

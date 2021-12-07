@@ -54,6 +54,7 @@ namespace GlobalTeamNetwork
             //Add scoped repositories
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<ICurriculumRepository, CurriculumRepository>();
             services.AddScoped<ISemesterCoreRepository, SemesterCoreRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();

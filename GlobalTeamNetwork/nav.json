@@ -33,6 +33,58 @@
         }
       ]
     },
+    //{
+    //  "title": "Curriculum",
+    //  "href": "admin_curriculum",
+    //  "icon": "fal fa-book",
+    //  "environment": "production"
+    //},
+    //{
+    //  "title": "SemesterCores",
+    //  "href": "admin_semestercores",
+    //  "icon": "fal fa-book",
+    //  "environment": "production"
+    //},
+    //{
+    //  "title": "CourseCores",
+    //  "href": "admin_coursecores",
+    //  "icon": "fal fa-book",
+    //  "environment": "production"
+    //},
+    //{
+    //  "title": "SessionsCores",
+    //  "href": "admin_sessioncores",
+    //  "icon": "fal fa-book",
+    //  "environment": "production"
+    //},
+
+    {
+      "title": "Cores",
+      "icon": "fal fa-book",
+      "environment": "production",
+      "items": [
+        {
+          "title": "Curriculum",
+          "href": "cores_curriculum",
+          "showOnSeed": false
+        },
+        {
+          "title": "SemesterCores",
+          "href": "cores_semestercores",
+          "showOnSeed": false
+        },
+        {
+          "title": "CourseCores",
+          "href": "cores_coursecores",
+          "showOnSeed": false
+        },
+        {
+          "title": "SessionsCores",
+          "href": "cores_sessioncores",
+          "showOnSeed": false
+        }
+      ]
+    },
     {
       "title": "Users",
       "icon": "fal fa-user",
@@ -63,12 +115,8 @@
         }
       ]
     },
-    {
-      "title": "Semesters",
-      "href": "admin_semestercores",
-      "icon": "fal fa-book",
-      "environment": "production"
-    },
+
+
     {
       "title": "Customers",
       "href": "org_organizations",
@@ -904,4 +952,4 @@
       ]
     }
   ]
-}
+    }
