@@ -1,16 +1,12 @@
 using GlobalTeamNetwork.Models;
-using GlobalTeamNetwork.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 
 namespace GlobalTeamNetwork.Controllers
 {
     public class CoresController : Controller
     {
-        private readonly ISemesterCoreRepository _semesterCoreRepository;
         private readonly ICurriculumRepository _curriculumRepository;
+        private readonly ISemesterCoreRepository _semesterCoreRepository;
 
         public CoresController(
             ICurriculumRepository curriculumRepository,
@@ -31,6 +27,5 @@ namespace GlobalTeamNetwork.Controllers
             var semesterCores = _semesterCoreRepository.AllSemesterCores;
             return View(semesterCores);
         }
-
     }
 }
