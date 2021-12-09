@@ -166,7 +166,7 @@
                     org.orgID = 0;
                     orgs.push(org);
                 }
-                if (row.find('td:last-child').html().includes('value="Add"')) {
+                if (row.find('td:last-child').html().includes('value="Add Another"')) {
                     org.OrgName = row.find("input").eq(0).val();
                     org.OrgLocation = row.find("input").eq(1).val()
                     org.orgID = 0;

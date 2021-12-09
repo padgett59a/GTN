@@ -1,0 +1,105 @@
+﻿@model GlobalTeamNetwork.Models.SemesterCore
+
+@{
+    ViewData["Title"] = "Organizations";
+}
+
+    <!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Organization</title>
+</head>
+    <body>
+
+        <h2>Details</h2>
+
+        <div>
+            <h4>Customer</h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.SemesterCode)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SemesterCode)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.SemesterName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SemesterName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.CurriculumName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurriculumName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.NumberOfVideoSessions)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.NumberOfVideoSessions)
+                </dd>
+
+
+
+
+                @*<dt>
+                    Semesters Delivered [In Work]
+                </dt>
+                <dd>
+                    This will show a list of the Semesters delivered to this Customer, including: <br>
+                    Semester<br>
+                    Languauge<br>
+                    Media Format<br>
+                    Etc.<br>
+                    [Date Delivered?]
+                </dd>
+                <dd>
+                    Sample Listing:
+                    <ul>
+                        <li>
+                            Christian Apologetics, Hindi, DVD
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                        <li>
+                            Christian Apologetics, Hindi, MP3
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                        <li>
+                            Christian Apologetics, Hindi, PDF
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                        <li>
+                            Christian Apologetics, Hindi, DVD
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                        <li>
+                            Foundations Track Sem 1, Hindi, MP3
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                        <li>
+                            Foundations Track Sem 1, PDF
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Edit</a>
+                            &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)">Delete</a>
+                        </li>
+                    </ul>
+                </dd>*@
+            </dl>
+        </div>
+        <p>
+            @Html.ActionLink("Back to List", "SemesterCores")
+        </p>
+    </body>
+</html>

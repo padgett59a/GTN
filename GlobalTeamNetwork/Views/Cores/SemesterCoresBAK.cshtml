@@ -1,0 +1,346 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCores>
+
+    @{
+    ViewData["Title"] = "SemesterCores";
+    }
+
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Semester Cores</title>
+    </head>
+    <body>
+        <h1>Semester Cores</h1>
+
+        <p>
+            <a id="createNew" href="javascript:void(0)">Add New Semester Core</a>
+            <!--     <button id="createNew">Add Semester Core</button> -->
+        </p>
+        <table id="tblMain" class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SemesterName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CurriculumName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NumberOfVideoSessions)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr id="@(" tr" + @item.SemesterCode)"> 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SemesterName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CurriculumName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberOfVideoSessions)
+                    </td>
+                    <td>
+                        <a onclick="editItem(@item.SemesterCode)" href="javascript:void(0)" id="@item.SemesterCode">Edit</a> |
+                        <a asp-controller="Cores" asp-action="SemesterCoreDetail" asp-route-id="@item.SemesterCode">Details</a> |
+                        <a onclick="deleteItem(@item.SemesterCode, this)" href="javascript:void(0)" id="@item.SemesterCode">Delete</a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+            <tfoot hidden>
+                <tr>
+                    <td><input type="text" id="txtSemesterCode" /></td>
+                    <td><input type="text" id="txtSemesterName" /></td>
+                    <td><input type="text" id="txtCurriculumID" /></td>
+                    <td><input type="text" id="txtNumberOfVideoSessions" /></td>
+                    <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                </tr>
+                <tr id="trSaveAll">
+                    <td><input type="button" id="btnSave" value="Save All" /></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+        <script type="text/javascript">
+
+            $("body").on("click", "#btnCancel", function () {
+                //Refresh the page
+                var url = '@Url.Action("Cores", "SemesterCores")';
+                window.location.href = url;
+            });
+
+            $("#createNew").click(function () {
+                //Set up add button
+                changeSaveButton(buttonType.ADD, 0);
+                //show footer
+                $("#tblMain TFOOT").attr("hidden", false);
+                //scroll to bottom
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            });
+
+            var delayMils = 900;
+
+            const buttonType = {
+                SAVECHANGES: 0,
+                ADD: 1
+            }
+
+            function changeSaveButton(changeTo, orgId) {
+                //Replace action button
+                var cancelButton = "<input type=\"button\" id=\"btnCancel\" value=\"Cancel\" />";
+                var saveButton = "<input type=\"button\" data-id=\"" + orgId + "\" id=\"btnSaveEdit\" value=\"Save Changes\" />";
+                var addButton = "<input type=\"button\" id=\"btnAdd\" value=\"Add Another\" />";
+                var template = "~~0~~&nbsp;&nbsp;&nbsp;&nbsp;" + cancelButton;
+                var btnHtml;
+                switch (changeTo) {
+                    case buttonType.ADD:
+                        btnHtml = template.replace('~~0~~', addButton);
+                        break;
+                    case buttonType.SAVECHANGES:
+                        btnHtml = template.replace('~~0~~', saveButton);
+                        break;
+                }
+                //alert(btnHtml);
+                $('#tdBtnCell').html(btnHtml);
+            }
+
+            function waitSeconds(iMilliSeconds) {
+                var counter = 0
+                    , start = new Date().getTime()
+                    , end = 0;
+                while (counter < iMilliSeconds) {
+                    end = new Date().getTime();
+                    counter = end - start;
+                }
+            }
+
+            $("body").on("click", "#btnAdd", function () {
+                //Reference the Name and Country TextBoxes.
+                var txt01 = $("#txtSemesterCode");
+                var txt02 = $("#txtSemesterName");
+                var txt03 = $("#txtCurriculumID");
+                var txt04 = $("#txtNumberOfVideoSessions");
+
+                if (txt01.val().length == 0 ||
+                    txt02.val().length == 0 ||
+                    txt03.val().length == 0 ||
+                    txt04.val().length == 0) {
+                    alert("Please enter all data before proceeding.");
+                }
+                else {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
+
+                    //Add Row.
+                    var row = tFoot.insertRow(0);
+
+                    ////Add OrgName cell.
+                    //var cell = $(row.insertCell(-1));
+                    //cell.html(txtOrgName.val());
+
+                    ////Add OrgLocation cell.
+                    //cell = $(row.insertCell(-1));
+                    //cell.html(txtOrgLocation.val());
+
+                    //Add txtSemesterCode cell.
+                    var cell = $(row.insertCell(-1));
+                    cell.html(txtSemesterCode.val());
+
+                    //Add txtSemesterName cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txtSemesterName.val());
+
+                    //Add txtCurriculumID cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txtCurriculumID.val());
+
+                    //Add txtNumberOfVideoSessions cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txtNumberOfVideoSessions.val());
+
+                    //Add Button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "Remove(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
+
+                    //Clear the TextBoxes.
+                    txtSemesterCode.val("");
+                    txtSemesterName.val("");
+                    txtCurriculumID.val("");
+                    txtNumberOfVideoSessions.val("");
+                }
+            });
+
+            $("body").on("click", "#btnSave", function () {
+                //Loop through the Table rows and build a JSON array.
+                var semesters = new Array();
+
+                $("#tblMain TFOOT TR").each(function () {
+                    var row = $(this);
+                    var semCore = {};
+
+                    if (row.find('td:last-child').html().includes('value="Remove"')) {
+                        //alert('Remove row found');
+                        semCore.SemesterCode= row.find("TD").eq(0).html();
+                        semCore.SemesterName = row.find("TD").eq(1).html();
+                        semCore.curriculumID = row.find("TD").eq(2).html();
+                        semCore.NumberOfVideoSessions = row.find("TD").eq(3).html();
+                        semesters.push(semCore);
+                    }
+                    if (row.find('td:last-child').html().includes('value="Add"')) {
+                        semCore.SemesterCode = row.find("input").eq(0).val();
+                        semCore.SemesterName = row.find("input").eq(1).val();
+                        semCore.curriculumID = row.find("input").eq(2).val();
+                        semCore.NumberOfVideoSessions = row.find("input").eq(3).val();
+
+                        if (semCore.SemesterCode.length > 0 &&
+                            semCore.SemesterName.length > 0 &&
+                            semCore.curriculumID.length > 0 &&
+                            semCore.NumberOfVideoSessions.length > 0) {
+                            semesters.push(semCore);
+                        }
+                        else {
+                            alert('Add function is missing Semester data');
+                        }
+                    }
+                });
+
+                //Send the JSON array to Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertSemesters","Cores")',
+                    data: JSON.stringify(semesters),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                    success: function (r) {
+                    //alert(r + " record(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                var url = '@Url.Action("Cores", "SemesterCores")';
+                window.location.href = url;
+            });
+
+            //Delete item via AJAX
+            function deleteItem(itemId, button) {
+                //Determine the reference of the Row using the Button.
+                var row = $(button).closest("TR");
+                //var name = $("TD", row).eq(0).html();
+                var name = $("TD", row).eq(1).html();
+                if (confirm("Do you want to delete: " + name + " ?")) {
+                    //Get the reference of the Table.
+                    var table = $("#tblMain")[0];
+                    var itemArray = new Array;
+                    itemArray[0] = itemId;
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("deleteSemesters","Cores")',
+                        data: JSON.stringify(itemArray),
+                        dataType: 'JSON',
+                        cache: false,
+                        contentType: "application/json; charset=utf-8",
+                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                        success: function (r) {
+                            //alert(r + " record(s) have been deleted.");
+                        }
+                    });
+
+                    //Give the db a minute to recognize the new records
+                    waitSeconds(delayMils);
+                    //Refresh the page
+                    var url = '@Url.Action("Organizations", "Org")';
+                    window.location.href = url;
+                }
+            }
+
+            //Edit an org
+            function editItem(itemId) {
+                //Set up Save Changes button
+                changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+                //Hide edit row
+                $('#tr' + itemId).hide();
+
+                //Copy in existing values
+                var orgCellStr = '#txtSemesterCode' + itemId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtSemesterCode').val(orgCell.html().trim());
+
+                var orgCellStr = '#txtSemesterName' + itemId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtSemesterName').val(orgCell.html().trim());
+
+                var orgCellStr = '#txtCurriculumID' + itemId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtCurriculumID').val(orgCell.html().trim());
+
+                var orgCellStr = '#txtNumberOfVideoSessions' + itemId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtNumberOfVideoSessions').val(orgCell.html().trim());
+
+                //Show footer
+                $("#trSaveAll").attr("hidden", true);
+                //$("#btnCancel").attr("hidden", false);
+
+                $("#tblMain TFOOT").attr("hidden", false);
+                //scroll to bottom
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            }
+
+            //Save edits to an Org via ajax
+            $("body").on("click", "#btnSaveEdit", function () {
+                //alert($("#btnSaveEdit").attr("data-id"));
+                var row = $("#tblMain TFOOT TR:first");
+                var semCore = {};
+                semCore.SemesterName = row.find("INPUT").eq(0).val();
+                semCore.curriculumID = row.find("INPUT").eq(1).val();
+                semCore.NumberOfVideoSessions = row.find("INPUT").eq(2).val();
+                alert('nofvs: ' + semCore.NumberOfVideoSessions);
+
+                semCore.SemesterCode = parseInt($("#btnSaveEdit").attr("data-id"));
+                alert('semCode: ' + semCore.SemesterCode);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateSemester","Cores")',
+                    data: JSON.stringify(semCore),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                    success: function (r) {
+                        alert(r + " record(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                var url = '@Url.Action("SemesterCores", "Cores")';
+                window.location.href = url;
+            });
+
+        </script>
+    </body>
+</html>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using GlobalTeamNetwork.Data;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -30,5 +31,28 @@ namespace GlobalTeamNetwork.Models
             //may need to replace with paramaterized call to SP
             return _appDbContext.SemesterCores.Find(semesterCode);
         }
+        public EntityEntry<SemesterCore> InsertSemesterCore(SemesterCore semesterCore)
+        {
+            //may need to replace with paramaterized call to SP
+            return _appDbContext.SemesterCores.Add(semesterCore);
+        }
+
+        //This takes a semesterCore list having curriculum names (rather than curriculumID). The SP makes the conversion to curriculumID (if it can)
+        public int InsertSemesters(List<SemesterCore> semesterCores)
+        {
+            int addCount = 0;
+            foreach (SemesterCore newSemester in semesterCores)
+            {
+                var retVal = _appDbContext.Database.ExecuteSqlRaw("dbo.SP_InsertSemesterCore {0},{1},{2},{3}", 
+                    newSemester.SemesterCode, 
+                    newSemester.SemesterName, 
+                    newSemester.CurriculumName, 
+                    newSemester.NumberOfVideoSessions);
+                if (retVal == -1) { addCount++; }
+            }
+            _appDbContext.SaveChanges();
+            return addCount;
+        }
+
     }
 }
