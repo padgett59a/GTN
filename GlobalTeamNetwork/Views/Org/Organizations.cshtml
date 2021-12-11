@@ -115,6 +115,11 @@
             }
         }
 
+        function removeRow(evt) {
+            $(evt).parent().parent().remove();
+        }
+
+
         $("body").on("click", "#btnAdd", function () {
             //Reference the Name and Country TextBoxes.
             var txtOrgName = $("#txtOrgName");
@@ -137,11 +142,12 @@
                 //Add OrgLocation cell.
                 cell = $(row.insertCell(-1));
                 cell.html(txtOrgLocation.val());
-                //Add Button cell.
+
+                //Add Remove button cell.
                 cell = $(row.insertCell(-1));
                 var btnRemove = $("<input />");
                 btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "Remove(this);");
+                btnRemove.attr("onclick", "removeRow(this);");
                 btnRemove.val("Remove");
                 cell.append(btnRemove);
 

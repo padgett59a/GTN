@@ -50,5 +50,18 @@ namespace GlobalTeamNetwork.Controllers
             return Json(insertCount);
         }
 
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteSemesters([FromBody] List<string> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<string>();
+            }
+
+            int deleteCount = _semesterCoreRepository.DeleteSemesters(delItemList);
+            return Json(deleteCount);
+        }
+
     }
 }

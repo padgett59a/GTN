@@ -13,5 +13,7 @@ namespace GlobalTeamNetwork.Models
         SemesterCore GetSemesterCoreById(string semesterCode);
         EntityEntry<SemesterCore> InsertSemesterCore(SemesterCore semesterCore);
         int InsertSemesters(List<SemesterCore> semesterCores);
+        int DeleteSemesters(List<string> semesterCodes);
+        int UpdateSemesters(List<SemesterCore> semesterCodes);
     }
 }

@@ -53,6 +53,20 @@ namespace GlobalTeamNetwork.Models
             _appDbContext.SaveChanges();
             return addCount;
         }
+        public int DeleteSemesters(List<string> delItemList)
+        {
+            int delCount = 0;
+            foreach (string delItemId in delItemList)
+            {
+                var retVal = _appDbContext.Database.ExecuteSqlRaw("dbo.SP_DeleteSemesterCoreById {0}",
+                    delItemId);
+                if (retVal == -1) { delCount++; }
+            }
+            _appDbContext.SaveChanges();
+            return delCount;
+        }
+
+        int UpdateSemesters(List<SemesterCore> semesterCodes);
 
     }
 }
