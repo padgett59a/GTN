@@ -3,20 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 //using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GlobalTeamNetwork.Controllers
 {
     public class CoresController : Controller
     {
         private readonly ICurriculumRepository _curriculumRepository;
-        private readonly ISemesterCoreRepository _semesterCoreRepository;
+        private readonly ISemesterCoreRepository _SemesterCoreRepository;
 
         public CoresController(
             ICurriculumRepository curriculumRepository,
-            ISemesterCoreRepository semesterCoreRepository)
+            ISemesterCoreRepository SemesterCoreRepository)
         {
             _curriculumRepository = curriculumRepository;
-            _semesterCoreRepository = semesterCoreRepository;
+            _SemesterCoreRepository = SemesterCoreRepository;
         }
 
         public IActionResult Curriculum()
@@ -33,8 +34,9 @@ namespace GlobalTeamNetwork.Controllers
 
         public IActionResult SemesterCores()
         {
-            var semesterCores = _semesterCoreRepository.AllSemesterCores;
-            return View(semesterCores);
+            List<SemesterCore> semesterCores = _SemesterCoreRepository.AllSemesterCores.ToList();
+            IEnumerable<SemesterCoreCName> semesterCNames = _SemesterCoreRepository.ConvertToCNames(semesterCores).OrderBy(i => i.CurriculumName).ThenBy(i => i.SemesterName);
+            return View(semesterCNames);
         }
 
         [HttpPost]
@@ -46,7 +48,7 @@ namespace GlobalTeamNetwork.Controllers
                 newSemesters = new List<SemesterCore>();
             }
 
-            int insertCount = _semesterCoreRepository.InsertSemesters(newSemesters);
+            int insertCount = _SemesterCoreRepository.InsertSemesters(newSemesters);
             return Json(insertCount);
         }
 
@@ -59,7 +61,7 @@ namespace GlobalTeamNetwork.Controllers
                 delItemList = new List<string>();
             }
 
-            int deleteCount = _semesterCoreRepository.DeleteSemesters(delItemList);
+            int deleteCount = _SemesterCoreRepository.DeleteSemesters(delItemList);
             return Json(deleteCount);
         }
 

@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace GlobalTeamNetwork.Models
 {
-    public class SemesterCore
+    public class SemesterCoreCName
     {
         public string SemesterName { get; set; }
         [Key]
         public string SemesterCode { get; set; }
         public string CurriculumName { get; set; }
-        public Int16 NumberOfVideoSessions{ get; set; }
+        public Int16? NumberOfVideoSessions{ get; set; }
     }
-    public class SemesterCoreColId
+    public class SemesterCore
     {
         public string SemesterName { get; set; }
         [Key]
         public string SemesterCode { get; set; }
-        public string CurriculumID { get; set; }
-        public Int16 NumberOfVideoSessions { get; set; }
+        public Int32 CurriculumID { get; set; }
+        public Int16? NumberOfVideoSessions { get; set; }
     }
 }

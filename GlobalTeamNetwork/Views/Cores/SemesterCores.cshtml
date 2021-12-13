@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCore>
+﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCoreCName>
 
 @{
     ViewData["Title"] = "SemesterCores";
@@ -275,7 +275,11 @@
                     //These rows already validated
                     semCore.SemesterCode= row.find("TD").eq(0).html();
                     semCore.SemesterName = row.find("TD").eq(1).html();
-                    semCore.curriculumName = row.find("TD").eq(2).html();
+                    //semCore.curriculumName = row.find("TD").eq(2).html();
+                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("TD").eq(2).html()));
+
+                    alert(semCore.CurriculumId);
+
                     semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
                     semesters.push(semCore);
                 }
@@ -285,7 +289,7 @@
                     // get values of the candidate object
                     semCore.SemesterCode = row.find("input").eq(0).val();
                     semCore.SemesterName = row.find("input").eq(1).val();
-                    semCore.curriculumName = row.find("select option:selected").text();
+                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
                     nvsString = row.find("input").eq(2).val();
 
                     //if all blank, ingore it
@@ -415,7 +419,10 @@
             // get values of the candidate object
             semCore.SemesterCode = row.find("input").eq(0).val();
             semCore.SemesterName = row.find("input").eq(1).val();
-            semCore.curriculumName = row.find("select option:selected").text();
+            semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
+
+            alert(semCore.CurriculumId);
+
             nvsString = row.find("input").eq(2).val();
 
             //if all blank, post 'use Delete' message
