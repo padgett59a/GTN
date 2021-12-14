@@ -41,7 +41,7 @@
             @foreach (var item in Model)
             {
                 <tr id="@(" tr" + @item.SemesterCode)">
-                    <td>
+                    <td class="semesterCode">
                         @Html.DisplayFor(modelItem => item.SemesterCode)
                     </td>
                     <td>
@@ -64,10 +64,10 @@
         <tfoot hidden>
             @*input controls for adding a new item*@
             <tr>
-                <td><input type="text" id="txtSemesterCode" /></td>
-                <td><input type="text" id="txtSemesterName" /></td>
-                <td id="currDDL"><input type="text" id="txtCurriculumID" /></td>
-                <td><input type="text" id="txtNumberOfVideoSessions" /></td>
+                <td><input type="text" id="txtSemesterCode" class="semInputClass" /></td>
+                <td><input type="text" id="txtSemesterName" class="semInputClass" /></td>
+                <td id="currDDL"><input type="text" id="txtCurriculumID" class="semInputClass" /></td>
+                <td><input type="text" id="txtNumberOfVideoSessions" class="semInputClass" /></td>
                 <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
             </tr>
             <tr id="trSaveAll">
@@ -105,10 +105,12 @@
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
     <script type="text/javascript">
 
+
         //Get the curriculum from the db via ajax
         var curriculum;
         var curriculumTextArray = ['0th item'];
         var delayMils = 900;
+        var pageObjectText = 'SemesterCore';
 
         const buttonType = {
             SAVECHANGES: 0,
@@ -137,6 +139,20 @@
 
         function removeRow(evt) {
             $(evt).parent().parent().remove();
+        }
+
+        //see if the candidate semester code already exists
+        function semesterCodeExists(testCode) {
+            var codeMatch = $("td.semesterCode").filter(function () {
+                return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+            });
+
+            if (codeMatch.length > 0)
+            { return true;}
+            else
+            {
+                return false;
+            }
         }
 
         //Set up curriculum add drop down
@@ -209,10 +225,13 @@
                 txt02.val().length == 0 ||
                 //txt03.val().length == 0 ||
                 txt04.val().length == 0) {
-                alert("Please enter all data before proceeding.");
+                alert("Please enter all " + pageObjectText + " data before proceeding.");
             }
             else if (!digitsOnly(txt04.val())) {
                 alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
+            }
+            else if (semesterCodeExists(txt01.val()) ) {
+                alert("Semester Codes must be unique. Please correct this before proceeding.");
             }
             else {
                 //Get the reference of the Table's TFOOT element.
@@ -256,6 +275,21 @@
             }
         });
 
+        //If new Semester data complete enable save button
+        $("body").on("blur", ".semInputClass", function () {
+            if (
+                $('#txtSemesterCode').val().length > 0 &&
+                $('#txtSemesterName').val.length > 0 &&
+                $('#txtNumberOfVideoSessions').val().length > 0
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop("disabled", true);
+            }
+        });
+
+
         //Save all added rows
         $("body").on("click", "#btnSave", function () {
 
@@ -268,8 +302,6 @@
                 var semCore = {};
                 exitNow = false;
 
-                //alert(row.html());
-
                 //push new rows to the add list
                 if (row.find('td:last-child').html().includes('value="Remove"')) {
                     //These rows already validated
@@ -277,9 +309,6 @@
                     semCore.SemesterName = row.find("TD").eq(1).html();
                     //semCore.curriculumName = row.find("TD").eq(2).html();
                     semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("TD").eq(2).html()));
-
-                    alert(semCore.CurriculumId);
-
                     semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
                     semesters.push(semCore);
                 }
@@ -300,7 +329,7 @@
                         if (semCore.SemesterCode.length == 0 ||
                             semCore.SemesterName.length == 0 ||
                             nvsString.length == 0) {
-                            alert('Please populate all fields before saving data.');
+                            alert('Please populate all ' + pageObjectText + ' fields before saving data.');
                             exitNow = true;
                         }
                         //validate nvs
@@ -317,29 +346,30 @@
                 }
             });
 
-            if (exitNow) { return; }
+            if (!exitNow)  {
+                //alert('entering Ajax');
 
-            alert('entering Ajax');
+                //Send the JSON array to Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertSemesters","Cores")',
+                    data: JSON.stringify(semesters),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
 
-            //Send the JSON array to Controller using AJAX.
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("InsertSemesters","Cores")',
-                data: JSON.stringify(semesters),
-                dataType: 'JSON',
-                cache: false,
-                contentType: "application/json; charset=utf-8",
-                success: function (r) {
-                //alert(r + " record(s) inserted.");
-                }
-            });
+                    alert(r + " " + pageObjectText + "(s) inserted.");
+                    }
+                });
 
-            //Give the db a minute to recognize the new records
-            waitSeconds(delayMils);
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
 
-            //Refresh the page
-            var url = '@Url.Action("SemesterCores", "Cores")';
-            window.location.href = url;
+                //Refresh the page
+                var url = '@Url.Action("SemesterCores", "Cores")';
+                window.location.href = url;
+            }
         });
 
         //Delete item via AJAX
@@ -348,9 +378,6 @@
             //Determine the reference of the calling Row
             var row = $(button).closest("TR");
             var name = $("TD", row).eq(1).html();
-
-            //remove weird trailing chars
-            //nameTrim = name.substring(0, name.length + 3)+ " ?";
 
             if (confirm("Do you want to delete: " + name)) {
                 //Get the reference of the Table.
@@ -366,7 +393,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " record(s) have been deleted.");
+                        alert(r + " " + pageOjectText + "(s) have been deleted.");
                     }
                 });
 
@@ -420,9 +447,6 @@
             semCore.SemesterCode = row.find("input").eq(0).val();
             semCore.SemesterName = row.find("input").eq(1).val();
             semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
-
-            alert(semCore.CurriculumId);
-
             nvsString = row.find("input").eq(2).val();
 
             //if all blank, post 'use Delete' message
@@ -433,7 +457,7 @@
                 if (semCore.SemesterCode.length == 0 ||
                     semCore.SemesterName.length == 0 ||
                     nvsString.length == 0) {
-                    alert('Please populate all fields before saving changes.');
+                    alert('Please populate all ' + pageObjectText + ' fields before saving changes.');
                     exitNow = true;
                 }
                 //validate nvs
@@ -444,7 +468,7 @@
             }
             // all were blank
             else {
-                alert("Please populate fields or use 'Delete' to remove row.");
+                alert("Please populate the " + pageObjectText + " fields or use 'Delete' to remove a row.");
                 exitNow = true;
             }
 
@@ -457,7 +481,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " record(s) have been modified.");
+                        alert(r + " SemesterCore(s) have been modified.");
                     }
                 });
 

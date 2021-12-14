@@ -22,7 +22,6 @@ namespace GlobalTeamNetwork.Models
             //get { return _appDbContext.SemesterCores; }
             get
             {
-                //return _appDbContext.SemesterCores.FromSqlRaw("SP_GetSemesterCores");
                 return _appDbContext.SemesterCores;
             }
         }
@@ -64,14 +63,8 @@ namespace GlobalTeamNetwork.Models
             int addCount = 0;
             foreach (SemesterCore newSemester in SemesterCores)
             {
-                //var retVal = _appDbContext.Database.ExecuteSqlRaw("dbo.SP_InsertSemesterCore {0},{1},{2},{3}", 
-                //    newSemester.SemesterCode, 
-                //    newSemester.SemesterName, 
-                //    newSemester.CurriculumName, 
-                //    newSemester.NumberOfVideoSessions);
                 var retVal = _appDbContext.SemesterCores.Add(newSemester);
-                //if (retVal == -1) { addCount++; }
-                addCount++;
+                if (retVal.State == EntityState.Added) { addCount++; }
             }
             _appDbContext.SaveChanges();
             return addCount;
@@ -82,15 +75,9 @@ namespace GlobalTeamNetwork.Models
             //SemesterCore delItem;
             foreach (string delItemId in delItemList)
             {
-                //var retVal = _appDbContext.Database.ExecuteSqlRaw("dbo.SP_DeleteSemesterCoreById {0},{1},{2},{3}",
-                //    delItemList.SemesterCode,
-                //    delItemList.SemesterName,
-                //    delItemList.CurriculumName,
-                //    delItemList.NumberOfVideoSessions);
-                //if (retVal == -1) { delCount++; }
                 SemesterCore delSemester = this.GetSemesterCoreById(delItemId);
                 var retVal = _appDbContext.SemesterCores.Remove(delSemester);
-                delCount++;
+                if (retVal.State == EntityState.Deleted) {delCount++;}
             }
             _appDbContext.SaveChanges();
             return delCount;
