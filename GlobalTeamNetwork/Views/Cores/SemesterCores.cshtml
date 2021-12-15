@@ -103,14 +103,20 @@
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
     <script type="text/javascript">
 
+    //scope functions declared inside of document.ready
+    var editItem;
+    var deleteItem;
+
+    $(document).ready(function () {
 
         //Get the curriculum from the db via ajax
         var curriculum;
         var curriculumTextArray = ['0th item'];
         var delayMils = 900;
-        var pageObjectText = 'SemesterCore';
+        var pageOjectLabel = 'SemesterCore';
 
         const buttonType = {
             SAVECHANGES: 0,
@@ -183,10 +189,10 @@
         $("[id^=createNew]").click(function () {
             //Set up add button
             changeSaveButton(buttonType.ADD, 0);
-
             $("#currDDL").html(ddlCode);
 
             //show footer
+            $('#txtSemesterCode').prop('disabled', false);
             $("#tblMain TFOOT").attr("hidden", false);
             //scroll to bottom
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
@@ -225,7 +231,7 @@
                 txt02.val().length == 0 ||
                 //txt03.val().length == 0 ||
                 txt04.val().length == 0) {
-                alert("Please enter all " + pageObjectText + " data before proceeding.");
+                alert("Please enter all " + pageOjectLabel + " data before proceeding.");
             }
             else if (!digitsOnly(txt04.val())) {
                 alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
@@ -284,9 +290,16 @@
             ) {
                 $("#btnSave").prop('disabled', false);
             }
-            else {
-                $("#btnSave").prop("disabled", true);
-            }
+        });
+
+        $("body").on("input", ".semInputClass", function () {
+            if (
+                $('#txtSemesterCode').val().length > 0 &&
+                $('#txtSemesterName').val.length > 0 &&
+                $('#txtNumberOfVideoSessions').val().length > 0
+                ) {
+                    $("#btnSave").prop('disabled', false);
+                }
         });
 
 
@@ -295,7 +308,7 @@
 
             //Loop through the Table rows and build a JSON array.
             var semesters = new Array();
-            var exitNow = false;
+            var exitNow;
 
             $("#tblMain TFOOT TR").each(function () {
                 var row = $(this);
@@ -329,13 +342,13 @@
                         if (semCore.SemesterCode.length == 0 ||
                             semCore.SemesterName.length == 0 ||
                             nvsString.length == 0) {
-                            alert('Please populate all ' + pageObjectText + ' fields before saving data.');
+                            alert('Please populate all ' + pageOjectLabel + ' fields before saving data.');
                             exitNow = true;
                         }
                         //validate nvs
                         else if (!digitsOnly(nvsString)) {
-                            alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
                             exitNow = true;
+                            alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
                         }
                         //all is good, push it
                         else {
@@ -358,8 +371,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-
-                    alert(r + " " + pageObjectText + "(s) inserted.");
+                    alert(r + " " + pageOjectLabel + "(s) inserted.");
                     }
                 });
 
@@ -373,13 +385,14 @@
         });
 
         //Delete item via AJAX
-        function deleteItem(itemId, button) {
+        /*function deleteItem(itemId, button) {*/
+        deleteItem = function (itemId, button) {
 
             //Determine the reference of the calling Row
             var row = $(button).closest("TR");
-            var name = $("TD", row).eq(1).html();
+            var name = $("TD", row).eq(1).html().trim();
 
-            if (confirm("Do you want to delete: " + name)) {
+            if (confirm("Do you want to delete Semester: " + name + " ?")) {
                 //Get the reference of the Table.
                 var table = $("#tblMain")[0];
                 var itemArray = new Array;
@@ -393,7 +406,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageOjectText + "(s) have been deleted.");
+                        alert(r + " " + pageOjectLabel + "(s) have been deleted.");
                     }
                 });
 
@@ -406,7 +419,8 @@
         }
 
         //Edit an org
-        function editItem(itemId, button) {
+        //function editItem(itemId, button) {
+        editItem = function (itemId, button) {
 
             var editRow = $(button).closest("TR");
             var selectedVal;
@@ -424,6 +438,8 @@
 
             //Copy current values to the edit controls
             $('#txtSemesterCode').val(editRow.find("TD").eq(0).html().trim());
+            $('#txtSemesterCode').prop('disabled', true);
+
             $('#txtSemesterName').val(editRow.find("TD").eq(1).html().trim());
             $("#curriculumDDL").val(curriculumTextArray.indexOf(selectedVal)).change();
             $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); curriculum
@@ -437,15 +453,16 @@
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
         }
 
-        //Save edits to an Org via ajax
+        //Save edits via ajax
         $("body").on("click", "#btnSaveEdit", function () {
-            //alert($("#btnSaveEdit").attr("data-id"));
             var row = $("#tblMain TFOOT TR:first");
             var semCore = {};
+            var exitNow = false;
 
             // get values of the candidate object
             semCore.SemesterCode = row.find("input").eq(0).val();
             semCore.SemesterName = row.find("input").eq(1).val();
+            //convert the curriculumName to curriculumID
             semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
             nvsString = row.find("input").eq(2).val();
 
@@ -457,7 +474,7 @@
                 if (semCore.SemesterCode.length == 0 ||
                     semCore.SemesterName.length == 0 ||
                     nvsString.length == 0) {
-                    alert('Please populate all ' + pageObjectText + ' fields before saving changes.');
+                    alert('Please populate all ' + pageOjectLabel + ' fields before saving changes.');
                     exitNow = true;
                 }
                 //validate nvs
@@ -468,11 +485,12 @@
             }
             // all were blank
             else {
-                alert("Please populate the " + pageObjectText + " fields or use 'Delete' to remove a row.");
+                alert("Please populate the " + pageOjectLabel + " fields or use 'Delete' to remove a row.");
                 exitNow = true;
             }
 
             if (!exitNow) {
+                semCore.NumberOfVideoSessions = parseInt(nvsString);
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("UpdateSemester","Cores")',
@@ -493,6 +511,10 @@
             }
         });
 
+    /*end document.ready*/
+    });
+
     </script>
+
 </body>
 </html>

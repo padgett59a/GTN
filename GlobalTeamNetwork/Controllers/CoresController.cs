@@ -1,5 +1,6 @@
 using GlobalTeamNetwork.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 //using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -63,6 +64,22 @@ namespace GlobalTeamNetwork.Controllers
 
             int deleteCount = _SemesterCoreRepository.DeleteSemesters(delItemList);
             return Json(deleteCount);
+        }
+
+        public JsonResult UpdateSemester([FromBody] SemesterCore updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new SemesterCore();
+            }
+
+            EntityState retVal = _SemesterCoreRepository.UpdateSemesterCore(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
         }
 
     }
