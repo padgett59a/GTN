@@ -1,0 +1,637 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.CourseCoreSName>
+
+@{
+    ViewData["Title"] = "CourseCores";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Course Cores</title>
+</head>
+<body>
+    <h1>Course Cores</h1>
+
+    <p>
+        <a id="createNew" href="javascript:void(0)">Add New Course Core</a>
+        <!--     <button id="createNew">Add Course Core</button> -->
+    </p>
+    <table id="tblMain" class="table">
+        <thead>
+            <!-- Top Labels-->
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SemesterName)
+                </th>
+                <th>
+                    Letter
+                </th>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Workbook
+                </th>
+                <th>
+                    Video Text
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.InstructorName)
+                </th>
+                <th>
+                    Videos
+                </th>
+                <th>
+                    Mastering Files
+                </th>
+                <th>
+                    TextFiles
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>@*Cell for CRUD buttons*@</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr id="@(" tr" + @item.CourseCoreID)">
+                <td class="CourseCode">
+                    @Html.DisplayFor(model => item.CourseCoreID)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.CourseName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.SemesterName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.CourseLetterCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.CourseNumberCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.HasWorkbook)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.HasVideoText)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.InstructorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.VideosInHand)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.MasteringFilesInHand)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.TextFilesInHand)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Notes)
+                </td>
+                <td>
+                    <a onclick="editItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Edit</a> |
+                    <a asp-controller="Cores" asp-action="CourseCoreDetail" asp-route-id="@item.CourseCoreID">Details</a> |
+                    <a onclick="deleteItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Delete</a>
+                </td>
+            </tr>
+            }
+            </tbody>
+            <tfoot hidden>
+                @*input controls for adding a new item*@
+                <tr>
+                    <input type="text" id="txtCourseName" class="courseInputClass" /></td>
+
+                    <td><input type="text" id="txtCourseName" class="courseInputClass" /></td>
+                    <td id="semesterDDL"><input type="text" id="txtSemesterName" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtCourseLetterCode" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtCourseNumberCode" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtHasWorkbook" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtHasVideoText" class="courseInputClass" /></td>
+                    <td id="instructorDDL"><input type="text" id="txtInstructorID" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtVideosInHand" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtMasteringFilesInHand" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtTextFilesInHand" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtNotes" class="courseInputClass" /></td>
+
+                    <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                </tr>
+                <tr id="trSaveAll">
+                    <td>
+                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btnCancel" value="Cancel" />
+                    </td>
+                    <td colspan="100%"></td>
+                </tr>
+            </tfoot>
+            <!-- Bottom Labels-->
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SemesterName)
+                </th>
+                <th>
+                    Letter
+                </th>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Workbook
+                </th>
+                <th>
+                    Video Text
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.InstructorName)
+                </th>
+                <th>
+                    Videos
+                </th>
+                <th>
+                    Mastering Files
+                </th>
+                <th>
+                    TextFiles
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>@*Cell for CRUD buttons*@</th>
+            </tr>
+            <tr><td colspan="100%"></td></tr>
+        </table>
+    <p>
+        <a id="createNew2" href="javascript:void(0)">Add New Course Core</a>
+        <!--     <button id="createNew">Add Course Core</button> -->
+    </p>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <script type="text/javascript">
+
+    //scope functions declared inside of document.ready
+    var editItem;
+    var deleteItem;
+
+    $(document).ready(function () {
+
+        //Set up the drop down value arrays
+        var semesters;
+        var instructors;
+        //var semesterTextArray = ['0th item'];
+        //var semesterCodeArray = ['0th item'];
+        //var curriculumTextArray = ['0th item'];
+
+        var delayMils = 900;
+        var pageOjectLabel = 'CourseCore';
+
+        const buttonType = {
+            SAVECHANGES: 0,
+            ADD: 1
+        }
+
+        function waitSeconds(iMilliSeconds) {
+            var counter = 0
+                , start = new Date().getTime()
+                , end = 0;
+            while (counter < iMilliSeconds) {
+                end = new Date().getTime();
+                counter = end - start;
+            }
+        }
+
+        function digitsOnly(checkStr) {
+            const reg = new RegExp('^[0-9]+$');
+            if (reg.test(checkStr)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        function removeRow(evt) {
+            $(evt).parent().parent().remove();
+        }
+
+        //see if the candidate Course code already exists
+        function CourseCodeExists(testCode) {
+            var codeMatch = $("td.CourseCode").filter(function () {
+                return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+            });
+
+            if (codeMatch.length > 0)
+            { return true;}
+            else
+            {
+                return false;
+            }
+        }
+
+        //Set up semester, instructor drop downs
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSemserstersJson","Cores")',
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                semesters = response;
+            }
+        });
+
+        alert(semesters[0].semesterCode);
+
+        var semesterDdlCode =
+            '<select id = "semesterDDL" name = "semesterDDL"> '
+            //for (i = 0; i < semester.length; i++) {
+            //    ddlCode += '<option value=' + semester[i].semesterCode + '>' + semester[i].semesterName + '</option >';
+            //    semesterTextArray.push(semester[i].semesterName);
+            //}
+            for (var key in semesters) {
+                options += "<option value='" + semesters[key].semesterCode + "'>" + semesters[key].semesterName + "</option>";
+            }
+            semesterDdlCode += '</select >';
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetInstructorsJson","Cores")',
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                instructors = response;
+            }
+        });
+
+        alert(instructors[0].semesterCode);
+
+        var instructorDdlCode =
+            '<select id = "instructorDDL" name = "instructorDDL"> '
+            ////for (i = 0; i < instructor.length; i++) {
+            ////    ddlCode += '<option value=' + instructor[i].instructorID + '>' + instructor[i].instructorName + '</option >';
+            ////    instructorTextArray.push(instructor[i].instructorName);
+            ////}
+            for (var key in instructors) {
+                options += "<option value='" + instructors[key].personID + "'>" + instructors[key].FullName + "</option>";
+            }
+            instructorDdlCode += '</select >';
+
+
+        $("body").on("click", "#btnCancel", function () {
+            //Refresh the page
+            var url = '@Url.Action("CourseCores", "Cores")';
+            window.location.href = url;
+        });
+
+        $("[id^=createNew]").click(function () {
+            //Set up add button
+            changeSaveButton(buttonType.ADD, 0);
+            $("#sememesterDDL").html(semesterDdlCode);
+            $("#instructorDDL").html(instructorDdlCode);
+
+            //show footer
+            $('#txtCourseCode').prop('disabled', false);
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        });
+
+        //switch the button html
+        function changeSaveButton(changeTo, selCurr ) {
+            //Replace action button
+            var cancelButton = "<input type=\"button\" id=\"btnCancel\" value=\"Cancel\" />";
+            var saveButton = "<input type=\"button\" data-id=\"" + selCurr + "\" id=\"btnSaveEdit\" value=\"Save Changes\" />";
+            var addButton = "<input type=\"button\" id=\"btnAdd\" value=\"Add Another\" />";
+            var template = "~~0~~&nbsp;&nbsp;&nbsp;&nbsp;"
+            var btnHtml;
+            switch (changeTo) {
+                case buttonType.ADD:
+                    btnHtml = template.replace('~~0~~', addButton);
+                    break;
+                case buttonType.SAVECHANGES:
+                    btnHtml = template.replace('~~0~~', saveButton) + cancelButton;
+                    break;
+            }
+            $('#tdBtnCell').html(btnHtml);
+        }
+
+        // Add another item
+        $("body").on("click", "#btnAdd", function () {
+            //Reference the Name and Country TextBoxes.
+            var txt01 = $("#txtCourseCode");
+            var txt02 = $("#txtCourseName");
+            //var txt03 = $("#txtCurriculumID");
+            var selCurr = $("#curriculumDDL");
+            var curriculumText = $('#curriculumDDL option:selected').text();
+            var txt04 = $("#txtNumberOfVideoSessions");
+
+            if (txt01.val().length == 0 ||
+                txt02.val().length == 0 ||
+                //txt03.val().length == 0 ||
+                txt04.val().length == 0) {
+                alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+            }
+            else if (!digitsOnly(txt04.val())) {
+                alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
+            }
+            else if (CourseCodeExists(txt01.val()) ) {
+                alert("Course Codes must be unique. Please correct this before proceeding.");
+            }
+            else {
+                //Get the reference of the Table's TFOOT element.
+                var tFoot = $("#tblMain > TFOOT")[0];
+
+                //Add Row.
+                var row = tFoot.insertRow(0);
+
+                //Add txtCourseCode cell.
+                var cell = $(row.insertCell(-1));
+                cell.html(txt01.val());
+
+                //Add txtCourseName cell.
+                cell = $(row.insertCell(-1));
+                cell.html(txt02.val());
+
+                //Add txtCurriculumName cell.
+                cell = $(row.insertCell(-1));
+                cell.html(curriculumText);
+
+                //Add txtNumberOfVideoSessions cell.
+                cell = $(row.insertCell(-1));
+                cell.html(txt04.val());
+
+                //Add Button cell.
+                cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "removeRow(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //Clear the input control values
+                txt01.val("");
+                txt02.val("");
+                $("#curriculumDDL").val("1").change();
+                txt04.val("");
+
+                //now there is something to save
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        //If new Course data complete enable save button
+        $("body").on("blur", ".courseInputClass", function () {
+            if (
+                $('#txtCourseCode').val().length > 0 &&
+                $('#txtCourseName').val.length > 0 &&
+                $('#txtNumberOfVideoSessions').val().length > 0
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        $("body").on("input", ".courseInputClass", function () {
+            if (
+                $('#txtCourseCode').val().length > 0 &&
+                $('#txtCourseName').val.length > 0 &&
+                $('#txtNumberOfVideoSessions').val().length > 0
+                ) {
+                    $("#btnSave").prop('disabled', false);
+                }
+        });
+
+
+        //Save all added rows
+        $("body").on("click", "#btnSave", function () {
+
+            //Loop through the Table rows and build a JSON array.
+            var Courses = new Array();
+            var exitNow;
+
+            $("#tblMain TFOOT TR").each(function () {
+                var row = $(this);
+                var semCore = {};
+                exitNow = false;
+
+                //push new rows to the add list
+                if (row.find('td:last-child').html().includes('value="Remove"')) {
+                    //These rows already validated
+                    semCore.CourseCode= row.find("TD").eq(0).html();
+                    semCore.CourseName = row.find("TD").eq(1).html();
+                    //semCore.curriculumName = row.find("TD").eq(2).html();
+                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("TD").eq(2).html()));
+                    semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
+                    Courses.push(semCore);
+                }
+                //Row Added but not saved
+                if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                    // get values of the candidate object
+                    semCore.CourseCode = row.find("input").eq(0).val();
+                    semCore.CourseName = row.find("input").eq(1).val();
+                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
+                    nvsString = row.find("input").eq(2).val();
+
+                    //if all blank, ingore it
+                    if (semCore.CourseCode.length > 0 ||
+                        semCore.CourseName.length > 0 ||
+                        nvsString.length > 0) {
+                        //if some blanks fix it
+                        if (semCore.CourseCode.length == 0 ||
+                            semCore.CourseName.length == 0 ||
+                            nvsString.length == 0) {
+                            alert('Please populate all ' + pageOjectLabel + ' fields before saving data.');
+                            exitNow = true;
+                        }
+                        //validate nvs
+                        else if (!digitsOnly(nvsString)) {
+                            exitNow = true;
+                            alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
+                        }
+                        //all is good, push it
+                        else {
+                            semCore.NumberOfVideoSessions = parseInt(nvsString);
+                            Courses.push(semCore);
+                        }
+                    }
+                }
+            });
+
+            if (!exitNow)  {
+                //alert('entering Ajax');
+
+                //Send the JSON array to Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertCourses","Cores")',
+                    data: JSON.stringify(Courses),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                    alert(r + " " + pageOjectLabel + "(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                var url = '@Url.Action("CourseCores", "Cores")';
+                window.location.href = url;
+            }
+        });
+
+        //Delete item via AJAX
+        /*function deleteItem(itemId, button) {*/
+        deleteItem = function (itemId, button) {
+
+            //Determine the reference of the calling Row
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(1).html().trim();
+
+            if (confirm("Do you want to delete Course: " + name + " ?")) {
+                //Get the reference of the Table.
+                var table = $("#tblMain")[0];
+                var itemArray = new Array;
+                itemArray[0] = itemId;
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("deleteCourses","Cores")',
+                    data: JSON.stringify(itemArray),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageOjectLabel + "(s) have been deleted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                var url = '@Url.Action("CourseCores", "Cores")';
+                window.location.href = url;
+            }
+        }
+
+        //Edit an org
+        //function editItem(itemId, button) {
+        editItem = function (itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+
+            //set up the ddl html
+            $("#semesterDDL").html(semesterDdlCode);
+            $("#instructorDDL").html(instructorDdlCode);
+
+            selectedVal = editRow.find("TD").eq(2).html().trim();
+
+            //Copy current values to the edit controls
+            $('#txtCourseCode').val(editRow.find("TD").eq(0).html().trim());
+            $('#txtCourseCode').prop('disabled', true);
+
+            $('#txtCourseName').val(editRow.find("TD").eq(1).html().trim());
+            $("#curriculumDDL").val(curriculumTextArray.indexOf(selectedVal)).change();
+            $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); curriculum
+
+            //Show footer
+            $("#trSaveAll").attr("hidden", true);
+            //$("#btnCancel").attr("hidden", false);
+
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+        //Save edits via ajax
+        $("body").on("click", "#btnSaveEdit", function () {
+            var row = $("#tblMain TFOOT TR:first");
+            var semCore = {};
+            var exitNow = false;
+
+            // get values of the candidate object
+            semCore.CourseCode = row.find("input").eq(0).val();
+            semCore.CourseName = row.find("input").eq(1).val();
+            //convert the curriculumName to curriculumID
+            semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
+            nvsString = row.find("input").eq(2).val();
+
+            //if all blank, post 'use Delete' message
+            if (semCore.CourseCode.length > 0 ||
+                semCore.CourseName.length > 0 ||
+                nvsString.length > 0) {
+                //if some blanks fix it
+                if (semCore.CourseCode.length == 0 ||
+                    semCore.CourseName.length == 0 ||
+                    nvsString.length == 0) {
+                    alert('Please populate all ' + pageOjectLabel + ' fields before saving changes.');
+                    exitNow = true;
+                }
+                //validate nvs
+                else if (!digitsOnly(nvsString)) {
+                    alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
+                    exitNow = true;
+                }
+            }
+            // all were blank
+            else {
+                alert("Please populate the " + pageOjectLabel + " fields or use 'Delete' to remove a row.");
+                exitNow = true;
+            }
+
+            if (!exitNow) {
+                semCore.NumberOfVideoSessions = parseInt(nvsString);
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateCourse","Cores")',
+                    data: JSON.stringify(semCore),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " CourseCore(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                var url = '@Url.Action("CourseCores", "Cores")';
+                window.location.href = url;
+            }
+        });
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>
