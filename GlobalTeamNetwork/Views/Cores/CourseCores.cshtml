@@ -64,7 +64,7 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
-                <th>@*Cell for CRUD buttons*@</th>
+                <th>Modify</th>
             </tr>
         </thead>
         <tbody>
@@ -178,7 +178,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Notes)
             </th>
-            <th>@*Cell for CRUD buttons*@</th>
+            <th>Modify</th>
         </tr>
         <tr><td colspan="100%"></td></tr>
     </table>
@@ -309,6 +309,9 @@
                 //show all rows
                 $("#tblMain tr").show();
             }
+            //$("#tblMain tfoot>tr").hide();
+            $("#tblMain TFOOT").attr("hidden", true);
+
         })
 
         //select the first value
@@ -344,13 +347,17 @@
         });
 
         $("[id^=createNew]").click(function () {
+
+            alert('createNew');
+
             //Set up add button
             changeSaveButton(buttonType.ADD, 0);
             $("#semesterDDL").html(semesterDdlCode);
             $("#instructorDDL").html(instructorDdlCode);
 
             //show footer
-            $('txtCourseCoreID').prop('disabled', false);
+            //$('txtCourseCoreID').prop('disabled', false);
+            $("#tblMain tfoot>tr").show();
             $("#tblMain TFOOT").attr("hidden", false);
             //scroll to bottom
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
@@ -438,6 +445,8 @@
                     $('#semesterDDL option:selected').val() == '??' &&
                     inp04.val().length == 0 &&
                     $('#instructorDDL option:selected').val() == '??');
+
+            alert(allBlank);
 
             if (!allBlank) {
 
