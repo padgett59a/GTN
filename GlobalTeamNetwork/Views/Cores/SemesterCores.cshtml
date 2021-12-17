@@ -285,7 +285,7 @@
         $("body").on("blur", ".semInputClass", function () {
             if (
                 $('#txtSemesterCode').val().length > 0 &&
-                $('#txtSemesterName').val.length > 0 &&
+                $('#txtSemesterName').val().length > 0 &&
                 $('#txtNumberOfVideoSessions').val().length > 0
             ) {
                 $("#btnSave").prop('disabled', false);
@@ -295,7 +295,7 @@
         $("body").on("input", ".semInputClass", function () {
             if (
                 $('#txtSemesterCode').val().length > 0 &&
-                $('#txtSemesterName').val.length > 0 &&
+                $('#txtSemesterName').val().length > 0 &&
                 $('#txtNumberOfVideoSessions').val().length > 0
                 ) {
                     $("#btnSave").prop('disabled', false);

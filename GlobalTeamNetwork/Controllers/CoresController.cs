@@ -97,7 +97,7 @@ namespace GlobalTeamNetwork.Controllers
         //******************  CourseCores ************************//
         public string GetSemestersJson()
         {
-            var semesterCores = _semesterCoreRepository.AllSemesterCores;
+            List<SemesterCore> semesterCores = _semesterCoreRepository.AllSemesterCores.OrderBy(s => s.SemesterName).ToList();
             string retVal = JsonConvert.SerializeObject(semesterCores);
             return retVal;
         }
