@@ -24,7 +24,7 @@
         <a id="createNew" href="javascript:void(0)">Add New Course Core</a>
         <!--     <button id="createNew">Add Course Core</button> -->
     </p>
-    <table id="tblMain" class="table" style="display: block; overflow-x: auto;">
+    <table id="tblMain" class="table" style="display: block; overflow-x: auto;" hidden>
         <thead>
             <!-- Top Labels-->
             <tr>
@@ -130,7 +130,7 @@
                 <td><input type="checkbox" id="txtMasteringFilesInHand" class="courseInputClass" size="3" /></td>
                 <td><input type="checkbox" id="txtTextFilesInHand" class="courseInputClass" size="3" /></td>
                 <td><input type="text" id="txtNotes" class="courseInputClass" /></td>
-                <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
             </tr>
             <tr id="trSaveAll">
                 <td style="white-space:nowrap">
@@ -196,99 +196,100 @@
     var editItem;
     var deleteItem;
 
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        //Set up the drop down value arrays
-        var inputValid = false;
-        var semesters;
-        var instructors;
-        var delayMils = 900;
-        var pageOjectLabel = 'CourseCore';
+            //pFilter is passed to the page via query string for page refresh, etc.
+            var pFilter = (new URL(location.href)).searchParams.get('filter');
 
-        const buttonType = {
-            SAVECHANGES: 0,
-            ADD: 1
-        }
+            //Set up the drop down value arrays
+            var inputValid = false;
+            var semesters;
+            var instructors;
+            var delayMils = 900;
+            var pageOjectLabel = 'CourseCore';
 
-        function waitSeconds(iMilliSeconds) {
-            var counter = 0
-                , start = new Date().getTime()
-                , end = 0;
-            while (counter < iMilliSeconds) {
-                end = new Date().getTime();
-                counter = end - start;
+            const buttonType = {
+                SAVECHANGES: 0,
+                ADD: 1
             }
-        }
 
-        function digitsOnly(checkStr) {
-            if (checkStr.length == 0) {
-                return true;
+            function waitSeconds(iMilliSeconds) {
+                var counter = 0
+                    , start = new Date().getTime()
+                    , end = 0;
+                while (counter < iMilliSeconds) {
+                    end = new Date().getTime();
+                    counter = end - start;
+                }
             }
-            else {
-                const reg = new RegExp('^[0-9]+$');
-                if (reg.test(checkStr)) {
+
+            function digitsOnly(checkStr) {
+                if (checkStr.length == 0) {
                     return true;
                 }
+                else {
+                    const reg = new RegExp('^[0-9]+$');
+                    if (reg.test(checkStr)) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            function alphaOnly(checkStr) {
+                if (checkStr.length == 0) {
+                    return true;
+                }
+                else {
+                    const reg = new RegExp('^[A-Za-z]+$');
+                    if (reg.test(checkStr)) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            function removeRow(evt) {
+                $(evt).parent().parent().remove();
+            }
+
+            //see if the candidate Course code already exists
+            function CourseCodeExists(testCode) {
+                var codeMatch = $("td.CourseCode").filter(function () {
+                    return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+                });
+
+                if (codeMatch.length > 0) { return true; }
                 else {
                     return false;
                 }
             }
-        }
 
-        function alphaOnly(checkStr) {
-            if (checkStr.length == 0) {
-                return true;
+            function getCBhtml(bChecked, bDisabled) {
+                var cbCode = '<input type="checkbox"';
+                if (bDisabled) { cbCode += ' disabled'; }
+                if (bChecked) { cbCode += ' checked'; }
+                cbCode += '>';
+                return cbCode;
             }
-            else {
-                const reg = new RegExp('^[A-Za-z]+$');
-                if (reg.test(checkStr)) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        }
 
-        function removeRow(evt) {
-            $(evt).parent().parent().remove();
-        }
-
-        //see if the candidate Course code already exists
-        function CourseCodeExists(testCode) {
-            var codeMatch = $("td.CourseCode").filter(function () {
-                return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+            //Set up semester, instructor drop downs
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSemestersJson","Cores")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    semesters = response;
+                }
             });
 
-            if (codeMatch.length > 0)
-            { return true;}
-            else
-            {
-                return false;
-            }
-        }
-
-        function getCBhtml(bChecked, bDisabled) {
-            var cbCode = '<input type="checkbox"' ;
-            if (bDisabled) { cbCode += ' disabled'; }
-            if (bChecked) { cbCode += ' checked'; }
-            cbCode += '>';
-            return cbCode;
-        }
-
-        //Set up semester, instructor drop downs
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("GetSemestersJson","Cores")',
-            dataType: "json",
-            async: false,
-            success: function (response) {
-                semesters = response;
-            }
-        });
-
-        //set up semester drop downs
-        var semesterDdlCode ='<select id = "semesterDDL" name = "semesterDDL"> '
+            //set up semester drop downs
+            var semesterDdlCode = '<select id = "semesterDDL" name = "semesterDDL"> '
             semesterDdlCode += "<option value='??'>None Selected</option>";
             for (var key in semesters) {
                 semesterDdlCode += "<option value='" + semesters[key].SemesterCode + "'>" + semesters[key].SemesterName + "</option>";
@@ -297,29 +298,35 @@
                     text: semesters[key].SemesterName
                 }));
             }
-        semesterDdlCode += '</select >';
+            semesterDdlCode += '</select >';
 
-        $('#semFilter').change(function () {
-            var semesterFilter = this.options[this.selectedIndex].text;
-            if (semesterFilter != "All") {
-                $("#tblMain td:nth-child(2):contains('" + semesterFilter + "')").parent().show();
-                $("#tblMain td:nth-child(2):not(:contains('" + semesterFilter + "'))").parent().hide();
+            $('#semFilter').change(function () {
+                var semesterFilter = this.options[this.selectedIndex].text;
+                if (semesterFilter != "All") {
+                    $("#tblMain td:nth-child(2):contains('" + semesterFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(2):not(:contains('" + semesterFilter + "'))").parent().hide();
+                }
+                else {
+                    //show all rows
+                    $("#tblMain tr").show();
+                }
+                //$("#tblMain tfoot>tr").hide();
+                $("#tblMain TFOOT").attr("hidden", true);
+
+            })
+
+        //select the first semester value or passed filter value and show the main table
+        if (pFilter != null) {
+            var boolFilterExists = semesterDdlCode.indexOf("value='" + pFilter + "'") > -1;
+            //alert('boolFilterExists: '+ boolFilterExists);
+            if (boolFilterExists) {
+                $('#semFilter').val(pFilter).change();
             }
-            else {
-                //show all rows
-                $("#tblMain tr").show();
-            }
-            //$("#tblMain tfoot>tr").hide();
-            $("#tblMain TFOOT").attr("hidden", true);
-
-        })
-
-        //select the first value
-        $('#semFilter').prop('selectedIndex', 1).change();
-         //alert($("#semFilter option:selected").text());
-
-
-        // works in console: $("#tblMain td:nth-child(2):contains('" + "Semester 1" + "')").parent()
+        }
+        else {
+            $('#semFilter').prop('selectedIndex', 1).change();
+        }
+        $('#tblMain').removeAttr('hidden');
 
         $.ajax({
             type: "GET",
@@ -340,15 +347,17 @@
             instructorDdlCode += '</select >';
 
 
-        $("body").on("click", "#btnCancel", function () {
-            //Refresh the page
-            var url = '@Url.Action("CourseCores", "Cores")';
+        function refreshMe() {
+                //Refresh the page
+            var url = '@Url.Action("CourseCores", "Cores")' + "?filter=" + $('#semFilter option').filter(':selected').val();
             window.location.href = url;
+            }
+
+        $("body").on("click", "#btnCancel", function () {
+            refreshMe();
         });
 
         $("[id^=createNew]").click(function () {
-
-            alert('createNew');
 
             //Set up add button
             changeSaveButton(buttonType.ADD, 0);
@@ -367,6 +376,45 @@
             //Set filter to 'All'
             $('#semFilter').prop('selectedIndex', 0).change();
         });
+
+        //validate input and set inputValid global boolean
+        function validateInput() {
+
+            //default to true
+            inputValid = true;
+
+            //if all blank, ingore it
+            var allBlank =
+                (//inp01.val().length == 0 &&
+                    $("#txtCourseName").val().length == 0 &&
+                    $('#semesterDDL option:selected').val() == '??' &&
+                    $("#txtCourseLetterCode").val().length == 0 &&
+                    $('#instructorDDL option:selected').val() == '??');
+
+            if (!allBlank) {
+                //Validate input
+                if (//inp01.val().length == 0 ||
+                    $("#txtCourseName").val().length == 0 ||
+                    $('#semesterDDL option:selected').val() == '??' ||
+                    $("#txtCourseLetterCode").val().length == 0 ||
+                    $('#instructorDDL option:selected').val() == '??') {
+                    inputValid = false;
+                    alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+                }
+                else if (!alphaOnly($("#txtCourseLetterCode").val())) {
+                    inputValid = false;
+                    alert("The Course Letter code must be letters only. Please correct this before proceeding.");
+                }
+                else if (!digitsOnly($("#txtCourseNumberCode").val())) {
+                    inputValid = false;
+                    alert("The Course Number code must be number. Please correct this before proceeding.");
+                }
+                //else if (CourseCodeExists(inp01.val())) {
+                //    inputValid = false;
+                //    alert(pageOjectLabel + " IDs must be unique. Please correct this before proceeding.");
+                //}
+            }
+        }
 
         //switch the button html
         function changeSaveButton(changeTo, selCurr ) {
@@ -403,6 +451,7 @@
             }
         });
 
+        //Enable or Disable the save button when required fields are completed and valid
         $("body").on("change", "#semesterDDL, #instructorDDL", function () {
             if (
                 //$('#txtCourseCoreID').val().length > 0 &&
@@ -418,166 +467,116 @@
             }
         });
 
-        // Add another item
+        // Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
-            //Reference the input controls
-            //var inp01 = $("#txtCourseCoreID");
-            var inp02 = $("#txtCourseName");
-            var selSemester = $("#semesterDDL");
-            var inp04 = $("#txtCourseLetterCode");
-            var inp05 = $("#txtCourseNumberCode");
-            var selInstructor = $("#instructorDDL");
-            var inp07 = $("#txtHasWorkbook");
-            var inp08 = $("#txtHasVideoText");
-            var inp09 = $("#txtVideosInHand");
-            var inp10 = $("#txtMasteringFilesInHand");
-            var inp11 = $("#txtTextFilesInHand");
-            var inp12 = $("#txtNotes");
+            validateInput();
 
-            //defaultl to true
-            inputValid = true;
+            if (inputValid) {
+                //Get the reference of the Table's TFOOT element.
+                var tFoot = $("#tblMain > TFOOT")[0];
 
-            //if all blank, ingore it
-            var allBlank =
-                (//inp01.val().length == 0 &&
-                    inp02.val().length == 0 &&
-                    $('#semesterDDL option:selected').val() == '??' &&
-                    inp04.val().length == 0 &&
-                    $('#instructorDDL option:selected').val() == '??');
+                //Add a new row above the input row and move the added values to it
+                var row = tFoot.insertRow(0);
 
-            alert(allBlank);
+                ////Add Course ID cell.
+                //var cell = $(row.insertCell(-1));
+                //cell.html(inp01.val());
+                //cell.addClass("CourseCode");
 
-            if (!allBlank) {
+                //Add Course Name cell.
+                cell = $(row.insertCell(-1));
+                cell.html( $("#txtCourseName").val());
 
-                //Validate input
-                if (//inp01.val().length == 0 ||
-                    inp02.val().length == 0 ||
-                    $('#semesterDDL option:selected').val() == '??' ||
-                    inp04.val().length == 0 ||
-                    $('#instructorDDL option:selected').val() == '??') {
-                    inputValid = false;
-                    alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+                //Add Semester select cell.
+                cell = $(row.insertCell(-1));
+                cell.html($("#semesterDDL option:selected").text());
+
+                //Add Letter Code cell.
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtCourseLetterCode").val());
+
+                //Add Number Code cell.
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtCourseNumberCode").val());
+
+                //Add Instructor select cell.
+                cell = $(row.insertCell(-1));
+                cell.html($("#instructorDDL option:selected").text());
+
+                //Add Has Workbook
+                cell = $(row.insertCell(-1));
+                if ($("#txtHasWorkbook").is(':checked')) {
+                    cell.html(getCBhtml(true, true));
                 }
-                else if (!alphaOnly(inp04.val())) {
-                    inputValid = false;
-                    alert("The Course Letter code must be letters only. Please correct this before proceeding.");
+                else {
+                    cell.html(getCBhtml(false, true));
                 }
-                else if (!digitsOnly(inp05.val())) {
-                    inputValid = false;
-                    alert("The Course Number code must be number. Please correct this before proceeding.");
+
+                //Add Has Video Text
+                cell = $(row.insertCell(-1));
+                if ($("#txtHasVideoText").is(':checked')) {
+                    cell.html(getCBhtml(true, true));
                 }
-                //else if (CourseCodeExists(inp01.val())) {
-                //    inputValid = false;
-                //    alert(pageOjectLabel + " IDs must be unique. Please correct this before proceeding.");
-                //}
-
-                if (inputValid) {
-                    //Get the reference of the Table's TFOOT element.
-                    var tFoot = $("#tblMain > TFOOT")[0];
-
-                    //Add a new row above the input row and move the added values to it
-                    var row = tFoot.insertRow(0);
-
-                    ////Add Course ID cell.
-                    //var cell = $(row.insertCell(-1));
-                    //cell.html(inp01.val());
-                    //cell.addClass("CourseCode");
-
-                    //Add Course Name cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html(inp02.val());
-
-                    //Add Semester select cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html($("#semesterDDL option:selected").text());
-
-                    //Add Letter Code cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html(inp04.val());
-
-                    //Add Number Code cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html(inp05.val());
-
-                    //Add Instructor select cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html($("#instructorDDL option:selected").text());
-
-                    //Add Has Workbook
-                    cell = $(row.insertCell(-1));
-                    if (inp07.is(':checked')) {
-                        cell.html(getCBhtml(true, true));
-                    }
-                    else {
-                        cell.html(getCBhtml(false, true));
-                    }
-
-                    //Add Has Video Text
-                    cell = $(row.insertCell(-1));
-                    if (inp08.is(':checked')) {
-                        cell.html(getCBhtml(true, true));
-                    }
-                    else {
-                        cell.html(getCBhtml(false, true));
-                    }
-
-                    //Add Videos In Hand
-                    cell = $(row.insertCell(-1));
-                    if (inp09.is(':checked')) {
-                        cell.html(getCBhtml(true, true));
-                    }
-                    else {
-                        cell.html(getCBhtml(false, true));
-                    }
-
-                    //Add Mastering Files In Hand
-                    cell = $(row.insertCell(-1));
-                    if (inp10.is(':checked')) {
-                        cell.html(getCBhtml(true, true));
-                    }
-                    else {
-                        cell.html(getCBhtml(false, true));
-                    }
-
-                    //Add Text Files In Hand
-                    cell = $(row.insertCell(-1));
-                    if (inp11.is(':checked')) {
-                        cell.html(getCBhtml(true, true));
-                    }
-                    else {
-                        cell.html(getCBhtml(false, true));
-                    }
-
-                    //Add Notes cell
-                    cell = $(row.insertCell(-1));
-                    cell.html(inp12.val());
-
-                    //Add Remove button cell.
-                    cell = $(row.insertCell(-1));
-                    var btnRemove = $("<input />");
-                    btnRemove.attr("type", "button");
-                    btnRemove.attr("onclick", "removeRow(this);");
-                    btnRemove.val("Remove");
-                    cell.append(btnRemove);
-
-                    //Clear the input control values of the new Add row
-                    //inp01.val("");
-                    inp02.val("");
-                    $("#semesterDDL select").val("??");
-                    inp04.val("");
-                    inp05.val("");
-                    $("#instructorDDL select").val("??");
-                    inp07.prop('checked', false);
-                    inp08.prop('checked', false);
-                    inp09.prop('checked', false);
-                    inp10.prop('checked', false);
-                    inp11.prop('checked', false);
-                    inp12.val("");
-
-                    //now there is something to save
-                    $("#btnSave").prop('disabled', false);
+                else {
+                    cell.html(getCBhtml(false, true));
                 }
+
+                //Add Videos In Hand
+                cell = $(row.insertCell(-1));
+                if ($("#txtVideosInHand").is(':checked')) {
+                    cell.html(getCBhtml(true, true));
+                }
+                else {
+                    cell.html(getCBhtml(false, true));
+                }
+
+                //Add Mastering Files In Hand
+                cell = $(row.insertCell(-1));
+                if ($("#txtMasteringFilesInHand").is(':checked')) {
+                    cell.html(getCBhtml(true, true));
+                }
+                else {
+                    cell.html(getCBhtml(false, true));
+                }
+
+                //Add Text Files In Hand
+                cell = $(row.insertCell(-1));
+                if ($("#txtTextFilesInHand").is(':checked')) {
+                    cell.html(getCBhtml(true, true));
+                }
+                else {
+                    cell.html(getCBhtml(false, true));
+                }
+
+                //Add Notes cell
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtNotes").val());
+
+                //Add Remove button cell.
+                cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "removeRow(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //Clear the input control values of the new Add row
+                //inp01.val("");
+                    $("#txtCourseName").val("");
+                $("#semesterDDL select").val("??");
+                $("#txtCourseLetterCode").val("");
+                $("#txtCourseNumberCode").val("");
+                $("#instructorDDL select").val("??");
+                $("#txtHasWorkbook").prop('checked', false);
+                $("#txtHasVideoText").prop('checked', false);
+                $("#txtVideosInHand").prop('checked', false);
+                $("#txtMasteringFilesInHand").prop('checked', false);
+                $("#txtTextFilesInHand").prop('checked', false);
+                $("#txtNotes").val("");
+
+                //now there is something to save
+                $("#btnSave").prop('disabled', false);
             }
         });
 
@@ -587,11 +586,9 @@
             //Validate any unsaved input. Click returns false if entered data is invalid. btnAdd sets inputValid boolean
             $("#btnAdd").click();
 
-            if (inputValid)
-            {
+            if (inputValid) {
                 //Loop through the Table rows and build a JSON array.
                 var Courses = new Array();
-                var exitNow;
 
                 $("#tblMain TFOOT TR").each(function () {
                     var row = $(this);
@@ -610,7 +607,7 @@
                         courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
                         courseCore.MasteringFilesInHand = row.find("TD").eq(8).find('input:checkbox:first').is(':checked');
                         courseCore.TextFilesInHand = row.find("TD").eq(9).find('input:checkbox:first').is(':checked');
-                        courseCore.Notes =row.find("TD").eq(10).html();
+                        courseCore.Notes = row.find("TD").eq(10).html();
                         Courses.push(courseCore);
                     }
                 });
@@ -624,7 +621,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                    alert(r + " " + pageOjectLabel + "(s) inserted.");
+                        alert(r + " " + pageOjectLabel + "(s) inserted.");
                     }
                 });
 
@@ -632,8 +629,7 @@
                 waitSeconds(delayMils);
 
                 //Refresh the page
-                var url = '@Url.Action("CourseCores", "Cores")';
-                window.location.href = url;
+                refreshMe();
             }
         });
 
@@ -643,13 +639,13 @@
 
             //Determine the reference of the calling Row
             var row = $(button).closest("TR");
-            var name = $("TD", row).eq(1).html().trim();
+            var name = $("TD", row).eq(0).html().trim();
 
             if (confirm("Do you want to delete Course: " + name + " ?")) {
-                //Get the reference of the Table.
-                var table = $("#tblMain")[0];
+                //Get the reference to the Table.
+                //var table = $("#tblMain")[0];
                 var itemArray = new Array;
-                itemArray[0] = itemId;
+                itemArray[0] = parseInt(itemId);
 
                 $.ajax({
                     type: "POST",
@@ -666,17 +662,15 @@
                 //Give the db a minute to recognize the new records
                 waitSeconds(delayMils);
                 //Refresh the page
-                var url = '@Url.Action("CourseCores", "Cores")';
-                window.location.href = url;
+                refreshMe();            
             }
         }
 
-        //Edit an org
-        //function editItem(itemId, button) {
-        editItem = function (itemId, button) {
+        //Edit an item
+        editItem = function editItem(itemId, button) {
 
             var editRow = $(button).closest("TR");
-            var selectedVal;
+            //var selectedVal;
 
             //Set up Save Changes button
             changeSaveButton(buttonType.SAVECHANGES, itemId);
@@ -684,71 +678,68 @@
             //Hide edit row
             editRow.hide();
 
-            //set up the ddl html
-            $("#semesterDDL").html(semesterDdlCode);
-            $("#instructorDDL").html(instructorDdlCode);
+            var semReplVal = "<option value='" + semesters.find(semester => semester.SemesterName === editRow.find("TD").eq(1).html().trim()).SemesterCode + "'>";
+            var semReplValOpt = semReplVal.replace('option value=', 'option selected value=');
+            var semesterDdlCodeOpt = semesterDdlCode.replace(semReplVal, semReplValOpt);
 
-            selectedVal = editRow.find("TD").eq(2).html().trim();
+            var instrReplVal = "<option value='" + instructors.find(instructor => instructor.FullName === editRow.find("TD").eq(4).html().trim()).personID + "'>";
+            var instrReplValOpt = instrReplVal.replace('option value=', 'option selected value=');
+            var instructorDdlCodeOpt = instructorDdlCode.replace(instrReplVal, instrReplValOpt);
 
-            ////Copy current values to the edit controls
-            //$('txtCourseCoreID').val(editRow.find("TD").eq(0).html().trim());
-            //$('txtCourseCoreID').prop('disabled', true);
+            ////set up the ddls html
+            $("#semesterDDL").html(semesterDdlCodeOpt);
+            $("#instructorDDL").html(instructorDdlCodeOpt);
 
-            $('#txtCourseName').val(editRow.find("TD").eq(1).html().trim());
-            $("#curriculumDDL").val(curriculumTextArray.indexOf(selectedVal)).change();
-            $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); curriculum
+            //Copy unmodified values to the edit controls
+            $('#txtCourseName').val(editRow.find("TD").eq(0).html().trim());
+            //$("#semesterDDL").val(semesters.find(semester => semester.SemesterName === editRow.find("TD").eq(1).html().trim()).SemesterCode).change();
+            $('#txtCourseLetterCode').val(editRow.find("TD").eq(2).html().trim());
+            $('#txtCourseNumberCode').val(editRow.find("TD").eq(3).html().trim());
+            //$('#instructorDDL').val(instructors.find(instructor => instructor.FullName === editRow.find("TD").eq(4).html().trim()).personID).change();
+            $("#txtHasWorkbook").prop('checked', editRow.find("TD").eq(5).find('input:checkbox:first').is(':checked'));
+            $("#txtHasVideoText").prop('checked', editRow.find("TD").eq(6).find('input:checkbox:first').is(':checked'));
+            $("#txtVideosInHand").prop('checked', editRow.find("TD").eq(7).find('input:checkbox:first').is(':checked'));
+            $("#MasteringFilesInHand").prop('checked', editRow.find("TD").eq(8).find('input:checkbox:first').is(':checked'));
+            $("#txtTextFilesInHand").prop('checked', editRow.find("TD").eq(9).find('input:checkbox:first').is(':checked'));
+            $('#txtNotes').val(editRow.find("TD").eq(10).html().trim());
 
-            //Show footer
+            //Hide Save ALL button row, show footer
             $("#trSaveAll").attr("hidden", true);
-            //$("#btnCancel").attr("hidden", false);
-
+            $("#tblMain tfoot>tr").show();
             $("#tblMain TFOOT").attr("hidden", false);
+
             //scroll to bottom
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
         }
 
+
         //Save edits via ajax
         $("body").on("click", "#btnSaveEdit", function () {
-            var row = $("#tblMain TFOOT TR:first");
-            var semCore = {};
-            var exitNow = false;
 
-            // get values of the candidate object
-            semCore.CourseCode = row.find("input").eq(0).val();
-            semCore.CourseName = row.find("input").eq(1).val();
-            //convert the curriculumName to curriculumID
-            semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
-            nvsString = row.find("input").eq(2).val();
+            var editRow = $("#btnSaveEdit").closest("TR");
+            var courseCore = {};
+            validateInput();
 
-            //if all blank, post 'use Delete' message
-            if (semCore.CourseCode.length > 0 ||
-                semCore.CourseName.length > 0 ||
-                nvsString.length > 0) {
-                //if some blanks fix it
-                if (semCore.CourseCode.length == 0 ||
-                    semCore.CourseName.length == 0 ||
-                    nvsString.length == 0) {
-                    alert('Please populate all ' + pageOjectLabel + ' fields before saving changes.');
-                    exitNow = true;
-                }
-                //validate nvs
-                else if (!digitsOnly(nvsString)) {
-                    alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
-                    exitNow = true;
-                }
-            }
-            // all were blank
-            else {
-                alert("Please populate the " + pageOjectLabel + " fields or use 'Delete' to remove a row.");
-                exitNow = true;
-            }
+            if (inputValid) {
+                //push modified editRow to the add list
+                courseCore.courseCoreID = parseInt($("#btnSaveEdit").attr('data-id'));
+                courseCore.CourseName = editRow.find("input").eq(0).val(); 
+                courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val()
+                courseCore.CourseLetterCode = editRow.find("input").eq(1).val();
+                courseCore.CourseNumberCode = parseInt(editRow.find("input").eq(2).val());
+                courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());
+                courseCore.HasWorkbook = editRow.find("TD").eq(5).find('input:checkbox:first').is(':checked');
+                courseCore.HasVideoText = editRow.find("TD").eq(6).find('input:checkbox:first').is(':checked');
+                courseCore.VideosInHand = editRow.find("TD").eq(7).find('input:checkbox:first').is(':checked');
+                courseCore.MasteringFilesInHand = editRow.find("TD").eq(8).find('input:checkbox:first').is(':checked');
+                courseCore.TextFilesInHand = editRow.find("TD").eq(9).find('input:checkbox:first').is(':checked');
+                //NOTE: All inputs, and checkboxes match find("input")
+                courseCore.Notes = editRow.find("input").eq(8).val();
 
-            if (!exitNow) {
-                semCore.NumberOfVideoSessions = parseInt(nvsString);
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("UpdateCourse","Cores")',
-                    data: JSON.stringify(semCore),
+                    data: JSON.stringify(courseCore),
                     dataType: 'JSON',
                     cache: false,
                     contentType: "application/json; charset=utf-8",
@@ -760,8 +751,7 @@
                 //Give the db a minute to recognize the new records
                 waitSeconds(delayMils);
                 //Refresh the page
-                var url = '@Url.Action("CourseCores", "Cores")';
-                window.location.href = url;
+                refreshMe();
             }
         });
 
