@@ -9,7 +9,7 @@ namespace GlobalTeamNetwork.Models
         public Int32 SessionCoreID { get; set; }
         public string CourseName { get; set; }
         public string SessionName { get; set; }
-        public string SessionCode { get; set; }
+        public decimal SessionCode { get; set; }
         public string Notes { get; set; }
     }
 
@@ -19,7 +19,7 @@ namespace GlobalTeamNetwork.Models
         public Int32 SessionCoreID { get; set; }
         public Int32 CourseCoreID { get; set; }
         public string SessionName { get; set; }
-        public string SessionCode { get; set; }
+        public decimal SessionCode { get; set; }
         public string Notes { get; set; }
     }
 }

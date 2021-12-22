@@ -14,7 +14,7 @@
 <body>
     <h1>Course Cores</h1>
     <table><tr><td nowrap>
-    filtered&nbsp;for&nbsp;<select id="semFilter" style="width:300px;">
+    filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
         <option value="??">All</option>
     </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
@@ -258,16 +258,16 @@
             }
 
             //see if the candidate Course code already exists
-            function CourseCodeExists(testCode) {
-                var codeMatch = $("td.CourseCode").filter(function () {
-                    return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
-                });
+            //function CourseCodeExists(testCode) {
+            //    var codeMatch = $("td.CourseCode").filter(function () {
+            //        return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+            //    });
 
-                if (codeMatch.length > 0) { return true; }
-                else {
-                    return false;
-                }
-            }
+            //    if (codeMatch.length > 0) { return true; }
+            //    else {
+            //        return false;
+            //    }
+            //}
 
             function getCBhtml(bChecked, bDisabled) {
                 var cbCode = '<input type="checkbox"';
@@ -377,21 +377,31 @@
             $('#semFilter').prop('selectedIndex', 0).change();
         });
 
+        //See if all input values are blank
+        function allBlank() {
+            var allAreBlank =
+                (
+                    $("#txtCourseName").val().length == 0 &&
+                    $('#semesterDDL option:selected').val() == '??' &&
+                    $("#txtCourseLetterCode").val().length == 0 &&
+                    $('#instructorDDL option:selected').val() == '??'
+                );
+            return allAreBlank;
+        }
+
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
         //validate input and set inputValid global boolean
         function validateInput() {
 
             //default to true
             inputValid = true;
 
-            //if all blank, ingore it
-            var allBlank =
-                (//inp01.val().length == 0 &&
-                    $("#txtCourseName").val().length == 0 &&
-                    $('#semesterDDL option:selected').val() == '??' &&
-                    $("#txtCourseLetterCode").val().length == 0 &&
-                    $('#instructorDDL option:selected').val() == '??');
-
-            if (!allBlank) {
+            if (!allBlank()) {
                 //Validate input
                 if (//inp01.val().length == 0 ||
                     $("#txtCourseName").val().length == 0 ||
@@ -583,10 +593,11 @@
         //Save all added rows
         $("body").on("click", "#btnSave", function () {
 
-            //Validate any unsaved input. Click returns false if entered data is invalid. btnAdd sets inputValid boolean
-            $("#btnAdd").click();
+            //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+            validateInput();
 
             if (inputValid) {
+
                 //Loop through the Table rows and build a JSON array.
                 var Courses = new Array();
 
@@ -595,13 +606,34 @@
                     var courseCore = {};
 
                     //push new rows to the add list
+                    if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                        if (!allBlank())
+                        {
+                            //courseCore.courseCoreID = null; //IDENTITY value
+                            courseCore.CourseName = row.find("input").eq(0).val();
+                            courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val();
+                            courseCore.CourseLetterCode = row.find("input").eq(1).val();
+                            courseCore.CourseNumberCode = parseInt(row.find("input").eq(2).val());
+                            courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());
+                            courseCore.HasWorkbook = row.find("TD").eq(5).find('input:checkbox:first').is(':checked');
+                            courseCore.HasVideoText = row.find("TD").eq(6).find('input:checkbox:first').is(':checked');
+                            courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
+                            courseCore.MasteringFilesInHand = row.find("TD").eq(8).find('input:checkbox:first').is(':checked');
+                            courseCore.TextFilesInHand = row.find("TD").eq(9).find('input:checkbox:first').is(':checked');
+                            //NOTE: All inputs, and checkboxes match find("input")
+                            courseCore.Notes = row.find("input").eq(8).val();
+                            Courses.push(courseCore);
+                        }
+                    }
+
                     if (row.find('td:last-child').html().includes('value="Remove"')) {
                         //courseCore.courseCoreID = null; //IDENTITY value
                         courseCore.CourseName = row.find("TD").eq(0).html();
-                        courseCore.semesterCode = semesters.find(semester => semester.SemesterName === row.find("TD").eq(1).html()).SemesterCode;
+                        courseCore.semesterCode = semesters.find(semester => semester.SemesterName === decodeHtml(row.find("TD").eq(1).html())).SemesterCode;
                         courseCore.CourseLetterCode = row.find("TD").eq(2).html();
                         courseCore.CourseNumberCode = parseInt(row.find("TD").eq(3).html());
-                        courseCore.instructorID = parseInt(instructors.find(instructor => instructor.FullName === row.find("TD").eq(4).html()).personID);
+                        courseCore.instructorID = parseInt(instructors.find(instructor => instructor.FullName === decodeHtml(row.find("TD").eq(4).html())).personID);
                         courseCore.HasWorkbook = row.find("TD").eq(5).find('input:checkbox:first').is(':checked');
                         courseCore.HasVideoText = row.find("TD").eq(6).find('input:checkbox:first').is(':checked');
                         courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
@@ -692,10 +724,8 @@
 
             //Copy unmodified values to the edit controls
             $('#txtCourseName').val(editRow.find("TD").eq(0).html().trim());
-            //$("#semesterDDL").val(semesters.find(semester => semester.SemesterName === editRow.find("TD").eq(1).html().trim()).SemesterCode).change();
             $('#txtCourseLetterCode').val(editRow.find("TD").eq(2).html().trim());
             $('#txtCourseNumberCode').val(editRow.find("TD").eq(3).html().trim());
-            //$('#instructorDDL').val(instructors.find(instructor => instructor.FullName === editRow.find("TD").eq(4).html().trim()).personID).change();
             $("#txtHasWorkbook").prop('checked', editRow.find("TD").eq(5).find('input:checkbox:first').is(':checked'));
             $("#txtHasVideoText").prop('checked', editRow.find("TD").eq(6).find('input:checkbox:first').is(':checked'));
             $("#txtVideosInHand").prop('checked', editRow.find("TD").eq(7).find('input:checkbox:first').is(':checked'));
@@ -724,7 +754,7 @@
                 //push modified editRow to the add list
                 courseCore.courseCoreID = parseInt($("#btnSaveEdit").attr('data-id'));
                 courseCore.CourseName = editRow.find("input").eq(0).val(); 
-                courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val()
+                courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val();
                 courseCore.CourseLetterCode = editRow.find("input").eq(1).val();
                 courseCore.CourseNumberCode = parseInt(editRow.find("input").eq(2).val());
                 courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());

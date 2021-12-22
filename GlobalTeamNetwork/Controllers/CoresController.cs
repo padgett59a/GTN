@@ -160,6 +160,13 @@ namespace GlobalTeamNetwork.Controllers
             return Json(updateCount);
         }
         //******************  SessionCores ************************//
+        public string GetCoursesJson()
+        {
+            List<CourseCore> courseCores = _courseCoreRepository.AllCourseCores.OrderBy(c => c.CourseName).ToList();
+            string retVal = JsonConvert.SerializeObject(courseCores);
+            return retVal;
+        }
+
         public IActionResult SessionCores()
         {
             List<SessionCore> SessionCores = _sessionCoreRepository.AllSessionCores.ToList();
