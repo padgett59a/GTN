@@ -57,14 +57,14 @@ namespace GlobalTeamNetwork
             services.AddScoped<ICurriculumRepository, CurriculumRepository>();
             services.AddScoped<ISemesterCoreRepository, SemesterCoreRepository>();
             services.AddScoped<ICourseCoreRepository, CourseCoreRepository>();
+            services.AddScoped<ISessionCoreRepository, SessionCoreRepository>();
             services.AddScoped<IPersonsRepository, PersonsRepository>();
-
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
-            services.AddScoped<ICourseCoreRepository, CourseCoreRepository>();
-            services.AddScoped<IPersonsRepository, PersonsRepository>();
+            //services.AddScoped<ICourseCoreRepository, CourseCoreRepository>();
+            //services.AddScoped<IPersonsRepository, PersonsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

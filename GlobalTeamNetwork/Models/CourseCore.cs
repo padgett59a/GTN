@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -22,22 +19,6 @@ namespace GlobalTeamNetwork.Models
         public Boolean TextFilesInHand { get; set; }
         public string? Notes { get; set; }
     }
-
-/*
-     CourseCoreID
-     CourseName
-     SemesterCode
-     CourseLetterCode
-     CourseNumberCode
-     HasWorkbook
-     HasVideoText
-     InstructorID
-     VideosInHand
-     MasteringFilesInHand
-     TextFilesInHand
-     Notes
-*/
-
 
     public class CourseCore
     {

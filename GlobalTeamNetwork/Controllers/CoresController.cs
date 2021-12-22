@@ -14,19 +14,22 @@ namespace GlobalTeamNetwork.Controllers
         private readonly ISemesterCoreRepository _semesterCoreRepository;
         private readonly IPersonsRepository _personsRepository;
         private readonly ICourseCoreRepository _courseCoreRepository;
+        private readonly ISessionCoreRepository _sessionCoreRepository;
 
         private readonly int INSTRUCTOR_TYPE = 6;
     public CoresController(
             ICurriculumRepository curriculumRepository,
             ISemesterCoreRepository semesterCoreRepository,
             ICourseCoreRepository courseCoreRepository,
-            IPersonsRepository personsRepository
+            IPersonsRepository personsRepository,
+            ISessionCoreRepository sessionCoreRepository
         )
         {
             _curriculumRepository = curriculumRepository;
             _semesterCoreRepository = semesterCoreRepository;
             _personsRepository = personsRepository;
             _courseCoreRepository = courseCoreRepository;
+            _sessionCoreRepository = sessionCoreRepository;
         }
 
 
@@ -157,16 +160,15 @@ namespace GlobalTeamNetwork.Controllers
             return Json(updateCount);
         }
         //******************  SessionCores ************************//
-        /* 
         public IActionResult SessionCores()
         {
-            List<SessionCore> SessionCores = _SessionCoreRepository.AllSessionCores.ToList();
-            IEnumerable<SessionCoreCName> SessionCNames = _SessionCoreRepository.ConvertToCNames(SessionCores).OrderBy(i => i.CurriculumName).ThenBy(i => i.SessionName);
+            List<SessionCore> SessionCores = _sessionCoreRepository.AllSessionCores.ToList();
+            IEnumerable<SessionCoreCName> SessionCNames = _sessionCoreRepository.ConvertSessionsToCNames(SessionCores).OrderBy(i => i.CourseName).ThenBy(i => i.SessionName);
             return View(SessionCNames);
         }
 
         [HttpPost]
-        NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
         public JsonResult InsertSessions([FromBody] List<SessionCore> newSessions)
         {
             if (newSessions == null)
@@ -174,20 +176,20 @@ namespace GlobalTeamNetwork.Controllers
                 newSessions = new List<SessionCore>();
             }
 
-            int insertCount = _SessionCoreRepository.InsertSessions(newSessions);
+            int insertCount = _sessionCoreRepository.InsertSessions(newSessions);
             return Json(insertCount);
         }
 
         [HttpPost]
-        NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-        public JsonResult deleteSessions([FromBody] List<string> delItemList)
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteSessions([FromBody] List<int> delItemList)
         {
             if (delItemList == null)
             {
-                delItemList = new List<string>();
+                delItemList = new List<int>();
             }
 
-            int deleteCount = _SessionCoreRepository.DeleteSessions(delItemList);
+            int deleteCount = _sessionCoreRepository.DeleteSessions(delItemList);
             return Json(deleteCount);
         }
 
@@ -199,13 +201,12 @@ namespace GlobalTeamNetwork.Controllers
                 updateItem = new SessionCore();
             }
 
-            EntityState retVal = _SessionCoreRepository.UpdateSessionCore(updateItem);
+            EntityState retVal = _sessionCoreRepository.UpdateSessionCore(updateItem);
             if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
             {
                 updateCount = 1;
             }
             return Json(updateCount);
         }
-        */
     }
 }
