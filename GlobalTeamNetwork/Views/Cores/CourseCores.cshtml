@@ -403,7 +403,7 @@
 
             if (!allBlank()) {
                 //Validate input
-                if (//inp01.val().length == 0 ||
+                if (//inp01.val().length == 0 || //don't use if IDENTITY Column
                     $("#txtCourseName").val().length == 0 ||
                     $('#semesterDDL option:selected').val() == '??' ||
                     $("#txtCourseLetterCode").val().length == 0 ||

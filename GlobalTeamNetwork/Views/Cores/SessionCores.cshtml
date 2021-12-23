@@ -294,7 +294,12 @@
 
                 //Set up add button
                 changeSaveButton(buttonType.ADD, 0);
-                $("#courseDDL").html(courseDDLCode);
+                //Default Course drop down to current filter value
+                //$('#courseDDL').val(pFilter).change(); //doesn't work... not rendered yet
+                var crsReplVal = "<option value='" + pFilter + "'>";
+                var crsReplValOpt = crsReplVal.replace('option value=', 'option selected value=');
+                var courseDDLCodeOpt = courseDDLCode.replace(crsReplVal, crsReplValOpt);
+                $("#courseDDL").html(courseDDLCodeOpt);
 
                 //show footer
                 $("#tblMain tfoot>tr").show();
@@ -556,17 +561,18 @@
             //Hide edit row
             editRow.hide();
 
-            var crsReplVal = "<option value='" + courses.find(semester => semester.CourseName === editRow.find("TD").eq(1).html().trim()).CourseCoreID + "'>";
+            var crsReplVal = "<option value='" + courses.find(course => course.CourseName === decodeHtml(editRow.find("TD").eq(1).html().trim())).CourseCoreID + "'>";
             var crsReplValOpt = crsReplVal.replace('option value=', 'option selected value=');
             var courseDDLCodeOpt = courseDDLCode.replace(crsReplVal, crsReplValOpt);
+            //alert(courseDDLCodeOpt)
 
-            ////set up the ddls html
+            ////set up the Course ddl html
             $("#courseDDL").html(courseDDLCodeOpt);
 
             //Copy unmodified values to the edit controls
             $('#txtSessionName').val(editRow.find("TD").eq(0).html().trim());
             $('#txtSessionCode').val(editRow.find("TD").eq(2).html().trim());
-            $('#txtNotes').val(editRow.find("TD").eq(10).html().trim());
+            $('#txtNotes').val(editRow.find("TD").eq(3).html().trim());
 
             //Hide Save ALL button row, show footer
             $("#trSaveAll").attr("hidden", true);
@@ -589,10 +595,11 @@
                 //push modified editRow to the add list
                 SessionCore.SessionCoreID = parseInt($("#btnSaveEdit").attr('data-id'));
                 SessionCore.SessionName = editRow.find("input").eq(0).val();
-                SessionCore.CourseCoreID = $('#courseDDL option').filter(':selected').val();
-                SessionCore.SessionCode = editRow.find("input").eq(1).val();
+                SessionCore.CourseCoreID = parseInt($('#courseDDL option').filter(':selected').val());
+                SessionCore.SessionCode = parseFloat(editRow.find("input").eq(1).val());
                 //NOTE: All inputs, and checkboxes match find("input")
-                SessionCore.Notes = editRow.find("input").eq(3).val();
+                SessionCore.Notes = editRow.find("input").eq(2).val();
+                //alert(JSON.stringify(SessionCore));
 
                 $.ajax({
                     type: "POST",
