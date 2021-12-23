@@ -361,7 +361,13 @@
 
             //Set up add button
             changeSaveButton(buttonType.ADD, 0);
-            $("#semesterDDL").html(semesterDdlCode);
+
+            //Default to current filter
+            var smstrReplVal = "<option value='" + $('#semFilter').val() + "'>";
+            var smstrReplValOpt = smstrReplVal.replace('option value=', 'option selected value=');
+            var smstrDDLCodeOpt = semesterDdlCode.replace(smstrReplVal, smstrReplValOpt);
+            //alert(smstrDDLCodeOpt);
+            $("#semesterDDL").html(smstrDDLCodeOpt);
             $("#instructorDDL").html(instructorDdlCode);
 
             //show footer

@@ -294,11 +294,12 @@
 
                 //Set up add button
                 changeSaveButton(buttonType.ADD, 0);
+
                 //Default Course drop down to current filter value
-                //$('#courseDDL').val(pFilter).change(); //doesn't work... not rendered yet
-                var crsReplVal = "<option value='" + pFilter + "'>";
+                var crsReplVal = "<option value='" + $('#corsFilter').val() + "'>";
                 var crsReplValOpt = crsReplVal.replace('option value=', 'option selected value=');
                 var courseDDLCodeOpt = courseDDLCode.replace(crsReplVal, crsReplValOpt);
+                //alert(courseDDLCodeOpt);
                 $("#courseDDL").html(courseDDLCodeOpt);
 
                 //show footer
