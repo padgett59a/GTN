@@ -81,45 +81,6 @@
 
         var delayMils = 900;
 
-        const buttonType = {
-            SAVECHANGES: 0,
-            ADD: 1
-        }
-
-        function changeSaveButton(changeTo, orgId) {
-            //Replace action button
-            var cancelButton = "<input type=\"button\" id=\"btnCancel\" value=\"Cancel\" />";
-            var saveButton = "<input type=\"button\" data-id=\"" + orgId + "\" id=\"btnSaveEdit\" value=\"Save Changes\" />";
-            var addButton = "<input type=\"button\" id=\"btnAdd\" value=\"Add Another\" />";
-            var template = "~~0~~&nbsp;&nbsp;&nbsp;&nbsp;" + cancelButton;
-            var btnHtml;
-            switch (changeTo) {
-                case buttonType.ADD:
-                    btnHtml = template.replace('~~0~~', addButton);
-                break;
-            case buttonType.SAVECHANGES:
-                    btnHtml = template.replace('~~0~~', saveButton);
-                break;
-            }
-            //alert(btnHtml);
-            $('#tdBtnCell').html(btnHtml);
-        }
-
-        function waitSeconds(iMilliSeconds) {
-            var counter = 0
-                , start = new Date().getTime()
-                , end = 0;
-            while (counter < iMilliSeconds) {
-                end = new Date().getTime();
-                counter = end - start;
-            }
-        }
-
-        function removeRow(evt) {
-            $(evt).parent().parent().remove();
-        }
-
-
         $("body").on("click", "#btnAdd", function () {
             //Reference the Name and Country TextBoxes.
             var txtOrgName = $("#txtOrgName");
@@ -208,7 +169,7 @@
         function deleteOrg(orgId, button) {
             //Determine the reference of the Row using the Button.
             var row = $(button).closest("TR");
-            var name = $("TD", row).eq(0).html();
+            var name = $("TD", row).eq(0).html().trim();
             if (confirm("Do you want to delete: " + name + " ?")) {
                 //Get the reference of the Table.
                 var table = $("#tblOrgs")[0];

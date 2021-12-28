@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\old\**" />
+    <Compile Remove="Views\Cores\BAK\**" />
     <Content Remove="Migrations\old\**" />
+    <Content Remove="Views\Cores\BAK\**" />
     <EmbeddedResource Remove="Migrations\old\**" />
+    <EmbeddedResource Remove="Views\Cores\BAK\**" />
     <None Remove="Migrations\old\**" />
+    <None Remove="Views\Cores\BAK\**" />
   </ItemGroup>
 
   <ItemGroup>

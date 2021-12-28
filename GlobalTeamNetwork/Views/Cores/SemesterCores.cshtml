@@ -118,12 +118,6 @@
         var delayMils = 900;
         var pageOjectLabel = 'SemesterCore';
 
-        const buttonType = {
-            SAVECHANGES: 0,
-            ADD: 1
-        }
-
-
         //see if the candidate semester code already exists
         function semesterCodeExists(testCode) {
             var codeMatch = $("td.semesterCode").filter(function () {
@@ -318,7 +312,6 @@
             });
 
             if (!exitNow)  {
-                //alert('entering Ajax');
 
                 //Send the JSON array to Controller using AJAX.
                 $.ajax({
@@ -343,7 +336,6 @@
         });
 
         //Delete item via AJAX
-        /*function deleteItem(itemId, button) {*/
         deleteItem = function (itemId, button) {
 
             //Determine the reference of the calling Row
