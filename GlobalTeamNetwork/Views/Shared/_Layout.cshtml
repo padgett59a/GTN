@@ -18,7 +18,7 @@
                     }
                     else
                     {
-        <partial name="_PageBreadcrumb" />
+                        <partial name="_PageBreadcrumb" />
                         <div class="subheader">
                             <partial name="_PageHeading" />
                             @RenderSection("SubheaderBlock", required: false)
@@ -37,6 +37,9 @@
     <partial name="_PageSettings" />
     <partial name="_GoogleAnalytics" />
     <partial name="_ScriptsBasePlugins" />
+
+    <script src="~/js/ViewCommon.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
     @RenderSection("ScriptsBlock", required: false)
 </body>
 </html>
@@ -113,4 +116,6 @@
                 }
             ]
         });
+
+
     });</script>

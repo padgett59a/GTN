@@ -213,6 +213,70 @@
                 ADD: 1
             }
 
+            function waitSeconds(iMilliSeconds) {
+                var counter = 0
+                    , start = new Date().getTime()
+                    , end = 0;
+                while (counter < iMilliSeconds) {
+                    end = new Date().getTime();
+                    counter = end - start;
+                }
+            }
+
+            function digitsOnly(checkStr) {
+                if (checkStr.length == 0) {
+                    return true;
+                }
+                else {
+                    const reg = new RegExp('^[0-9]+$');
+                    if (reg.test(checkStr)) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            function alphaOnly(checkStr) {
+                if (checkStr.length == 0) {
+                    return true;
+                }
+                else {
+                    const reg = new RegExp('^[A-Za-z]+$');
+                    if (reg.test(checkStr)) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+
+            function removeRow(evt) {
+                $(evt).parent().parent().remove();
+            }
+
+            //see if the candidate Course code already exists
+            //function CourseCodeExists(testCode) {
+            //    var codeMatch = $("td.CourseCode").filter(function () {
+            //        return $(this).html().trim().toUpperCase() == testCode.toUpperCase();
+            //    });
+
+            //    if (codeMatch.length > 0) { return true; }
+            //    else {
+            //        return false;
+            //    }
+            //}
+
+            function getCBhtml(bChecked, bDisabled) {
+                var cbCode = '<input type="checkbox"';
+                if (bDisabled) { cbCode += ' disabled'; }
+                if (bChecked) { cbCode += ' checked'; }
+                cbCode += '>';
+                return cbCode;
+            }
+
             //Set up semester, instructor drop downs
             $.ajax({
                 type: "GET",
@@ -331,6 +395,12 @@
             return allAreBlank;
         }
 
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
         //validate input and set inputValid global boolean
         function validateInput() {
 
@@ -360,6 +430,25 @@
                 //    alert(pageOjectLabel + " IDs must be unique. Please correct this before proceeding.");
                 //}
             }
+        }
+
+        //switch the button html
+        function changeSaveButton(changeTo, selCurr ) {
+            //Replace action button
+            var cancelButton = "<input type=\"button\" id=\"btnCancel\" value=\"Cancel\" />";
+            var saveButton = "<input type=\"button\" data-id=\"" + selCurr + "\" id=\"btnSaveEdit\" value=\"Save Changes\" />";
+            var addButton = "<input type=\"button\" id=\"btnAdd\" value=\"Add Another\" />";
+            var template = "~~0~~&nbsp;&nbsp;&nbsp;&nbsp;"
+            var btnHtml;
+            switch (changeTo) {
+                case buttonType.ADD:
+                    btnHtml = template.replace('~~0~~', addButton);
+                    break;
+                case buttonType.SAVECHANGES:
+                    btnHtml = template.replace('~~0~~', saveButton) + cancelButton;
+                    break;
+            }
+            $('#tdBtnCell').html(btnHtml);
         }
 
         //Enable or Disable the save button when required fields are completed and valid
