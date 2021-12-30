@@ -7,11 +7,63 @@
 //function getCBhtml(bChecked, bDisabled) {
 //function decodeHtml(html) {
 //function changeSaveButton(changeTo, selCurr ) {
+//function rowSort(tableBody, sortColumn, arrow) {
 
 //Button type enum
 const buttonType = {
     SAVECHANGES: 0,
     ADD: 1
+}
+
+//Sort Arrow enum
+const sortArrow = {
+    Up: '&#8593;',
+    Down: '&#8595;'
+}
+
+//execute Sorting
+$("body").on("click", ".columnSort", function () {
+
+    //default value
+    var newSort = sortArrow.Down;
+
+    //clear all arrows, show one clicked
+    $(".sortArrow").hide();
+    $(':nth-child(1)', this).show();
+    var currentSort = $(':nth-child(1)', this).html();
+    if (currentSort.includes(decodeHtml(sortArrow.Down))) {
+        $(':nth-child(1)', this).html(sortArrow.Up);
+        newSort = sortArrow.Up;
+    }
+    else if (currentSort.includes(decodeHtml(sortArrow.Up))) {
+        $(':nth-child(1)', this).html(sortArrow.Down);
+    }
+    //do the sort 
+    rowSort($('#tblMain tbody'), $(this).index(), newSort);
+});
+
+function rowSort(tableBody, sortColumn, arrow) {
+    var sortDirection = 1;
+    if (arrow == sortArrow.Down) { sortDirection = -1 }
+
+    var $tbody = tableBody;
+    $tbody.find('tr').sort(function (a, b) {
+        var tda = $(a).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+        var tdb = $(b).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+
+        //Numeric Sort if both numbers
+        if (!isNaN(tda) && !isNaN(tdb)) {
+            return +tda < +tdb ? (-1 * sortDirection)
+                : +tda > +tdb ? (1 * sortDirection)
+                    : 0;
+        }
+        //Else Alpha sort
+        else {
+            return tda < tdb ? (-1 * sortDirection)
+                : tda > tdb ? (1 * sortDirection)
+                    : 0;
+        }
+    }).appendTo($tbody);
 }
 
 function waitSeconds(iMilliSeconds) {

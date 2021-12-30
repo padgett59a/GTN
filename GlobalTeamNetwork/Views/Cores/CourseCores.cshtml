@@ -13,41 +13,43 @@
 </head>
 <body>
     <h1>Course Cores</h1>
+    
+    @*Filtering*@
     <table><tr><td nowrap>
     filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
         <option value="??">All</option>
     </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
-</td></tr></table><br>   
+    </td></tr></table><br>   
 
     <p>
         <a id="createNew" href="javascript:void(0)">Add New Course Core</a>
         <!--     <button id="createNew">Add Course Core</button> -->
     </p>
-    <table id="tblMain" class="table" style="display: block; overflow-x: auto;" hidden>
+    <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
         <thead>
             <!-- Top Labels-->
             <tr>
                 @*<th>
                         ID
                     </th>*@
-                <th>
-                    @Html.DisplayNameFor(model => model.CourseName)
+                <th class="columnSort">
+                    @Html.DisplayNameFor(model => model.CourseName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SemesterName)
+                <th class="columnSort">
+                    @Html.DisplayNameFor(model => model.SemesterName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    Letter
+                <th class="columnSort">
+                    Letter&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    Number
+                <th class="columnSort">
+                    Number&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.InstructorName)
+                <th class="columnSort">
+                    @Html.DisplayNameFor(model => model.InstructorName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    Workbook
+                <th class="columnSort">
+                    Workbook&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
                 <th>
                     Video Text
@@ -116,6 +118,47 @@
             }
         </tbody>
         <tfoot hidden>
+            <!-- Bottom Labels-->
+            <tr class="bottomLabels">
+                @*<th>
+                ID
+            </th>*@
+                <th>
+                    @Html.DisplayNameFor(model => model.CourseName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SemesterName)
+                </th>
+                <th>
+                    Letter
+                </th>
+                <th>
+                    Number
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.InstructorName)
+                </th>
+                <th>
+                    Workbook
+                </th>
+                <th>
+                    Video Text
+                </th>
+                <th>
+                    Videos
+                </th>
+                <th>
+                    Mastering Files
+                </th>
+                <th>
+                    TextFiles
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>Modify</th>
+            </tr>
+
             @*input controls for adding a new item*@
             <tr>
                 @*<td><input type="text" id="txtCourseCoreID" class="courseInputClass" size="5" /></td>*@
@@ -140,47 +183,6 @@
                 <td colspan="100%"></td>
             </tr>
         </tfoot>
-        <!-- Bottom Labels-->
-        <tr>
-            @*<th>
-                    ID
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.CourseName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SemesterName)
-            </th>
-            <th>
-                Letter
-            </th>
-            <th>
-                Number
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InstructorName)
-            </th>
-            <th>
-                Workbook
-            </th>
-            <th>
-                Video Text
-            </th>
-            <th>
-                Videos
-            </th>
-            <th>
-                Mastering Files
-            </th>
-            <th>
-                TextFiles
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th>Modify</th>
-        </tr>
-        <tr><td colspan="100%"></td></tr>
     </table>
     <p>
         <a id="createNew2" href="javascript:void(0)">Add New Course Core</a>
@@ -192,6 +194,7 @@
 
     <script type="text/javascript">
 
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
     var editItem;
     var deleteItem;
@@ -208,7 +211,6 @@
             var delayMils = 900;
             var pageOjectLabel = 'CourseCore';
 
-            //Set up semester, instructor drop downs
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSemestersJson","Cores")',
@@ -218,6 +220,7 @@
                     semesters = response;
                 }
             });
+
 
             //set up semester drop downs
             var semesterDdlCode = '<select id = "semesterDDL" name = "semesterDDL"> '
@@ -606,7 +609,7 @@
                 //Give the db a minute to recognize the new records
                 waitSeconds(delayMils);
                 //Refresh the page
-                refreshMe();            
+                refreshMe();
             }
         }
 
@@ -665,7 +668,7 @@
             if (inputValid) {
                 //push modified editRow to the add list
                 courseCore.courseCoreID = parseInt($("#btnSaveEdit").attr('data-id'));
-                courseCore.CourseName = editRow.find("input").eq(0).val(); 
+                courseCore.CourseName = editRow.find("input").eq(0).val();
                 courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val();
                 courseCore.CourseLetterCode = editRow.find("input").eq(1).val();
                 courseCore.CourseNumberCode = parseInt(editRow.find("input").eq(2).val());

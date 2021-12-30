@@ -8,8 +8,16 @@
     padding-left: 1rem;
 }
 
+span.nobreak {
+    white-space: nowrap;
+}
+
 .alert.validation-summary-errors {
     margin-bottom: 1rem;
+}
+
+tr.bottomLabels {
+    background-color: lightsteelblue;
 }
 
 /* Reference classes, no implementation */

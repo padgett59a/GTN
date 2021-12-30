@@ -28,35 +28,35 @@
             <a id="createNew" href="javascript:void(0)">Add New Session Core</a>
             <!--     <button id="createNew">Add Session Core</button> -->
         </p>
-        <table id="tblMain" class="table" style="display: block; overflow-x: auto;" hidden>
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
             <thead>
                 <!-- Top Labels-->
                 <tr>
                     @*<th>
-                        ID
+                        ID &nbsp; &nbsp; &nbsp; <span class="nobreak">T</span>
                     </th>*@
-                    <th>
-                        Session Name
+                    <th class="columnSort" style="width:35%">
+                        Session Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th>
-                        Course Name
+                    <th class="columnSort" style="width:35%">
+                        Course Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th>
-                        Session Code
+                    <th class="columnSort" style="width:10%">
+                        Session Code&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th>
+                    <th style="width:10%">
                         @Html.DisplayNameFor(model => model.Notes)
                     </th>
-                    <th>Modify</th>
+                    <th style="width:10%">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="dataRows">
                 @foreach (var item in Model)
                 {
                     <tr id="@(" tr" + @item.SessionCoreID)">
                         @*<td class="SessionCode">
-                            @Html.DisplayFor(model => item.SessionCoreID)
-                        </td>*@
+                    @Html.DisplayFor(model => item.SessionCoreID)
+                </td>*@
                         <td>
                             @Html.DisplayFor(model => item.SessionName)
                         </td>
@@ -78,6 +78,27 @@
                 }
             </tbody>
             <tfoot hidden>
+
+                <!-- Bottom Labels-->
+                <tr id="bottomLabels" class="bottomLabels">
+                    @*<th>
+                        ID
+                    </th>*@
+                    <th>
+                        Session Name
+                    </th>
+                    <th>
+                        Course Name
+                    </th>
+                    <th>
+                        Session Code
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
+                    <th>Action</th>
+                </tr>
+
                 @*input controls for adding a new item*@
                 <tr>
                     @*<td><input type="text" id="txtSessionCoreID" class="SessionInputClass" size="5" /></td>*@
@@ -95,26 +116,6 @@
                     <td colspan="100%"></td>
                 </tr>
             </tfoot>
-            <!-- Bottom Labels-->
-            <tr>
-                @*<th>
-                    ID
-                </th>*@
-                <th>
-                    Session Name
-                </th>
-                <th>
-                    Course Name
-                </th>
-                <th>
-                    Session Code
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Notes)
-                </th>
-                <th>Modify</th>
-            </tr>
-            <tr><td colspan="100%"></td></tr>
         </table>
         <p>
             <a id="createNew2" href="javascript:void(0)">Add New Session Core</a>
@@ -129,6 +130,7 @@
 
         <script type="text/javascript">
 
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
             var editItem;
             var deleteItem;
@@ -205,6 +207,8 @@
             $("body").on("click", "#btnCancel", function () {
                 refreshMe();
             });
+
+            //$(".sortArrow").hide();
 
             $("[id^=createNew]").click(function () {
 
