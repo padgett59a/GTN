@@ -489,10 +489,10 @@
                 //Clear the input control values of the new Add row
                 //inp01.val("");
                     $("#txtCourseName").val("");
-                $("#semesterDDL select").val("??");
+                //$("#semesterDDL select").val("??");
                 $("#txtCourseLetterCode").val("");
                 $("#txtCourseNumberCode").val("");
-                $("#instructorDDL select").val("??");
+                //$("#instructorDDL select").val("??");
                 $("#txtHasWorkbook").prop('checked', false);
                 $("#txtHasVideoText").prop('checked', false);
                 $("#txtVideosInHand").prop('checked', false);
@@ -520,42 +520,45 @@
                     var row = $(this);
                     var courseCore = {};
 
-                    //push new rows to the add list
-                    if (row.find('td:last-child').html().includes('value="Add Another"')) {
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
 
-                        if (!allBlank())
-                        {
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                //courseCore.courseCoreID = null; //IDENTITY value
+                                courseCore.CourseName = row.find("input").eq(0).val();
+                                courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val();
+                                courseCore.CourseLetterCode = row.find("input").eq(1).val();
+                                courseCore.CourseNumberCode = parseInt(row.find("input").eq(2).val());
+                                courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());
+                                courseCore.HasWorkbook = row.find("TD").eq(5).find('input:checkbox:first').is(':checked');
+                                courseCore.HasVideoText = row.find("TD").eq(6).find('input:checkbox:first').is(':checked');
+                                courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
+                                courseCore.MasteringFilesInHand = row.find("TD").eq(8).find('input:checkbox:first').is(':checked');
+                                courseCore.TextFilesInHand = row.find("TD").eq(9).find('input:checkbox:first').is(':checked');
+                                //NOTE: All inputs, and checkboxes match find("input")
+                                courseCore.Notes = row.find("input").eq(8).val();
+                                Courses.push(courseCore);
+                            }
+                        }
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
                             //courseCore.courseCoreID = null; //IDENTITY value
-                            courseCore.CourseName = row.find("input").eq(0).val();
-                            courseCore.semesterCode = $('#semesterDDL option').filter(':selected').val();
-                            courseCore.CourseLetterCode = row.find("input").eq(1).val();
-                            courseCore.CourseNumberCode = parseInt(row.find("input").eq(2).val());
-                            courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());
+                            courseCore.CourseName = row.find("TD").eq(0).html();
+                            courseCore.semesterCode = semesters.find(semester => semester.SemesterName === decodeHtml(row.find("TD").eq(1).html())).SemesterCode;
+                            courseCore.CourseLetterCode = row.find("TD").eq(2).html();
+                            courseCore.CourseNumberCode = parseInt(row.find("TD").eq(3).html());
+                            courseCore.instructorID = parseInt(instructors.find(instructor => instructor.FullName === decodeHtml(row.find("TD").eq(4).html())).personID);
                             courseCore.HasWorkbook = row.find("TD").eq(5).find('input:checkbox:first').is(':checked');
                             courseCore.HasVideoText = row.find("TD").eq(6).find('input:checkbox:first').is(':checked');
                             courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
                             courseCore.MasteringFilesInHand = row.find("TD").eq(8).find('input:checkbox:first').is(':checked');
                             courseCore.TextFilesInHand = row.find("TD").eq(9).find('input:checkbox:first').is(':checked');
-                            //NOTE: All inputs, and checkboxes match find("input")
-                            courseCore.Notes = row.find("input").eq(8).val();
+                            courseCore.Notes = row.find("TD").eq(10).html();
                             Courses.push(courseCore);
                         }
-                    }
-
-                    if (row.find('td:last-child').html().includes('value="Remove"')) {
-                        //courseCore.courseCoreID = null; //IDENTITY value
-                        courseCore.CourseName = row.find("TD").eq(0).html();
-                        courseCore.semesterCode = semesters.find(semester => semester.SemesterName === decodeHtml(row.find("TD").eq(1).html())).SemesterCode;
-                        courseCore.CourseLetterCode = row.find("TD").eq(2).html();
-                        courseCore.CourseNumberCode = parseInt(row.find("TD").eq(3).html());
-                        courseCore.instructorID = parseInt(instructors.find(instructor => instructor.FullName === decodeHtml(row.find("TD").eq(4).html())).personID);
-                        courseCore.HasWorkbook = row.find("TD").eq(5).find('input:checkbox:first').is(':checked');
-                        courseCore.HasVideoText = row.find("TD").eq(6).find('input:checkbox:first').is(':checked');
-                        courseCore.VideosInHand = row.find("TD").eq(7).find('input:checkbox:first').is(':checked');
-                        courseCore.MasteringFilesInHand = row.find("TD").eq(8).find('input:checkbox:first').is(':checked');
-                        courseCore.TextFilesInHand = row.find("TD").eq(9).find('input:checkbox:first').is(':checked');
-                        courseCore.Notes = row.find("TD").eq(10).html();
-                        Courses.push(courseCore);
                     }
                 });
 

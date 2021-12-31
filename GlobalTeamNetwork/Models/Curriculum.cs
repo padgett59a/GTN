@@ -8,8 +8,8 @@ namespace GlobalTeamNetwork.Models
 {
     public class Curriculum
     {
-        public Int32 CurriculumID { get; set; }
         [Key]
+        public Int32 CurriculumID { get; set; }
         public string CurriculumName { get; set; }
     }
 }

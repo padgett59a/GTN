@@ -40,6 +40,50 @@ namespace GlobalTeamNetwork.Controllers
             return View(curriculum);
         }
 
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertCurriculum([FromBody] List<Curriculum> newCurriculum)
+        {
+            if (newCurriculum == null)
+            {
+                newCurriculum = new List<Curriculum>();
+            }
+
+            int insertCount = _curriculumRepository.InsertCurriculum(newCurriculum);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteCurriculum([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _curriculumRepository.DeleteCurriculum(delItemList);
+            return Json(deleteCount);
+        }
+
+        public JsonResult UpdateCurriculum([FromBody] Curriculum updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new Curriculum();
+            }
+
+            EntityState retVal = _curriculumRepository.UpdateCurriculum(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
+
+
+
         //******************  Semesters ************************//
         public string GetCurriculumJson()
         {
@@ -97,7 +141,6 @@ namespace GlobalTeamNetwork.Controllers
             return Json(updateCount);
         }
 
-        //******************  CourseCores ************************//
         public string GetSemestersJson()
         {
             List<SemesterCore> semesterCores = _semesterCoreRepository.AllSemesterCores.OrderBy(s => s.SemesterName).ToList();
@@ -105,12 +148,16 @@ namespace GlobalTeamNetwork.Controllers
             return retVal;
         }
 
+        //******************  CourseCores ************************//
+
         public string GetInstructorsJson()
         {
             List<Person> instructors = _personsRepository.AllPersons.Where(i => i.personTypeID == INSTRUCTOR_TYPE).ToList();
             string retVal = JsonConvert.SerializeObject(instructors);
             return retVal;
         }
+
+
         public IActionResult CourseCores()
         {
             List<CourseCore> CourseCores = _courseCoreRepository.AllCourseCores.ToList();

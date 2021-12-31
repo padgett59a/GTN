@@ -166,16 +166,6 @@
             }
         });
 
-
-        //var ddlCode =
-        //    '<select id = "curriculumDDL" name = "curriculumDDL"> '
-        //    for (i = 0; i < curriculum.length; i++) {
-        //        ddlCode += '<option value=' + curriculum[i].CurriculumID + '>' + curriculum[i].CurriculumName + '</option >';
-        //        curriculumTextArray.push(curriculum[i].CurriculumName);
-        //    }
-        //    ddlCode += '</select >';
-
-
         //set up curriculum ddlCode and filter values
         var ddlCode = '<select id = "curriculumDDL" name = "curriculumDDL"> '
         ddlCode += "<option value='??'>None Selected</option>";
@@ -282,7 +272,7 @@
                 //Clear the input control values
                 txt01.val("");
                 txt02.val("");
-                $("#curriculumDDL").val("1").change();
+                //$("#curriculumDDL").val("1").change();
                 txt04.val("");
 
                 //now there is something to save
@@ -324,45 +314,49 @@
                 var semCore = {};
                 exitNow = false;
 
-                //push new rows to the add list
-                if (row.find('td:last-child').html().includes('value="Remove"')) {
-                    //These rows already validated
-                    semCore.SemesterCode= row.find("TD").eq(0).html();
-                    semCore.SemesterName = row.find("TD").eq(1).html();
-                    //semCore.curriculumName = row.find("TD").eq(2).html();
-                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("TD").eq(2).html()));
-                    semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
-                    semesters.push(semCore);
-                }
-                //Row Added but not saved
-                if (row.find('td:last-child').html().includes('value="Add Another"')) {
+                //Skip the bottomLabels row
+                if (!row.hasClass("bottomLabels")) {
 
-                    // get values of the candidate object
-                    semCore.SemesterCode = row.find("input").eq(0).val();
-                    semCore.SemesterName = row.find("input").eq(1).val();
-                    semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
-                    nvsString = row.find("input").eq(2).val();
+                    //push new rows to the add list
+                    if (row.find('td:last-child').html().includes('value="Remove"')) {
+                        //These rows already validated
+                        semCore.SemesterCode = row.find("TD").eq(0).html();
+                        semCore.SemesterName = row.find("TD").eq(1).html();
+                        //semCore.curriculumName = row.find("TD").eq(2).html();
+                        semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("TD").eq(2).html()));
+                        semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
+                        semesters.push(semCore);
+                    }
+                    //Row Added but not saved
+                    if (row.find('td:last-child').html().includes('value="Add Another"')) {
 
-                    //if all blank, ingore it
-                    if (semCore.SemesterCode.length > 0 ||
-                        semCore.SemesterName.length > 0 ||
-                        nvsString.length > 0) {
-                        //if some blanks fix it
-                        if (semCore.SemesterCode.length == 0 ||
-                            semCore.SemesterName.length == 0 ||
-                            nvsString.length == 0) {
-                            alert('Please populate all ' + pageOjectLabel + ' fields before saving data.');
-                            exitNow = true;
-                        }
-                        //validate nvs
-                        else if (!digitsOnly(nvsString)) {
-                            exitNow = true;
-                            alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
-                        }
-                        //all is good, push it
-                        else {
-                            semCore.NumberOfVideoSessions = parseInt(nvsString);
-                            semesters.push(semCore);
+                        // get values of the candidate object
+                        semCore.SemesterCode = row.find("input").eq(0).val();
+                        semCore.SemesterName = row.find("input").eq(1).val();
+                        semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
+                        nvsString = row.find("input").eq(2).val();
+
+                        //if all blank, ingore it
+                        if (semCore.SemesterCode.length > 0 ||
+                            semCore.SemesterName.length > 0 ||
+                            nvsString.length > 0) {
+                            //if some blanks fix it
+                            if (semCore.SemesterCode.length == 0 ||
+                                semCore.SemesterName.length == 0 ||
+                                nvsString.length == 0) {
+                                alert('Please populate all ' + pageOjectLabel + ' fields before saving data.');
+                                exitNow = true;
+                            }
+                            //validate nvs
+                            else if (!digitsOnly(nvsString)) {
+                                exitNow = true;
+                                alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
+                            }
+                            //all is good, push it
+                            else {
+                                semCore.NumberOfVideoSessions = parseInt(nvsString);
+                                semesters.push(semCore);
+                            }
                         }
                     }
                 }

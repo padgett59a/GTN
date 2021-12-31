@@ -368,26 +368,30 @@
                     var row = $(this);
                     var SessionCore = {};
 
-                    //push new rows to the add list
-                    if (row.find('td:last-child').html().includes('value="Add Another"')) {
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
 
-                        if (!allBlank()) {
-                            SessionCore.SessionName = row.find("input").eq(0).val();
-                            SessionCore.CourseCoreID = parseInt($('#courseDDL option').filter(':selected').val());
-                            SessionCore.SessionCode = parseFloat(row.find("input").eq(1).val());
-                            //NOTE: All inputs, and checkboxes match find("input")
-                            SessionCore.Notes = row.find("input").eq(2).val();
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                SessionCore.SessionName = row.find("input").eq(0).val();
+                                SessionCore.CourseCoreID = parseInt($('#courseDDL option').filter(':selected').val());
+                                SessionCore.SessionCode = parseFloat(row.find("input").eq(1).val());
+                                //NOTE: All inputs, and checkboxes match find("input")
+                                SessionCore.Notes = row.find("input").eq(2).val();
+                                Sessions.push(SessionCore);
+                            }
+                        }
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //SessionCore.SessionCoreID = null; //IDENTITY value
+                            SessionCore.SessionName = row.find("TD").eq(0).html();
+                            SessionCore.CourseCoreID = parseInt(courses.find(course => course.CourseName === decodeHtml(row.find("TD").eq(1).html())).CourseCoreID);
+                            SessionCore.SessionCode = parseFloat(row.find("TD").eq(2).html());
+                            SessionCore.Notes = row.find("TD").eq(3).html();
                             Sessions.push(SessionCore);
                         }
-                    }
-
-                    if (row.find('td:last-child').html().includes('value="Remove"')) {
-                        //SessionCore.SessionCoreID = null; //IDENTITY value
-                        SessionCore.SessionName = row.find("TD").eq(0).html();
-                        SessionCore.CourseCoreID = parseInt(courses.find(course => course.CourseName === decodeHtml(row.find("TD").eq(1).html())).CourseCoreID);
-                        SessionCore.SessionCode = parseFloat(row.find("TD").eq(2).html());
-                        SessionCore.Notes = row.find("TD").eq(3).html();
-                        Sessions.push(SessionCore);
                     }
                 });
 

@@ -3,41 +3,338 @@
 @{
     ViewData["Title"] = "Curriculum";
 }
+<!DOCTYPE html>
 
-<h1>Curriculum</h1>
+<!DOCTYPE html>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table id="tblMain" class="table table-bordered table-hover table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CurriculumID)
-            </th>
-            <th class="columnSort">
-                @Html.DisplayNameFor(model => model.CurriculumName) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurriculumID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurriculumName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CurriculumID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CurriculumID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CurriculumID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Curriculum</title>
+</head>
+<body>
+
+    <h1>Curriculum</h1>
+
+    <p>
+        <a id="createNew" href="javascript:void(0)">Add New Curriculum</a>
+    </p>
+
+    <table id="tblMain" class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                @*<th>
+                        @Html.DisplayNameFor(model => model.CurriculumID)
+                    </th>*@
+                <th class="columnSort" style="width:70%">
+                    @Html.DisplayNameFor(model => model.CurriculumName) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.CurriculumID)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CurriculumName)
+                    </td>
+                    <td>
+                        <a onclick="editItem('@item.CurriculumID', this)" href="javascript:void(0)" id="@item.CurriculumID">Edit</a> |
+                        <a asp-controller="Cores" asp-action="CourseCoreDetail" asp-route-id="@item.CurriculumID">Details</a> |
+                        <a onclick="deleteItem('@item.CurriculumID', this)" href="javascript:void(0)" id="@item.CurriculumID">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot hidden>
+            <!-- Bottom Labels-->
+            <tr class="bottomLabels">
+                <th>
+                    @Html.DisplayNameFor(model => model.CurriculumName)
+                </th>
+                <th>Action</th>
+            </tr>
+
+            <tr>
+                <td><input type="text" id="txtCurriculumName" class="currInputClass" /></td>
+                <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+            </tr>
+            <tr id="trSaveAll">
+                <td>
+                    <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnCancel" value="Cancel" />
+                </td>
+                <td colspan="100%"></td>
+            </tr>
+        </tfoot>
+
+    </table>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+
+    //scope functions declared inside of document.ready
+    var editItem;
+    var deleteItem;
+
+    $(document).ready(function () {
+
+        var delayMils = 900;
+        var pageObjectLabel = 'Curriculum';
+
+        function refreshMe() {
+            //Refresh the page
+            var url = '@Url.Action("Curriculum", "Cores")'
+            window.location.href = url;
+        }
+
+        //See if all input values are blank
+        function allBlank() {
+            var allAreBlank = (
+                $("#txtCurriculumName").val().length == 0);
+            return allAreBlank;
+        }
+
+
+        //validate input and set inputValid global boolean
+        function validateInput() {
+
+            //default to true
+            inputValid = true;
+
+            if (!allBlank()) {
+                //Validate input
+                if ( $("#txtCurriculumName").val().length == 0 ) {
+                    inputValid = false;
+                    alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+                }
+            }
+        }
+
+
+        $("body").on("click", "#btnCancel", function () {
+            //Refresh the page
+            refreshMe();
+        });
+
+        $("[id^=createNew]").click(function () {
+            //Set up add button
+            changeSaveButton(buttonType.ADD, 0);
+
+            //show footer
+            $('#txtCurriculumName').prop('disabled', false);
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        });
+
+        // Add another item
+        $("body").on("click", "#btnAdd", function () {
+            //Reference the Name and Country TextBoxes.
+            var txt01 = $("#txtCurriculumName");
+
+            if (txt01.val().length == 0) {
+                alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+            }
+            else {
+                //Get the reference of the Table's TFOOT element.
+                var tFoot = $("#tblMain > TFOOT")[0];
+
+                //Add Row.
+                var row = tFoot.insertRow(0);
+
+                //Add txtCurriculumCode cell.
+                var cell = $(row.insertCell(-1));
+                cell.html(txt01.val());
+
+                //Add Button cell.
+                cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "removeRow(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //Clear the input control values
+                txt01.val("");
+
+                //now there is something to save
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        //If new Semester data complete enable save button
+        $("body").on("blur", ".currInputClass", function () {
+            if ( $('#txtCurriculumName').val().length > 0 ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        $("body").on("input", ".currInputClass", function () {
+            if ( $('#txtCurriculumName').val().length > 0 ) {
+                    $("#btnSave").prop('disabled', false);
+                }
+        });
+
+
+        //Save all added rows
+        $("body").on("click", "#btnSave", function () {
+
+            //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+            validateInput();
+
+            if (inputValid) {
+                //Loop through the Table rows and build a JSON array.
+                var curriculum = new Array();
+
+                $("#tblMain TFOOT TR").each(function () {
+                    var row = $(this);
+                    var curriculumObj = {};
+
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
+
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                //curriculumObj.curriculumID = null; //IDENTITY value
+                                curriculumObj.CurriculumName = row.find("input").eq(0).val();
+                                curriculum.push(curriculumObj);
+                            }
+                        }
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //curriculumObj.curriculumID = null; //IDENTITY value
+                            curriculumObj.CurriculumName = row.find("TD").eq(0).html();
+                            curriculum.push(curriculumObj);
+                        }
+                    }
+                });
+
+                //Serialize the object array and send the JSON to the Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertCurriculum", "Cores")',
+                    data: JSON.stringify(curriculum),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageOjectLabel + "(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+
+        //Delete item via AJAX
+        deleteItem = function (itemId, button) {
+
+            //Determine the reference of the calling Row
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html().trim();
+
+            if (confirm("Do you want to delete " + pageObjectLabel + " " + name + " ?")) {
+                var itemArray = new Array;
+                itemArray[0] = parseInt(itemId);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("deleteCurriculum","Cores")',
+                    data: JSON.stringify(itemArray),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        }
+
+        //Edit an org
+        //function editItem(itemId, button) {
+        editItem = function (itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+            selectedVal = editRow.find("TD").eq(0).html().trim();
+
+            //Copy current values to the edit controls
+            $('#txtCurriculumName').val(editRow.find("TD").eq(0).html().trim());
+
+            //Show footer
+            $("#trSaveAll").attr("hidden", true);
+            //$("#btnCancel").attr("hidden", false);
+
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+        //Save edits via ajax
+        //Note: btnSaveEdit is defined in ViewCommon.js
+        $("body").on("click", "#btnSaveEdit", function () {
+
+            var editRow = $("#btnSaveEdit").closest("TR");
+            var curriculum = {};
+            validateInput();
+
+            if (inputValid) {
+                //push modified editRow to the add list
+                curriculum.curriculumID = parseInt($("#btnSaveEdit").attr('data-id'));
+                curriculum.CurriculumName = editRow.find("input").eq(0).val();
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateCurriculum", "Cores")',
+                    data: JSON.stringify(curriculum),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " curriculum(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>
 
 

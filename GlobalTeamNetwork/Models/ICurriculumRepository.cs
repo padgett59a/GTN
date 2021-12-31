@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -9,5 +9,9 @@ namespace GlobalTeamNetwork.Models
     {
         IEnumerable<Curriculum> AllCurriculum { get; }
         Curriculum GetCurriculumById(Int32 curriculumID);
+        int InsertCurriculum(List<Curriculum> curriculum);
+        int DeleteCurriculum(List<int> delItemList);
+        EntityState UpdateCurriculum(Curriculum Curriculum);
     }
+
 }
