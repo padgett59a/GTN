@@ -44,12 +44,22 @@ $("body").on("click", ".columnSort", function () {
 
 function rowSort(tableBody, sortColumn, arrow) {
     var sortDirection = 1;
+    var $tbody = tableBody;
     if (arrow == sortArrow.Down) { sortDirection = -1 }
 
-    var $tbody = tableBody;
+    //see if we are sorting a text box
+    var isCheckBox = $tbody.find('tr td:eq(' + sortColumn + ') input:checkbox').length > 0
+
     $tbody.find('tr').sort(function (a, b) {
-        var tda = $(a).find('td:eq(' + sortColumn + ')').text().toLowerCase();
-        var tdb = $(b).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+
+        if (isCheckBox) {
+            var tda = $(a).find('td:eq(' + sortColumn + ') input[type="checkbox"]:checked').length;
+            var tdb = $(b).find('td:eq(' + sortColumn + ') input[type="checkbox"]:checked').length;
+        }
+        else {
+            var tda = $(a).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+            var tdb = $(b).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+        }
 
         //Numeric Sort if both numbers
         if (!isNaN(tda) && !isNaN(tdb)) {
@@ -63,6 +73,7 @@ function rowSort(tableBody, sortColumn, arrow) {
                 : tda > tdb ? (1 * sortDirection)
                     : 0;
         }
+
     }).appendTo($tbody);
 }
 
