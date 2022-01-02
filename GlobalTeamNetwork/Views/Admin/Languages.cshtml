@@ -1,57 +1,358 @@
-﻿@model IEnumerable<Language>
+﻿@model IEnumerable<GlobalTeamNetwork.Models.Language>
+
 @{
     ViewData["Title"] = "Languages";
-    ViewData["PageName"] = "admin_languages";
 }
-@section HeadBlock {
-    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
-}
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Languages</title>
+</head>
+<body>
+
+    <h1>Languages</h1>
+
+    <p>
+        <a id="createNew" href="javascript:void(0)">Add New Language</a>
+    </p>
+
+    <table id="tblMain" class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                @*<th>
+            @Html.DisplayNameFor(model => model.langID)
+        </th>*@
+                <th class="columnSort" style="width:35%">
+                    @Html.DisplayNameFor(model => model.LangName) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th style="width:45%">
+                    @Html.DisplayNameFor(model => model.Notes) 
+                </th>
+                <th style="width:20%">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                @*<td>
+            @Html.DisplayFor(modelItem => item.LanguagesID)
+        </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.LangName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+                <td>
+                    <a onclick="editItem('@item.langID', this)" href="javascript:void(0)" id="@item.langID">Edit</a> |
+                    <a asp-controller="Admin" asp-action="LanguagesDetail" asp-route-id="@item.langID">Details</a> |
+                    <a onclick="deleteItem('@item.langID', this)" href="javascript:void(0)" id="@item.langID">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+        <tfoot hidden>
+            <!-- Bottom Labels-->
+            <tr class="bottomLabels">
+                <th>
+                    @Html.DisplayNameFor(model => model.LangName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>Actions</th>
+            </tr>
+
+            <tr>
+                <td><input type="text" id="txtLangName" class="langInputClass" /></td>
+                <td><input type="text" id="txtNotes" class="langInputClass" /></td>
+                <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+            </tr>
+            <tr id="trSaveAll">
+                <td>
+                    <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnCancel" value="Cancel" />
+                </td>
+                <td colspan="100%"></td>
+            </tr>
+        </tfoot>
+
+    </table>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+
+    //scope functions declared inside of document.ready
+    var editItem;
+    var deleteItem;
+
+    $(document).ready(function () {
+
+        var delayMils = 900;
+        var pageObjectLabel = 'Languages';
+
+        function refreshMe() {
+            //Refresh the page
+            var url = '@Url.Action("Languages", "Admin")'
+            window.location.href = url;
+        }
+
+        //See if all input values are blank
+        function allBlank() {
+            var allAreBlank = (
+                $("#txtLangName").val().length == 0);
+            return allAreBlank;
+        }
 
 
-<div class="subheader">
-    <h1 class="subheader-title">
-        <i class="fal fa-th-list text-primary"></i>  Languages
-    </h1>
-</div>
-<div class="row">
-    <div class="col-xl-12">
-        <div id="panel-1" class="panel">
-            <div class="panel-container show">
-                <div class="panel-content">
-                    <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
-                        <thead>
-                            <tr>
-                                <th style="width:10%">langId</th>
-                                <th style="width:10%">Name</th>
-                                <th style="width:60%">Notes</th>
-                                <th style="width:20%">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var lang in Model)
-                            {
-                                <tr>
-                                    <td>@lang.LangId</td>
-                                    <td>@lang.LangName</td>
-                                    <td>@lang.Notes</td>
-                                    <td>
-                                        <button type="button" class="btn btn-xs btn-primary waves-effect waves-themed">Edit</button>
-                                    </td>
-                                </tr>
+        //validate input and set inputValid global boolean
+        function validateInput() {
+
+            //default to true
+            inputValid = true;
+
+            if (!allBlank()) {
+                //Validate input
+                if ( $("#txtLangName").val().length == 0 ) {
+                    inputValid = false;
+                    alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                }
+            }
+        }
+
+
+        $("body").on("click", "#btnCancel", function () {
+            //Refresh the page
+            refreshMe();
+        });
+
+        $("[id^=createNew]").click(function () {
+            //Set up add button
+            changeSaveButton(buttonType.ADD, 0);
+
+            //show footer
+            $('#txtLangName').prop('disabled', false);
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        });
+
+        // Add another item
+        $("body").on("click", "#btnAdd", function () {
+
+            validateInput();
+
+            if (inputValid) {
+
+                //Get the reference of the Table's TFOOT element.
+                var tFoot = $("#tblMain > TFOOT")[0];
+
+                //Add Row.
+                var row = tFoot.insertRow(0);
+
+                //Add txtLangName cell
+                var cell = $(row.insertCell(-1));
+                cell.html($("#txtLangName").val());
+
+                //Add txtNotes cell
+                var cell = $(row.insertCell(-1));
+                cell.html($("#txtNotes").val());
+
+                //Add Button cell.
+                cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "removeRow(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //Clear the input control values
+                $("#txtLangName").val("");
+                $("#txtNotes").val("");
+
+                //now there is something to save
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        //If all required data complete enable save button
+        $("body").on("blur", ".langInputClass", function () {
+            if ($('#txtLangName').val().length > 0) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        $("body").on("input", ".langInputClass", function () {
+            if ($('#txtLangName').val().length > 0) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+ 
+        //Save all added rows
+        $("body").on("click", "#btnSave", function () {
+
+            //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+            validateInput();
+
+            if (inputValid) {
+                //Loop through the Table rows and build a JSON array.
+                var Languages = new Array();
+
+                $("#tblMain TFOOT TR").each(function () {
+                    var row = $(this);
+                    var LanguagesObj = {};
+
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
+
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                //LanguagesObj.LanguagesID = null; //IDENTITY value
+                                LanguagesObj.LangName = row.find("input").eq(0).val();
+                                LanguagesObj.Notes= row.find("input").eq(1).val();
+                                Languages.push(LanguagesObj);
                             }
+                        }
 
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>langId</th>
-                                <th>Name</th>
-                                <th>Notes</th>
-                                <th>Actions</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //LanguagesObj.LanguagesID = null; //IDENTITY value
+                            LanguagesObj.LangName = row.find("TD").eq(0).html();
+                            LanguagesObj.Notes = row.find("TD").eq(1).html();
+                            Languages.push(LanguagesObj);
+                        }
+                    }
+                });
+
+                //Serialize the object array and send the JSON to the Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertLanguages", "Admin")',
+                    data: JSON.stringify(Languages),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+
+        //Delete item via AJAX
+        deleteItem = function (itemId, button) {
+
+            //Determine the reference of the calling Row
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html().trim();
+
+            if (confirm("Do you want to delete " + pageObjectLabel + " " + name + " ?")) {
+                var itemArray = new Array;
+                itemArray[0] = parseInt(itemId);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteLanguage","Admin")',
+                    data: JSON.stringify(itemArray),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        }
+
+        //Edit an org
+        //function editItem(itemId, button) {
+        editItem = function (itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+            selectedVal = editRow.find("TD").eq(0).html().trim();
+
+            //Copy current values to the edit controls
+            $('#txtLangName').val(editRow.find("TD").eq(0).html().trim());
+            $('#txtNotes').val(editRow.find("TD").eq(1).html().trim());
+
+            //Show footer
+            $("#trSaveAll").attr("hidden", true);
+            //$("#btnCancel").attr("hidden", false);
+
+            $("#tblMain TFOOT").attr("hidden", false);
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+        //Save edits via ajax
+        //Note: btnSaveEdit is defined in ViewCommon.js
+        $("body").on("click", "#btnSaveEdit", function () {
+
+            var editRow = $("#btnSaveEdit").closest("TR");
+            var Languages = {};
+            validateInput();
+
+            if (inputValid) {
+                //push modified editRow to the add list
+                Languages.langID = parseInt($("#btnSaveEdit").attr('data-id'));
+                //alert(Languages.LanguagesID);
+                Languages.LangName = editRow.find("input").eq(0).val();
+                Languages.Notes = editRow.find("input").eq(1).val();
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateLanguage", "Admin")',
+                    data: JSON.stringify(Languages),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Languages(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>
+
+

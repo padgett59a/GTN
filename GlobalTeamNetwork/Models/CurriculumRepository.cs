@@ -61,7 +61,5 @@ namespace GlobalTeamNetwork.Models
             return updateState;
         }
 
-
-
     }
 }

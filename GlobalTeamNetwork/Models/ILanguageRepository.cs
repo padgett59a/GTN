@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,5 +10,8 @@ namespace GlobalTeamNetwork.Models
     {
         IEnumerable<Language> AllLanguages { get; }
         Language GetLanguageById(int langId);
+        int InsertLanguage(List<Language> languageList);
+        int DeleteLanguage(List<int> delItemList);
+        EntityState UpdateLanguage(Language language);
     }
 }

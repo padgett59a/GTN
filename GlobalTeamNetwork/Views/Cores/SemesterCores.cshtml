@@ -47,7 +47,7 @@
                     <th class="columnSort">
                         @Html.DisplayNameFor(model => model.NumberOfVideoSessions)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,7 +89,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.NumberOfVideoSessions)
                     </th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
                 @*input controls for adding a new item*@
                 <tr>
@@ -139,7 +139,7 @@
         var curriculum;
         var curriculumTextArray = ['0th item'];
         var delayMils = 900;
-        var pageOjectLabel = 'SemesterCore';
+        var pageObjectLabel = 'SemesterCore';
 
         //see if the candidate semester code already exists
         function semesterCodeExists(testCode) {
@@ -230,7 +230,7 @@
                 txt02.val().length == 0 ||
                 //txt03.val().length == 0 ||
                 txt04.val().length == 0) {
-                alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+                alert("Please enter all " + pageObjectLabel + " data before proceeding.");
             }
             else if (!digitsOnly(txt04.val())) {
                 alert("The Number Of Video Sessions must be number. Please correct this before proceeding.");
@@ -344,7 +344,7 @@
                             if (semCore.SemesterCode.length == 0 ||
                                 semCore.SemesterName.length == 0 ||
                                 nvsString.length == 0) {
-                                alert('Please populate all ' + pageOjectLabel + ' fields before saving data.');
+                                alert('Please populate all ' + pageObjectLabel + ' fields before saving data.');
                                 exitNow = true;
                             }
                             //validate nvs
@@ -373,7 +373,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                    alert(r + " " + pageOjectLabel + "(s) inserted.");
+                    alert(r + " " + pageObjectLabel + "(s) inserted.");
                     }
                 });
 
@@ -406,7 +406,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageOjectLabel + "(s) have been deleted.");
+                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
                     }
                 });
 
@@ -473,7 +473,7 @@
                 if (semCore.SemesterCode.length == 0 ||
                     semCore.SemesterName.length == 0 ||
                     nvsString.length == 0) {
-                    alert('Please populate all ' + pageOjectLabel + ' fields before saving changes.');
+                    alert('Please populate all ' + pageObjectLabel + ' fields before saving changes.');
                     exitNow = true;
                 }
                 //validate nvs
@@ -484,7 +484,7 @@
             }
             // all were blank
             else {
-                alert("Please populate the " + pageOjectLabel + " fields or use 'Delete' to remove a row.");
+                alert("Please populate the " + pageObjectLabel + " fields or use 'Delete' to remove a row.");
                 exitNow = true;
             }
 

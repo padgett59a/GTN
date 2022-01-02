@@ -9,7 +9,7 @@ namespace GlobalTeamNetwork.Models
     public class Language
     {
         [Key]
-        public int LangId { get; set; }
+        public int langID { get; set; }
         public string LangName { get; set; }
         public string Notes { get; set; }
     }

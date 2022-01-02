@@ -31,12 +31,57 @@ namespace GlobalTeamNetwork.Controllers
             return View();
         }
 
+        //*****************TranslationSteps*****************
         public IActionResult Languages()
         {
             var languages = _languageRepository.AllLanguages;
             return View(languages);
         }
 
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertLanguages([FromBody] List<Language> newLanguage)
+        {
+            if (newLanguage == null)
+            {
+                newLanguage = new List<Language>();
+            }
+
+            int insertCount = _languageRepository.InsertLanguage(newLanguage);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteLanguage([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _languageRepository.DeleteLanguage(delItemList);
+            return Json(deleteCount);
+        }
+
+        public JsonResult UpdateLanguage([FromBody] Language updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new Language();
+            }
+
+            EntityState retVal = _languageRepository.UpdateLanguage(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
+
+
+        //*****************TranslationSteps*****************
         public IActionResult TranslationSteps()
         {
             var translationSteps = _translationStepRepository.AllTranslationSteps;

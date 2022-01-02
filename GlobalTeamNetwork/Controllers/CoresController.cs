@@ -83,7 +83,6 @@ namespace GlobalTeamNetwork.Controllers
         }
 
 
-
         //******************  Semesters ************************//
         public string GetCurriculumJson()
         {

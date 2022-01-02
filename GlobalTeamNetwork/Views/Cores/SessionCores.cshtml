@@ -47,7 +47,7 @@
                     <th style="width:10%">
                         @Html.DisplayNameFor(model => model.Notes)
                     </th>
-                    <th style="width:10%">Action</th>
+                    <th style="width:10%">Actions</th>
                 </tr>
             </thead>
             <tbody class="dataRows">
@@ -96,7 +96,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Notes)
                     </th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
 
                 @*input controls for adding a new item*@
@@ -144,7 +144,7 @@
             var inputValid = false;
             var courses;
             var delayMils = 900;
-            var pageOjectLabel = 'SessionCore';
+            var pageObjectLabel = 'SessionCore';
 
             //Set up semester drop down
             $.ajax({
@@ -258,7 +258,7 @@
                     $('#courseDDL option:selected').val() == '??' ||
                     $("#txtSessionCode").val().length == 0 ) {
                     inputValid = false;
-                    alert("Please enter all " + pageOjectLabel + " data before proceeding.");
+                    alert("Please enter all " + pageObjectLabel + " data before proceeding.");
                     }
                     else if (!decimalsOnly($("#txtSessionCode").val().trim())) {
                     inputValid = false;
@@ -266,7 +266,7 @@
                 }
                 //else if (CourseCodeExists(inp01.val())) {
                 //    inputValid = false;
-                //    alert(pageOjectLabel + " IDs must be unique. Please correct this before proceeding.");
+                //    alert(pageObjectLabel + " IDs must be unique. Please correct this before proceeding.");
                 //}
             }
         }
@@ -404,7 +404,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageOjectLabel + "(s) inserted.");
+                        alert(r + " " + pageObjectLabel + "(s) inserted.");
                     }
                 });
 
@@ -437,7 +437,7 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageOjectLabel + "(s) have been deleted.");
+                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
                     }
                 });
 
