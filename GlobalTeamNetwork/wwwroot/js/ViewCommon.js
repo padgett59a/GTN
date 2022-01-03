@@ -15,11 +15,22 @@ const buttonType = {
     ADD: 1
 }
 
+
 //Sort Arrow enum
 const sortArrow = {
     Up: '&#8593;',
     Down: '&#8595;'
 }
+
+
+//$(".sortArrow:visible").each(function (index, value) {
+//    //alert(decodeHtml(sortArrow.Up));
+//    alert($(value).html() == decodeHtml(sortArrow.Up) || $(value).html() == decodeHtml(sortArrow.Down));
+//    //alert($(value).html() == decodeHtml(sortArrow.Up));
+//});
+
+
+
 
 //execute Sorting
 $("body").on("click", ".columnSort", function () {
@@ -38,8 +49,11 @@ $("body").on("click", ".columnSort", function () {
     else if (currentSort.includes(decodeHtml(sortArrow.Up))) {
         $(':nth-child(1)', this).html(sortArrow.Down);
     }
-    //do the sort 
+
+
+    //do the sort
     rowSort($('#tblMain tbody'), $(this).index(), newSort);
+
 });
 
 function rowSort(tableBody, sortColumn, arrow) {
@@ -75,6 +89,25 @@ function rowSort(tableBody, sortColumn, arrow) {
         }
 
     }).appendTo($tbody);
+}
+
+function getCurrentSort() {
+    var sortSave = '';
+    var sortCol = -1;
+    var sortAsc = false;
+
+    $(".sortArrow:visible").each(function (index, value) {
+        //find the column that has sorting enabled if any
+        if ($(value).html() == decodeHtml(sortArrow.Up) || $(value).html() == decodeHtml(sortArrow.Down)) {
+            sortCol = $(value).parent().index();
+            if ($(value).html() == decodeHtml(sortArrow.Up)) { sortAsc = true; }
+        }
+    });
+
+    if (sortCol >= 0) {
+        sortSave = '&sort=' + sortCol + (sortAsc ? 'A' : 'D');
+    }
+    return sortSave;
 }
 
 function waitSeconds(iMilliSeconds) {
