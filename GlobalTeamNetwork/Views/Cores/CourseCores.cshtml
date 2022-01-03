@@ -283,7 +283,7 @@
 
         function refreshMe() {
                 //Refresh the page
-            var url = '@Url.Action("CourseCores", "Cores")' + "?filter=" + $('#semFilter option').filter(':selected').val();
+            var url = '@Url.Action("CourseCores", "Cores")' + "?filter=" + $('#semFilter option').filter(':selected').val() + getCurrentSort();
             window.location.href = url;
             }
 
@@ -682,7 +682,7 @@
                 courseCore.MasteringFilesInHand = editRow.find("TD").eq(8).find('input:checkbox:first').is(':checked');
                 courseCore.TextFilesInHand = editRow.find("TD").eq(9).find('input:checkbox:first').is(':checked');
                 //NOTE: All inputs, and checkboxes match find("input")
-                courseCore.Notes = editRow.find("input").eq(8).val(); txtNumberOfVideoSessions
+                courseCore.Notes = editRow.find("input").eq(8).val(); 
 
                 $.ajax({
                     type: "POST",

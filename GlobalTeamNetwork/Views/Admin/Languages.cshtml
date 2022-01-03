@@ -101,7 +101,7 @@
 
         function refreshMe() {
             //Refresh the page
-            var url = '@Url.Action("Languages", "Admin")'
+            var url = '@Url.Action("Languages", "Admin")' + "?filter=" + getCurrentSort();
             window.location.href = url;
         }
 

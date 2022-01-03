@@ -200,7 +200,7 @@
 
             function refreshMe() {
                 //Refresh the page
-                var url = '@Url.Action("SessionCores", "Cores")' + "?filter=" + $('#corsFilter option').filter(':selected').val();
+                var url = '@Url.Action("SessionCores", "Cores")' + "?filter=" + $('#corsFilter option').filter(':selected').val() + getCurrentSort();
                 window.location.href = url;
             }
 

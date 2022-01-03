@@ -130,9 +130,7 @@
         //pFilter is passed to the page via query string for page refresh, etc.
         var pFilter = (new URL(location.href)).searchParams.get('filter');
 
-        //pFilter is passed to the page via query string for page refresh, etc.
-        var setSort = (new URL(location.href)).searchParams.get('sort');
-        alert(setSort);
+        //note: sorting code is in ViewCommon.js
 
         $("#showAllRows").click(function () {
             //Set filter to 'All'
@@ -456,21 +454,12 @@
 
             var editRow = $(button).closest("TR");
             var selectedVal;
-
+ 
             //Set up Save Changes button
             changeSaveButton(buttonType.SAVECHANGES, itemId);
 
             //Hide edit row
             editRow.hide();
-
-            //set up the curriculum ddl
-            //$("#currDDL").html(ddlCode);
-            ////Default Course drop down to current filter value
-            //var currReplVal = "<option value='" + $('#currFilter').val() + "'>";
-            //var currReplValOpt = currReplVal.replace('option value=', 'option selected value=');
-            //var currDDLCodeOpt = ddlCode.replace(currReplVal, currReplValOpt);
-            ////alert(courseDDLCodeOpt);
-            //$("#currDDL").html(currDDLCodeOpt);
 
             var currReplVal = "<option value='" + curriculum.find(curr => curr.CurriculumName === editRow.find("TD").eq(2).html().trim()).CurriculumID + "'>";
             var currReplValOpt = currReplVal.replace('option value=', 'option selected value=');
@@ -482,22 +471,13 @@
             //Copy current values to the edit controls
             $('#txtSemesterCode').val(editRow.find("TD").eq(0).html().trim());
             $('#txtSemesterCode').prop('disabled', true);
-
             $('#txtSemesterName').val(editRow.find("TD").eq(1).html().trim());
-            //$("#curriculumDDL").val(curriculumTextArray.indexOf(selectedVal)).change();
             $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); curriculum
 
             //Hide Save ALL button row, show footer
             $("#trSaveAll").attr("hidden", true);
             $("#tblMain tfoot>tr").show();
             $("#tblMain TFOOT").attr("hidden", false);
-
-            //Show footer
-            //$("#trSaveAll").attr("hidden", true);
-            //$("#btnCancel").attr("hidden", false);
-
-            //$("#tblMain TFOOT").attr("hidden", false);
-            //scroll to bottom
 
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
         }
@@ -516,14 +496,8 @@
                 // get values of the candidate object
                 semCore.SemesterCode = row.find("input").eq(0).val();
                 semCore.SemesterName = row.find("input").eq(1).val();
-                //convert the curriculumName to curriculumID
-
-                //semCore.CurriculumId = parseInt(curriculumTextArray.indexOf(row.find("select option:selected").text()));
                 semCore.CurriculumId = parseInt($('#currDDL option').filter(':selected').val());
-                //courseCore.instructorID = parseInt($('#instructorDDL option').filter(':selected').val());
-
-                nvsString = row.find("input").eq(2).val();
-                semCore.NumberOfVideoSessions = parseInt(nvsString);
+                semCore.NumberOfVideoSessions = parseInt(row.find("input").eq(2).val());
 
                 alert(JSON.stringify(semCore));
 

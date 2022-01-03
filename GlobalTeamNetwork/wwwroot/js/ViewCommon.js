@@ -22,38 +22,40 @@ const sortArrow = {
     Down: '&#8595;'
 }
 
+//execute sort on passed qstring value
+var setSort = (new URL(location.href)).searchParams.get('sort');
 
-//$(".sortArrow:visible").each(function (index, value) {
-//    //alert(decodeHtml(sortArrow.Up));
-//    alert($(value).html() == decodeHtml(sortArrow.Up) || $(value).html() == decodeHtml(sortArrow.Down));
-//    //alert($(value).html() == decodeHtml(sortArrow.Up));
-//});
+if (setSort != null) {
+    var col2Sort = setSort.substring(0, setSort.length - 1)
+    var asc = true;
+    //alert(setSort.substring(setSort.length - 1, setSort.length).toUpperCase());
+    if (setSort.substring(setSort.length - 1, setSort.length).toUpperCase() == "D") { asc = false; }
+    var sortDir = asc ? sortArrow.Up : sortArrow.Down;
+    setSortArrows($('.columnSort').eq(col2Sort), sortDir);
+    rowSort($('#tblMain tbody'), col2Sort, sortDir);
+}
 
-
-
+//set arrows in UI
+function setSortArrows(sortCol, pSortDir) {
+    //clear all arrows, show one clicked
+    $(".sortArrow").hide();
+    $(':nth-child(1)', sortCol).show();
+    //set the new sort arrow
+    $(':nth-child(1)', sortCol).html(pSortDir);
+}
 
 //execute Sorting
 $("body").on("click", ".columnSort", function () {
-
-    //default value
-    var newSort = sortArrow.Down;
-
-    //clear all arrows, show one clicked
-    $(".sortArrow").hide();
-    $(':nth-child(1)', this).show();
+    var newSort = sortArrow.Down; //default
+    //alternate arrows
     var currentSort = $(':nth-child(1)', this).html();
+    //if both or down, change to up
     if (currentSort.includes(decodeHtml(sortArrow.Down))) {
-        $(':nth-child(1)', this).html(sortArrow.Up);
         newSort = sortArrow.Up;
     }
-    else if (currentSort.includes(decodeHtml(sortArrow.Up))) {
-        $(':nth-child(1)', this).html(sortArrow.Down);
-    }
-
-
     //do the sort
+    setSortArrows($(this), newSort);
     rowSort($('#tblMain tbody'), $(this).index(), newSort);
-
 });
 
 function rowSort(tableBody, sortColumn, arrow) {

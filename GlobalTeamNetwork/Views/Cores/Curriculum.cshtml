@@ -91,7 +91,7 @@
 
         function refreshMe() {
             //Refresh the page
-            var url = '@Url.Action("Curriculum", "Cores")'
+            var url = '@Url.Action("Curriculum", "Cores")' + "?filter=" + getCurrentSort();
             window.location.href = url;
         }
 
