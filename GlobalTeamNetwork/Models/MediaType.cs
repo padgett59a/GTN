@@ -9,7 +9,8 @@ namespace GlobalTeamNetwork.Models
     public class MediaType
     {
         [Key]
-        public int MediaTypeId  { get; set; }
+        public int mediaTypeID  { get; set; }
         public string MediaTypeName { get; set; }
+        public string Notes { get; set; }
     }
 }

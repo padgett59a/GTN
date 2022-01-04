@@ -178,6 +178,52 @@ namespace GlobalTeamNetwork.Controllers
             return Json(updateCount);
         }
 
+        //*****************MediaTypes*****************
+        public IActionResult MediaTypes()
+        {
+            var mediaTypes = _mediaTypeRepository.AllMediaTypes;
+            return View(mediaTypes);
+        }
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertMediaTypes([FromBody] List<MediaType> newMediaType)
+        {
+            if (newMediaType == null)
+            {
+                newMediaType = new List<MediaType>();
+            }
+
+            int insertCount = _mediaTypeRepository.InsertMediaType(newMediaType);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteMediaType([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _mediaTypeRepository.DeleteMediaType(delItemList);
+            return Json(deleteCount);
+        }
+        public JsonResult UpdateMediaType([FromBody] MediaType updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new MediaType();
+            }
+
+            EntityState retVal = _mediaTypeRepository.UpdateMediaType(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
 
         //*****************Payments*****************
         public IActionResult Payments()
@@ -185,11 +231,5 @@ namespace GlobalTeamNetwork.Controllers
             return View();
         }
 
-        //*****************MediaTypes*****************
-        public IActionResult MediaTypes()
-        {
-            var mediaTypes = _mediaTypeRepository.AllMediaTypes;
-            return View(mediaTypes);
-        }
     }
 }

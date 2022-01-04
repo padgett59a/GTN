@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,5 +10,8 @@ namespace GlobalTeamNetwork.Models
     {
         IEnumerable<MediaType> AllMediaTypes { get; }
         MediaType GetMediaTypeById(int langId);
+        int InsertMediaType(List<MediaType> mediaTypeList);
+        int DeleteMediaType(List<int> delItemList);
+        EntityState UpdateMediaType(MediaType MediaType);
     }
 }
