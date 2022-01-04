@@ -87,17 +87,63 @@ namespace GlobalTeamNetwork.Controllers
             var translationSteps = _translationStepRepository.AllTranslationSteps;
             return View(translationSteps);
         }
+        
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertTranslationSteps([FromBody] List<TranslationStep> newTranslationStep)
+        {
+            if (newTranslationStep == null)
+            {
+                newTranslationStep = new List<TranslationStep>();
+            }
+
+            int insertCount = _translationStepRepository.InsertTranslationStep(newTranslationStep);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteTranslationStep([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _translationStepRepository.DeleteTranslationStep(delItemList);
+            return Json(deleteCount);
+        }
+
+        public JsonResult UpdateTranslationStep([FromBody] TranslationStep updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new TranslationStep();
+            }
+
+            EntityState retVal = _translationStepRepository.UpdateTranslationStep(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
+
+        //*****************MasteringSteps*****************
         public IActionResult MasteringSteps()
         {
             var masteringSteps = _masteringStepRepository.AllMasteringSteps;
             return View(masteringSteps);
         }
 
+        //*****************Payments*****************
         public IActionResult Payments()
         {
             return View();
         }
 
+        //*****************MediaTypes*****************
         public IActionResult MediaTypes()
         {
             var mediaTypes = _mediaTypeRepository.AllMediaTypes;
