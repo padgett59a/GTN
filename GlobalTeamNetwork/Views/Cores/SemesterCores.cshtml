@@ -35,43 +35,50 @@
             <thead>
                 <!-- Top Labels-->
                 <tr>
-                    <th class="columnSort">
+                    <th class="columnSort" style="width:10%">
                         @Html.DisplayNameFor(model => model.SemesterCode)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th class="columnSort">
+                    <th class="columnSort" style="width:25%">
                         @Html.DisplayNameFor(model => model.SemesterName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th class="columnSort">
+                    <th class="columnSort" style="width:10%">
                         @Html.DisplayNameFor(model => model.CurriculumName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
-                    <th class="columnSort">
+                    <th class="columnSort" style="width:10%">
                         @Html.DisplayNameFor(model => model.NumberOfVideoSessions)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
+
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr id="@(" tr" + @item.SemesterCode)">
-                        <td class="semesterCode">
-                            @Html.DisplayFor(modelItem => item.SemesterCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.SemesterName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CurriculumName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.NumberOfVideoSessions)
-                        </td>
-                        <td>
-                            <a onclick="editItem('@item.SemesterCode', this)" href="javascript:void(0)" id="@item.SemesterCode">Edit</a> |
-                            <a asp-controller="Cores" asp-action="SemesterCoreDetail" asp-route-id="@item.SemesterCode">Details</a> |
-                            <a onclick="deleteItem('@item.SemesterCode', this)" href="javascript:void(0)" id="@item.SemesterCode">Delete</a>
-                        </td>
-                    </tr>
+                <tr id="@(" tr" + @item.SemesterCode)">
+                    <td class="semesterCode">
+                        @Html.DisplayFor(modelItem => item.SemesterCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SemesterName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CurriculumName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberOfVideoSessions)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Notes)
+                    </td>
+                    <td>
+                        <a onclick="editItem('@item.SemesterCode', this)" href="javascript:void(0)" id="@item.SemesterCode">Edit</a> |
+                        <a asp-controller="Cores" asp-action="SemesterCoreDetail" asp-route-id="@item.SemesterCode">Details</a> |
+                        <a onclick="deleteItem('@item.SemesterCode', this)" href="javascript:void(0)" id="@item.SemesterCode">Delete</a>
+                    </td>
+                </tr>
                 }
             </tbody>
             <tfoot hidden>
@@ -89,17 +96,21 @@
                     <th>
                         @Html.DisplayNameFor(model => model.NumberOfVideoSessions)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
                     <th>Actions</th>
                 </tr>
 
                 @*input controls for adding a new item*@
-                <tr>
-                    <td><input type="text" id="txtSemesterCode" class="semInputClass" /></td>
-                    <td><input type="text" id="txtSemesterName" class="semInputClass" /></td>
-                    <td id="currDDL"><input type="text" id="txtCurriculumID" class="semInputClass" /></td>
-                    <td><input type="text" id="txtNumberOfVideoSessions" class="semInputClass" /></td>
-                    <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
-                </tr>
+            <tr>
+                <td><input type="text" id="txtSemesterCode" class="itemInputClass" /></td>
+                <td><input type="text" id="txtSemesterName" class="itemInputClass" /></td>
+                <td id="currDDL"><input type="text" id="txtCurriculumID" class="itemInputClass" /></td>
+                <td><input type="text" id="txtNumberOfVideoSessions" class="itemInputClass" /></td>
+                <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
+                <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+            </tr>
                 <tr id="trSaveAll">
                     <td>
                         <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
@@ -216,8 +227,8 @@
                     $("#txtSemesterCode").val().length == 0 &&
                     $("#txtSemesterName").val().length == 0 &&
                     $('#currDDL option:selected').val() == '??' &&
-                    $("#txtNumberOfVideoSessions").val().length == 0
-                    // && $("#txtNotes").val().length == 0
+                    $("#txtNumberOfVideoSessions").val().length == 0 &&
+                    $("#txtNotes").val().length == 0
                 );
             return allAreBlank;
         }
@@ -289,6 +300,7 @@
                 var selCurr = $("#curriculumDDL");
                 var curriculumText = $('#curriculumDDL option:selected').text();
                 var txt04 = $("#txtNumberOfVideoSessions");
+                var txt05 = $("#txtNotes");
 
                 //Get the reference of the Table's TFOOT element.
                 var tFoot = $("#tblMain > TFOOT")[0];
@@ -312,6 +324,11 @@
                 cell = $(row.insertCell(-1));
                 cell.html(txt04.val());
 
+                //Add Notes cell
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtNotes").val());
+
+
                 //Add Button cell.
                 cell = $(row.insertCell(-1));
                 var btnRemove = $("<input />");
@@ -325,6 +342,7 @@
                 txt02.val("");
                 //$("#curriculumDDL").val("1").change();
                 txt04.val("");
+                txt05.val("");
 
                 //now there is something to save
                 $("#btnSave").prop('disabled', false);
@@ -332,7 +350,7 @@
         });
 
         //If new Semester data complete enable save button
-        $("body").on("blur", ".semInputClass", function () {
+        $("body").on("blur", ".itemInputClass", function () {
             if (
                 $('#txtSemesterCode').val().length > 0 &&
                 $('#txtSemesterName').val().length > 0 &&
@@ -342,7 +360,7 @@
             }
         });
 
-        $("body").on("input", ".semInputClass", function () {
+        $("body").on("input", ".itemInputClass", function () {
             if (
                 $('#txtSemesterCode').val().length > 0 &&
                 $('#txtSemesterName').val().length > 0 &&
@@ -380,6 +398,7 @@
                                 semCore.SemesterName = row.find("input").eq(1).val();
                                 semCore.CurriculumId = parseInt($('#currDDL option').filter(':selected').val());
                                 semCore.NumberOfVideoSessions = parseInt(row.find("input").eq(2).val());
+                                semCore.Notes = row.find("input").eq(3).val();
                                 semesters.push(semCore);
                             }
                         }
@@ -389,12 +408,13 @@
                             semCore.SemesterName = row.find("TD").eq(1).html();
                             semCore.CurriculumId = parseInt(curriculum.find(curr => curr.CurriculumName === decodeHtml(row.find("TD").eq(2).html())).CurriculumID);
                             semCore.NumberOfVideoSessions = parseInt(row.find("TD").eq(3).html());
+                            semCore.Notes = row.find("TD").eq(4).html();
                             semesters.push(semCore);
                         }
                     }
                 });
 
-                alert(JSON.stringify(semesters));
+                //alert(JSON.stringify(semesters));
 
                 //Send the JSON array to Controller using AJAX.
                 $.ajax({
@@ -473,7 +493,8 @@
             $('#txtSemesterCode').val(editRow.find("TD").eq(0).html().trim());
             $('#txtSemesterCode').prop('disabled', true);
             $('#txtSemesterName').val(editRow.find("TD").eq(1).html().trim());
-            $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); curriculum
+            $('#txtNumberOfVideoSessions').val(editRow.find("TD").eq(3).html().trim()); 
+            $('#txtNotes').val(editRow.find("TD").eq(4).html().trim()); 
 
             //Hide Save ALL button row, show footer
             $("#trSaveAll").attr("hidden", true);
@@ -499,8 +520,9 @@
                 semCore.SemesterName = row.find("input").eq(1).val();
                 semCore.CurriculumId = parseInt($('#currDDL option').filter(':selected').val());
                 semCore.NumberOfVideoSessions = parseInt(row.find("input").eq(2).val());
+                semCore.Notes = row.find("input").eq(3).val();
 
-                alert(JSON.stringify(semCore));
+                //alert(JSON.stringify(semCore));
 
                 $.ajax({
                     type: "POST",

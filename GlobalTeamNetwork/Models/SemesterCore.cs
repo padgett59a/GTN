@@ -13,6 +13,8 @@ namespace GlobalTeamNetwork.Models
         public string SemesterCode { get; set; }
         public string CurriculumName { get; set; }
         public Int16? NumberOfVideoSessions{ get; set; }
+        public string Notes { get; set; }
+
     }
     public class SemesterCore
     {
@@ -21,5 +23,6 @@ namespace GlobalTeamNetwork.Models
         public string SemesterCode { get; set; }
         public Int32 CurriculumID { get; set; }
         public Int16? NumberOfVideoSessions { get; set; }
+        public string Notes { get; set; }
     }
 }

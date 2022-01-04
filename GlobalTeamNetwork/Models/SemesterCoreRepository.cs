@@ -50,6 +50,7 @@ namespace GlobalTeamNetwork.Models
                 newSemCname.SemesterName = semester.SemesterName;
                 newSemCname.CurriculumName = currList.First(i => i.CurriculumID == semester.CurriculumID).CurriculumName;
                 newSemCname.NumberOfVideoSessions= semester.NumberOfVideoSessions;
+                newSemCname.Notes = semester.Notes;
 
                 semesterCnameList.Add(newSemCname);
             }
