@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "TranslationSteps";
 }
-<!DOCTYPE html>
 
 <!DOCTYPE html>
 
@@ -108,7 +107,9 @@
         //See if all input values are blank
         function allBlank() {
             var allAreBlank = (
-                $("#txtStep").val().length == 0);
+                $("#txtStep").val().length == 0 &&
+                $("#txtNotes").val().length == 0
+            );
             return allAreBlank;
         }
 

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using GlobalTeamNetwork.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -21,7 +23,39 @@ namespace GlobalTeamNetwork.Models
         }
         public MasteringStep GetMasteringStepById(int msId)
         {
-            throw new NotImplementedException();
+            return _appDbContext.MasteringSteps.Find(msId);
         }
+        public int InsertMasteringStep(List<MasteringStep> masteringStepList)
+        {
+            int addCount = 0;
+            foreach (MasteringStep newItem in masteringStepList)
+            {
+                var retVal = _appDbContext.MasteringSteps.Add(newItem);
+                if (retVal.State == EntityState.Added) { addCount++; }
+            }
+            _appDbContext.SaveChanges();
+            return addCount;
+        }
+
+        public int DeleteMasteringStep(List<int> delItemList)
+        {
+            int delCount = 0;
+            foreach (int delItemId in delItemList)
+            {
+                MasteringStep delItem = this.GetMasteringStepById(delItemId);
+                var retVal = _appDbContext.MasteringSteps.Remove(delItem);
+                if (retVal.State == EntityState.Deleted) { delCount++; }
+            }
+            _appDbContext.SaveChanges();
+            return delCount;
+        }
+        public EntityState UpdateMasteringStep(MasteringStep MasteringStep)
+        {
+            EntityEntry<MasteringStep> retVal = _appDbContext.MasteringSteps.Update(MasteringStep);
+            EntityState updateState = retVal.State;
+            _appDbContext.SaveChanges();
+            return updateState;
+        }
+
     }
 }

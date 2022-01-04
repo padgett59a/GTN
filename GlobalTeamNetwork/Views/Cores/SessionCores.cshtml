@@ -239,7 +239,8 @@
             var allAreBlank = (
                 $("#txtSessionName").val().length == 0 &&
                 $('#courseDDL option:selected').val() == '??' &&
-                $("#txtSessionCode").val().length == 0
+                $("#txtSessionCode").val().length == 0 &&
+                $("#txtNotes").val().length == 0
             );
             return allAreBlank;
         }

@@ -106,7 +106,9 @@
         //See if all input values are blank
         function allBlank() {
             var allAreBlank = (
-                $("#txtLangName").val().length == 0);
+                $("#txtLangName").val().length == 0 &&
+                $("#txtNotes").val().length == 0
+            );
             return allAreBlank;
         }
 

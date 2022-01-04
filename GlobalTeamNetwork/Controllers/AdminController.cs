@@ -137,6 +137,48 @@ namespace GlobalTeamNetwork.Controllers
             return View(masteringSteps);
         }
 
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertMasteringSteps([FromBody] List<MasteringStep> newMasteringStep)
+        {
+            if (newMasteringStep == null)
+            {
+                newMasteringStep = new List<MasteringStep>();
+            }
+
+            int insertCount = _masteringStepRepository.InsertMasteringStep(newMasteringStep);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteMasteringStep([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _masteringStepRepository.DeleteMasteringStep(delItemList);
+            return Json(deleteCount);
+        }
+        public JsonResult UpdateMasteringStep([FromBody] MasteringStep updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new MasteringStep();
+            }
+
+            EntityState retVal = _masteringStepRepository.UpdateMasteringStep(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
+
+
         //*****************Payments*****************
         public IActionResult Payments()
         {
