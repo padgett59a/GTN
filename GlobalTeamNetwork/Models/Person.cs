@@ -19,4 +19,16 @@ namespace GlobalTeamNetwork.Models
         public int personTypeID { get; set; }
 
     }
+    public class PersonOname
+    {
+        [Key]
+        public int personID { get; set; }
+        public string FullName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Location { get; set; }
+        public string Notes { get; set; }
+        public string Organization { get; set; }
+        public string Role { get; set; }
+    }
 }

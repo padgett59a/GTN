@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GlobalTeamNetwork.Models.MasteringStep>
 
 @{
-    ViewData["Title"] = "MasteringSteps";
+    ViewData["Title"] = "Mastering Steps";
 }
 
 <!DOCTYPE html>
@@ -16,7 +16,7 @@
     <h1>MasteringSteps</h1>
 
     <p>
-        <a id="createNew" href="javascript:void(0)">Add New MasteringStep</a>
+        <a id="createNew" href="javascript:void(0)">Add New Mastering Step</a>
     </p>
 
     <table id="tblMain" class="table table-bordered table-hover table-striped">
@@ -25,13 +25,16 @@
                 @*<th>
                         @Html.DisplayNameFor(model => model.msID)
                     </th>*@
-                <th class="columnSort" style="width:35%">
+                <th class="columnSort" style="width:30%">
                     @Html.DisplayNameFor(model => model.Step) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th style="width:45%">
+                <th style="width:10%">
+                    @Html.DisplayNameFor(model => model.DefaultPayDollars)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
-                <th style="width:20%">Actions</th>
+                <th style="width:15%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +46,12 @@
                         </td>*@
                     <td>
                         @Html.DisplayFor(modelItem => item.Step)
+                    </td>
+                    <td>
+                        @if (@item.DefaultPayDollars > 0)
+                        {
+                            @Html.Raw("$ ") @Html.DisplayFor(modelItem => item.DefaultPayDollars);
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Notes)
@@ -62,6 +71,9 @@
                     @Html.DisplayNameFor(model => model.Step)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.DefaultPayDollars)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
                 <th>Actions</th>
@@ -69,6 +81,7 @@
 
             <tr>
                 <td><input type="text" id="txtStep" class="itemInputClass" /></td>
+                <td nowrap>$&nbsp;<input type="text" id="txtDefaultPayDollars" class="itemInputClass" /></td>
                 <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
                 <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
             </tr>
@@ -108,7 +121,8 @@
         function allBlank() {
             var allAreBlank = (
                 $("#txtStep").val().length == 0 &&
-                $("#txtNotes").val().length == 0 
+                $("#txtDefaultPayDollars").val().length == 0 &&
+                $("#txtNotes").val().length == 0
             );
             return allAreBlank;
         }
@@ -122,13 +136,38 @@
 
             if (!allBlank()) {
                 //Validate input
-                if ( $("#txtStep").val().length == 0 ) {
+                if (
+                    $("#txtStep").val().length == 0 ||
+                    $("#txtDefaultPayDollars").val().length == 0
+                ) {
                     inputValid = false;
                     alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                }
+                else if (!amountsOnly($("#txtDefaultPayDollars").val())) {
+                    inputValid = false;
+                    alert("The DefaultPayDollars must be an amount in the format 'X.XX'  Please correct this before proceeding.");
                 }
             }
         }
 
+        //If all required data complete enable save button
+        $("body").on("blur", ".itemInputClass", function () {
+            if (
+                $('#txtStep').val().length > 0 &&
+                $('#txtDefaultPayDollars').val().length > 0
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        $("body").on("input", ".itemInputClass", function () {
+            if (
+                $('#txtStep').val().length > 0 &&
+                $('#txtDefaultPayDollars').val().length > 0
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
 
         $("body").on("click", "#btnCancel", function () {
             //Refresh the page
@@ -156,12 +195,16 @@
                 //Get the reference of the Table's TFOOT element.
                 var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add Row.
+                //Add Row and copy input values in
                 var row = tFoot.insertRow(0);
 
                 //Add txtStep cell
                 var cell = $(row.insertCell(-1));
                 cell.html($("#txtStep").val());
+
+                //Add txtDefaultAmount cell
+                var cell = $(row.insertCell(-1));
+                cell.html('$&nbsp;' + trimDecimal($("#txtDefaultPayDollars").val()));
 
                 //Add txtNotes cell
                 var cell = $(row.insertCell(-1));
@@ -177,22 +220,10 @@
 
                 //Clear the input control values
                 $("#txtStep").val("");
+                $("#txtDefaultPayDollars").val("");
                 $("#txtNotes").val("");
 
                 //now there is something to save
-                $("#btnSave").prop('disabled', false);
-            }
-        });
-
-        //If all required data complete enable save button
-        $("body").on("blur", ".itemInputClass", function () {
-            if ($('#txtStep').val().length > 0) {
-                $("#btnSave").prop('disabled', false);
-            }
-        });
-
-        $("body").on("input", ".itemInputClass", function () {
-            if ($('#txtStep').val().length > 0) {
                 $("#btnSave").prop('disabled', false);
             }
         });
@@ -206,11 +237,11 @@
 
             if (inputValid) {
                 //Loop through the Table rows and build a JSON array.
-                var masteringSteps = new Array();
+                var MasteringSteps = new Array();
 
                 $("#tblMain TFOOT TR").each(function () {
                     var row = $(this);
-                    var masteringStepsObj = {};
+                    var MasteringStepsObj = {};
 
                     //Skip the bottomLabels row
                     if (!row.hasClass("bottomLabels")) {
@@ -219,27 +250,31 @@
                         if (row.find('td:last-child').html().includes('value="Add Another"')) {
 
                             if (!allBlank()) {
-                                //masteringStepsObj.MasteringStepsID = null; //IDENTITY value
-                                masteringStepsObj.Step = row.find("input").eq(0).val();
-                                masteringStepsObj.Notes= row.find("input").eq(1).val();
-                                masteringSteps.push(masteringStepsObj);
+                                //MasteringStepsObj.MasteringStepsID = null; //IDENTITY value
+                                MasteringStepsObj.Step = row.find("input").eq(0).val();
+                                MasteringStepsObj.DefaultPayDollars = parseFloat(trimDollar(row.find("input").eq(1).val()));
+                                MasteringStepsObj.Notes= row.find("input").eq(2).val();
+                                MasteringSteps.push(MasteringStepsObj);
                             }
                         }
 
                         if (row.find('td:last-child').html().includes('value="Remove"')) {
-                            //masteringStepsObj.MasteringStepsID = null; //IDENTITY value
-                            masteringStepsObj.Step = row.find("TD").eq(0).html();
-                            masteringStepsObj.Notes = row.find("TD").eq(1).html();
-                            masteringSteps.push(masteringStepsObj);
+                            //MasteringStepsObj.MasteringStepsID = null; //IDENTITY value
+                            MasteringStepsObj.Step = row.find("TD").eq(0).html();
+                            MasteringStepsObj.DefaultPayDollars = parseFloat(trimDollar(row.find("TD").eq(1).html()));
+                            MasteringStepsObj.Notes = row.find("TD").eq(2).html();
+                            MasteringSteps.push(MasteringStepsObj);
                         }
                     }
                 });
+
+                //alert(JSON.stringify(MasteringSteps));
 
                 //Serialize the object array and send the JSON to the Controller using AJAX.
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("InsertMasteringSteps", "Admin")',
-                    data: JSON.stringify(masteringSteps),
+                    data: JSON.stringify(MasteringSteps),
                     dataType: 'JSON',
                     cache: false,
                     contentType: "application/json; charset=utf-8",
@@ -301,7 +336,8 @@
 
             //Copy current values to the edit controls
             $('#txtStep').val(editRow.find("TD").eq(0).html().trim());
-            $('#txtNotes').val(editRow.find("TD").eq(1).html().trim());
+            $('#txtDefaultPayDollars').val( trimDollar(editRow.find("TD").eq(1).html().trim()));
+            $('#txtNotes').val(editRow.find("TD").eq(2).html().trim());
 
             //Show footer
             $("#trSaveAll").attr("hidden", true);
@@ -317,25 +353,25 @@
         $("body").on("click", "#btnSaveEdit", function () {
 
             var editRow = $("#btnSaveEdit").closest("TR");
-            var masteringSteps = {};
+            var MasteringSteps = {};
             validateInput();
 
             if (inputValid) {
                 //push modified editRow to the add list
-                masteringSteps.msID = parseInt($("#btnSaveEdit").attr('data-id'));
-                //alert(masteringSteps.masteringStepsID);
-                masteringSteps.Step = editRow.find("input").eq(0).val();
-                masteringSteps.Notes = editRow.find("input").eq(1).val();
+                MasteringSteps.msID = parseInt($("#btnSaveEdit").attr('data-id'));
+                MasteringSteps.Step = editRow.find("input").eq(0).val();
+                MasteringSteps.DefaultPayDollars = parseFloat(editRow.find("input").eq(1).val());
+                MasteringSteps.Notes = editRow.find("input").eq(2).val();
 
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("UpdateMasteringStep", "Admin")',
-                    data: JSON.stringify(masteringSteps),
+                    data: JSON.stringify(MasteringSteps),
                     dataType: 'JSON',
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " masteringSteps(s) have been modified.");
+                        alert(r + " MasteringSteps(s) have been modified.");
                     }
                 });
 

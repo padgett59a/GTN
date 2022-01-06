@@ -69,25 +69,30 @@
         {
           "title": "All Persons",
           "showOnSeed": false,
-          "href": "users_persons"
+          "href": "persons_persons"
+        },
+        {
+          "title": "Customers",
+          "showOnSeed": false,
+          "href": "persons_customers"
         },
         {
           "title": "Admins",
           "showOnSeed": false,
-          "href": "users_admins"
+          "href": "persons_admins"
         },
         {
           "title": "Translators",
           "showOnSeed": false,
-          "href": "users_tranlators"
+          "href": "persons_tranlators"
         },
         {
           "title": "Masterers",
-          "href": "users_masterers"
+          "href": "persons_masterers"
         },
         {
           "title": "Archivers",
-          "href": "users_archivers"
+          "href": "persons_archivers"
         }
       ]
     },

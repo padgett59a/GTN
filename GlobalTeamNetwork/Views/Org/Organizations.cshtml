@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GlobalTeamNetwork.Models.Organization>
 
 @{
-    ViewData["Title"] = "Customers";
+    ViewData["Title"] = "Organizations";
 }
 
 <!DOCTYPE html>
@@ -9,23 +9,23 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Customers</title>
+    <title>Organizations</title>
 </head>
 <body>
-    <h1>Customers</h1>
+    <h1>Organizations</h1>
 
     <p>
-        <a id="createNew" href="javascript:void(0)">Add New Customer</a>
-        <!--     <button id="createNew">Add New Customer</button> -->
+        <a id="createNew" href="javascript:void(0)">Add New Organization</a>
+        <!--     <button id="createNew">Add New Organization</button> -->
     </p>
     <table id="tblOrgs" class="table">
         <thead>
             <tr>
                 <th>
-                    Customer
+                    Organization
                 </th>
                 <th>
-                    Custom Location
+                    Location
                 </th>
                 <th></th>
             </tr>

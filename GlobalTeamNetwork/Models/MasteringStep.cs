@@ -12,6 +12,7 @@ namespace GlobalTeamNetwork.Models
         [Key]
         public int msID { get; set; }
         public string Step { get; set; }
+        public decimal? DefaultPayDollars { get; set; }
         public string Notes { get; set; }
 
     }

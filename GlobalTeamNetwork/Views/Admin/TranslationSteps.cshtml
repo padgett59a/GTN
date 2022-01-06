@@ -23,36 +23,45 @@
         <thead>
             <tr>
                 @*<th>
-                        @Html.DisplayNameFor(model => model.tsID)
-                    </th>*@
-                <th class="columnSort" style="width:35%">
+            @Html.DisplayNameFor(model => model.tsID)
+        </th>*@
+                <th class="columnSort" style="width:30%">
                     @Html.DisplayNameFor(model => model.Step) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th style="width:45%">
+                <th style="width:10%">
+                    @Html.DisplayNameFor(model => model.DefaultPayDollars)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
-                <th style="width:20%">Actions</th>
+                <th style="width:15%">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.TranslationStepsID)
-                        </td>*@
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Step)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Notes)
-                    </td>
-                    <td>
-                        <a onclick="editItem('@item.tsID', this)" href="javascript:void(0)" id="@item.tsID">Edit</a> |
-                        <a asp-controller="Admin" asp-action="TranslationStepsDetail" asp-route-id="@item.tsID">Details</a> |
-                        <a onclick="deleteItem('@item.tsID', this)" href="javascript:void(0)" id="@item.tsID">Delete</a>
-                    </td>
-                </tr>
+            <tr>
+                @*<td>
+            @Html.DisplayFor(modelItem => item.TranslationStepsID)
+        </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Step)
+                </td>
+                <td>
+                    @if (@item.DefaultPayDollars > 0)
+                    {
+                        @Html.Raw("$ ") @Html.DisplayFor(modelItem => item.DefaultPayDollars);
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+                <td>
+                    <a onclick="editItem('@item.tsID', this)" href="javascript:void(0)" id="@item.tsID">Edit</a> |
+                    <a asp-controller="Admin" asp-action="TranslationStepsDetail" asp-route-id="@item.tsID">Details</a> |
+                    <a onclick="deleteItem('@item.tsID', this)" href="javascript:void(0)" id="@item.tsID">Delete</a>
+                </td>
+            </tr>
             }
         </tbody>
         <tfoot hidden>
@@ -62,6 +71,9 @@
                     @Html.DisplayNameFor(model => model.Step)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.DefaultPayDollars)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Notes)
                 </th>
                 <th>Actions</th>
@@ -69,6 +81,8 @@
 
             <tr>
                 <td><input type="text" id="txtStep" class="itemInputClass" /></td>
+                <td nowrap>$&nbsp;<input type="text" id="txtDefaultPayDollars" class="itemInputClass" /></td>
+                @*<td nowrap><input type="text" id="txtDefaultPayDollars" class="itemInputClass" /></td>*@
                 <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
                 <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
             </tr>
@@ -108,6 +122,7 @@
         function allBlank() {
             var allAreBlank = (
                 $("#txtStep").val().length == 0 &&
+                $("#txtDefaultPayDollars").val().length == 0 &&
                 $("#txtNotes").val().length == 0
             );
             return allAreBlank;
@@ -122,13 +137,38 @@
 
             if (!allBlank()) {
                 //Validate input
-                if ( $("#txtStep").val().length == 0 ) {
+                if (
+                    $("#txtStep").val().length == 0 ||
+                    $("#txtDefaultPayDollars").val().length == 0
+                ) {
                     inputValid = false;
                     alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                }
+                else if (!amountsOnly($("#txtDefaultPayDollars").val())) {
+                    inputValid = false;
+                    alert("The DefaultPayDollars must be an amount in the format 'X.XX'  Please correct this before proceeding.");
                 }
             }
         }
 
+        //If all required data complete enable save button
+        $("body").on("blur", ".itemInputClass", function () {
+            if (
+                $('#txtStep').val().length > 0 &&
+                $('#txtDefaultPayDollars').val().length > 0 
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        $("body").on("input", ".itemInputClass", function () {
+            if (
+                $('#txtStep').val().length > 0 &&
+                $('#txtDefaultPayDollars').val().length > 0
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+        });
 
         $("body").on("click", "#btnCancel", function () {
             //Refresh the page
@@ -156,12 +196,16 @@
                 //Get the reference of the Table's TFOOT element.
                 var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add Row.
+                //Add Row and copy input values in
                 var row = tFoot.insertRow(0);
 
                 //Add txtStep cell
                 var cell = $(row.insertCell(-1));
                 cell.html($("#txtStep").val());
+
+                //Add txtDefaultAmount cell
+                var cell = $(row.insertCell(-1));
+                cell.html('$&nbsp;' + trimDecimal($("#txtDefaultPayDollars").val()));
 
                 //Add txtNotes cell
                 var cell = $(row.insertCell(-1));
@@ -177,22 +221,10 @@
 
                 //Clear the input control values
                 $("#txtStep").val("");
+                $("#txtDefaultPayDollars").val("");
                 $("#txtNotes").val("");
 
                 //now there is something to save
-                $("#btnSave").prop('disabled', false);
-            }
-        });
-
-        //If all required data complete enable save button
-        $("body").on("blur", ".itemInputClass", function () {
-            if ($('#txtStep').val().length > 0) {
-                $("#btnSave").prop('disabled', false);
-            }
-        });
-
-        $("body").on("input", ".itemInputClass", function () {
-            if ($('#txtStep').val().length > 0) {
                 $("#btnSave").prop('disabled', false);
             }
         });
@@ -221,7 +253,8 @@
                             if (!allBlank()) {
                                 //translationStepsObj.TranslationStepsID = null; //IDENTITY value
                                 translationStepsObj.Step = row.find("input").eq(0).val();
-                                translationStepsObj.Notes= row.find("input").eq(1).val();
+                                translationStepsObj.DefaultPayDollars = parseFloat(trimDollar(row.find("input").eq(1).val()));
+                                translationStepsObj.Notes= row.find("input").eq(2).val();
                                 translationSteps.push(translationStepsObj);
                             }
                         }
@@ -229,11 +262,14 @@
                         if (row.find('td:last-child').html().includes('value="Remove"')) {
                             //translationStepsObj.TranslationStepsID = null; //IDENTITY value
                             translationStepsObj.Step = row.find("TD").eq(0).html();
-                            translationStepsObj.Notes = row.find("TD").eq(1).html();
+                            translationStepsObj.DefaultPayDollars = parseFloat(trimDollar(row.find("TD").eq(1).html()));
+                            translationStepsObj.Notes = row.find("TD").eq(2).html();
                             translationSteps.push(translationStepsObj);
                         }
                     }
                 });
+
+                //alert(JSON.stringify(translationSteps));
 
                 //Serialize the object array and send the JSON to the Controller using AJAX.
                 $.ajax({
@@ -301,7 +337,8 @@
 
             //Copy current values to the edit controls
             $('#txtStep').val(editRow.find("TD").eq(0).html().trim());
-            $('#txtNotes').val(editRow.find("TD").eq(1).html().trim());
+            $('#txtDefaultPayDollars').val( trimDollar(editRow.find("TD").eq(1).html().trim()));
+            $('#txtNotes').val(editRow.find("TD").eq(2).html().trim());
 
             //Show footer
             $("#trSaveAll").attr("hidden", true);
@@ -323,9 +360,9 @@
             if (inputValid) {
                 //push modified editRow to the add list
                 translationSteps.tsID = parseInt($("#btnSaveEdit").attr('data-id'));
-                //alert(translationSteps.translationStepsID);
                 translationSteps.Step = editRow.find("input").eq(0).val();
-                translationSteps.Notes = editRow.find("input").eq(1).val();
+                translationSteps.DefaultPayDollars = parseFloat(editRow.find("input").eq(1).val());
+                translationSteps.Notes = editRow.find("input").eq(2).val();
 
                 $.ajax({
                     type: "POST",

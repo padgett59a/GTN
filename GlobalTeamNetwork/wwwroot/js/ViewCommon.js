@@ -137,6 +137,37 @@ function digitsOnly(checkStr) {
     }
 }
 
+function trimDollar(inStr) {
+    return inStr.replace('$&nbsp;', '').replace('$ ','');
+}
+
+
+function trimDecimal(inStr) {
+    var trimStr = inStr + '00';
+    var dotPlace = inStr.indexOf('.');
+    if (dotPlace == -1) { return inStr + '.00' }
+    else {
+        return trimStr.substring(0, dotPlace + 3);
+    }
+    return trimStr;
+}
+
+//^\d{1,5}\.\d{0,2}$
+function amountsOnly(checkStr) {
+    if (checkStr.length == 0) {
+        return true;
+    }
+    else {
+        const reg = new RegExp("^\\d{0,5}\\.\\d{0,2}$");
+        if (reg.test(checkStr)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
 function decimalsOnly(checkStr) {
     if (checkStr.length == 0) {
         return true;

@@ -1,0 +1,592 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.PersonOname>
+
+@{
+    ViewData["Title"] = "Persons";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Session Cores</title>
+</head>
+<body>
+    <h1>Session Cores</h1>
+    <table>
+        <tr>
+            <td nowrap>
+                filtered&nbsp;for&nbsp;Role&nbsp;<select id="roleFilter" style="width:300px;">
+                    <option value="??">All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
+            </td>
+        </tr>
+    </table><br>
+
+    <p>
+        <a id="createNew" href="javascript:void(0)">Add New User</a>
+        <!--     <button id="createNew">Add Session Core</button> -->
+    </p>
+    <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
+        <thead>
+            <!-- Top Labels-->
+            <tr>
+                <th class="columnSort" style="width:20%">
+                    Full Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th class="columnSort" style="width:10%">
+                    @Html.DisplayNameFor(model => model.Phone) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th class="columnSort" style="width:15%">
+                    @Html.DisplayNameFor(model => model.Email) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th style="width:15%">
+                    @Html.DisplayNameFor(model => model.Location) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th style="width:15%">
+                    Organization &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th style="width:15%">
+                    Role &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th style="width:10%">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="dataRows">
+            @foreach (var item in Model)
+            {
+            <tr id="@(" tr" + @item.personID)">
+                <td>
+                    @Html.DisplayFor(model => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Location)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Organization)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Role)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.Notes)
+                </td>
+                <td>
+                    <a onclick="editItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Edit</a> |
+                    <a asp-controller="Cores" asp-action="PersonDetail" asp-route-id="@item.personID">Details</a> |
+                    <a onclick="deleteItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+        <tfoot hidden>
+
+            <!-- Bottom Labels-->
+            <tr id="bottomLabels" class="bottomLabels">
+                <th>
+                    Full Name
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Location)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Organization)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Role)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes)
+                </th>
+                <th>Actions</th>
+            </tr>
+
+            @*input controls for adding a new item*@
+        <tr>
+            <td><input type="text" id="txtFullName" class="itemInputClass" /></td>
+            <td><input type="text" id="txtPhone" class="itemInputClass" size="5" /></td>
+            <td><input type="text" id="txtEmail" class="itemInputClass" size="5" /></td>
+            <td><input type="text" id="txtLocation" class="itemInputClass" size="5" /></td>
+            <td id="orgDDL"><input type="text" id="tx.Phone" class="itemInputClass" /></td>
+            <td id="roleDDL"><input type="text" id="tx.Phone" class="itemInputClass" /></td>
+            <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
+            <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+        </tr>
+            <tr id="trSaveAll">
+                <td style="white-space:nowrap">
+                    <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnCancel" value="Cancel" />
+                </td>
+                <td colspan="100%"></td>
+            </tr>
+        </tfoot>
+    </table>
+    <p>
+        <a id="createNew2" href="javascript:void(0)">Add New Person</a>
+        <!--     <button id="createNew">Add Session Core</button> -->
+    </p>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+            var editItem;
+            var deleteItem;
+
+        $(document).ready(function () {
+
+            //pFilter is passed to the page via query string for page refresh, etc.
+            var pFilter = (new URL(location.href)).searchParams.get('filter');
+
+            //Set up the drop down value arrays
+            var inputValid = false;
+            var courses;
+            var delayMils = 900;
+            var pageObjectLabel = 'Persons';
+
+            //Set up Org drop down
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetOrganizationsJson","Org")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    organizations = response;
+                }
+            });
+            alert(JSON.stringify(organizations));
+
+            //set up Org drop down code
+            var orgDDLCode = '<select id = "orgDDL" name = "orgDDL"> '
+            orgDDLCode += "<option value='??'>None Selected</option>";
+            for (var key in courses) {
+                orgDDLCode += "<option value='" + courses[key].orgID + "'>" + courses[key].OrgName + "</option>";
+                $('#roleFilter').append($('<option>', {
+                    value: courses[key].orgID,
+                    text: courses[key].OrgName
+                }));
+            }
+            orgDDLCode += '</select >';
+
+            //Set up Roles drop down
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetPersonsJson","Admin")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    roles = response;
+                }
+            });
+
+            alert(JSON.stringify(roles));
+
+            //set up Role drop down code [PersonType]
+            var roleDDLCode = '<select id = "roleDDL" name = "roleDDL"> '
+            roleDDLCode += "<option value='??'>None Selected</option>";
+            for (var key in courses) {
+                roleDDLCode += "<option value='" + courses[key].personTypeID + "'>" + courses[key].PersonType + "</option>";
+                $('#roleFilter').append($('<option>', {
+                    value: courses[key].personTypeID,
+                    text: courses[key].PersonType
+                }));
+            }
+            roleDDLCode += '</select >';
+
+            $('#roleFilter').change(function () {
+                var roleFilter = this.options[this.selectedIndex].text;
+                if (roleFilter != "All") {
+                    $("#tblMain td:nth-child(5):contains('" + roleFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(5):not(:contains('" + roleFilter + "'))").parent().hide();
+                }
+                else {
+                    //show all rows
+                    $("#tblMain tr").show();
+                }
+                $("#tblMain TFOOT").attr("hidden", true);
+
+            })
+
+            //select the first role value or passed filter value and show the main table.
+            //pFilter gets set from the Course filter passed in via query string
+            if (pFilter != null) {
+                var boolFilterExists = roleDDLCode.indexOf("value='" + pFilter + "'") > -1;
+                if (boolFilterExists) {
+                    $('#roleFilter').val(pFilter).change();
+                }
+            }
+            else {
+                //Set to first option in the list
+                $('#roleFilter').prop('selectedIndex', 1).change();
+            }
+            $('#tblMain').removeAttr('hidden');
+
+            function refreshMe() {
+                //Refresh the page
+                var url = '@Url.Action("Persons", "Users")' + "?filter=" + $('#roleFilter option').filter(':selected').val() + getCurrentSort();
+                window.location.href = url;
+            }
+
+            $("body").on("click", "#btnCancel", function () {
+                refreshMe();
+            });
+
+            $("[id^=createNew]").click(function () {
+
+                //Set up add button
+                changeSaveButton(buttonType.ADD, 0);
+
+                //Default role drop down to current filter value
+                var roleReplVal = "<option value='" + $('#roleFilter').val() + "'>";
+                var roleReplValOpt = roleReplVal.replace('option value=', 'option selected value=');
+                var roleDDLCodeOpt = orgDDLCode.replace(roleReplVal, roleReplValOpt);
+                //alert(orgDDLCodeOpt);
+                $("#roleDDL").html(roleDDLCodeOpt);
+
+                //show footer
+                $("#tblMain tfoot>tr").show();
+                $("#tblMain TFOOT").attr("hidden", false);
+                //scroll to bottom
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            });
+
+            $("#showAllRows").click(function () {
+                //Set filter to 'All'
+                $('#roleFilter').prop('selectedIndex', 0).change();
+            });
+
+        //See if all input values are blank
+        function allBlank() {
+            var allAreBlank = (
+                $("#txtFullName").val().length == 0 &&
+                $("#txtPhone").val().length == 0 &&
+                $("#txtEmail").val().length == 0 &&
+                $("#txtLocation").val().length == 0 &&
+                $('#orgDDL option:selected').val() == '??' &&
+                $('#roleDDL option:selected').val() == '??' &&
+                $("#txtNotes").val().length == 0
+            );
+            return allAreBlank;
+        }
+
+        //validate input and set inputValid global boolean
+        function validateInput() {
+
+            //default to true
+            inputValid = true;
+
+            if (!allBlank()) {
+
+                //Validate input
+                if (//inp01.val().length == 0 ||
+                    $("#txtFullName").val().length == 0 ||
+                    $("#txtEmail").val().length == 0 ||
+                    $('#orgDDL option:selected').val() == '??' ||
+                    $('#roleDDL option:selected').val() == '??') {
+                    inputValid = false;
+                    alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                }
+                else if (!emailOnly($("#txtEmail").val().trim())) {
+                    inputValid = false;
+                    alert("Please input a valid email address before proceeding.");
+                }
+                else if ($("#txtPhone").val().trim().length > 0) {
+                    if (!phoneOnly($("#txtPhone").val().trim())) {
+                        inputValid = false;
+                        alert("Please input a valid phone number before proceeding.");
+                    }
+                }
+            }
+        }
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("input", ".itemInputClass", function () {
+            if (
+                //$('#txtpersonID').val().length > 0 &&
+                $('#txtFullName').val().length > 0 &&
+                $('#txtEmail').val().length > 0 &&
+                $('#orgDDL option:selected').val() != '??' &&
+                $('#roleDDL option:selected').val() != '??'
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop('disabled', true);
+            }
+        });
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("change", "#orgDDL, #instructorDDL", function () {
+            if (
+                //$('#txtpersonID').val().length > 0 &&
+                $('#txtFullName').val().length > 0 &&
+                $('#txtEmail').val().length > 0 &&
+                $('#orgDDL option:selected').val() != '??' &&
+                $('#roleDDL option:selected').val() != '??'
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop('disabled', true);
+            }
+        });
+
+        // Add another item - validate input
+        $("body").on("click", "#btnAdd", function () {
+
+            validateInput();
+
+            if (inputValid) {
+                //Get the reference of the Table's TFOOT element.
+                var tFoot = $("#tblMain > TFOOT")[0];
+
+                //Add a new row above the input row and move the added values to it
+                var row = tFoot.insertRow(0);
+
+                cell = $(row.insertCell(-1));
+                cell.html( $("#txtFullName").val());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtPhone").val());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtEmail").val());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtLocation").val());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#orgDDL option:selected").text());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#roleDDL option:selected").text());
+
+                cell = $(row.insertCell(-1));
+                cell.html($("#txtNotes").val());
+
+                //Add Remove button cell.
+                cell = $(row.insertCell(-1));
+                var btnRemove = $("<input />");
+                btnRemove.attr("type", "button");
+                btnRemove.attr("onclick", "removeRow(this);");
+                btnRemove.val("Remove");
+                cell.append(btnRemove);
+
+                //Clear the input control values of the new Add row
+                $("#txtFullName").val("");
+                $("#txtPhone").val("");
+                $("#txtEmail").val("");
+                $("#txtLocation").val("");
+                //$("#orgDDL select").val("??");
+                $("#txtNotes").val("");
+
+                //now there is something to save
+                $("#btnSave").prop('disabled', false);
+            }
+        });
+
+        //Save all added rows
+        $("body").on("click", "#btnSave", function () {
+
+            //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+            validateInput();
+
+            if (inputValid) {
+                //Loop through the Table rows and build a JSON array.
+                var persons = new Array();
+
+                $("#tblMain TFOOT TR").each(function () {
+                    var row = $(this);
+                    var Person = {};
+
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
+
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                Person.FullName = row.find("input").eq(0).val();
+                                Person.Phone = row.find("input").eq(1).val();
+                                Person.Email = row.find("input").eq(2).val();
+                                Person.Location = row.find("input").eq(3).val();
+                                Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
+                                Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
+                                //NOTE: All inputs, and checkboxes match find("input")
+                                Person.Notes = row.find("input").eq(4).val();
+                                persons.push(Person);
+                            }
+                        }
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //Person.personID = null; //IDENTITY value
+                            Person.FullName = row.find("TD").eq(0).html();
+                            Person.Phone = row.find("TD").eq(1).html();
+                            Person.Email = row.find("TD").eq(2).html();
+                            Person.Location = row.find("TD").eq(3).html();
+                            Person.orgID = parseInt(organizations.find(organization => organization.OrgName === decodeHtml(row.find("TD").eq(1).html())).orgID);
+                            Person.personTypeID = parseInt(roles.find(person => role.PersonType === decodeHtml(row.find("TD").eq(1).html())).personTypeID);
+                            Person.Notes = row.find("TD").eq(3).html();
+                            persons.push(Person);
+                        }
+                    }
+                });
+
+                //Serialize the object array and send the JSON to the Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertPersons","Users")',
+                    data: JSON.stringify(persons),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+        //Delete item via AJAX
+        deleteItem = function (itemId, button) {
+
+            //Determine the reference of the calling Row
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html().trim();
+
+            if (confirm("Do you want to delete Person: " + name + " ?")) {
+                var itemArray = new Array;
+                itemArray[0] = parseInt(itemId);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("deletePersons","Users")',
+                    data: JSON.stringify(itemArray),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        }
+
+        //Edit an item
+        editItem = function editItem(itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            //var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+
+            //set up the Org ddl html
+            var orgReplVal = "<option value='" + organizations.find(organization => organization.OrgName === decodeHtml(editRow.find("TD").eq(1).html().trim())).orgID + "'>";
+            var orgReplValOpt = orgReplVal.replace('option value=', 'option selected value=');
+            var orgDDLCodeOpt = orgDDLCode.replace(orgReplVal, orgReplValOpt);
+            //alert(orgDDLCodeOpt)
+            $("#orgDDL").html(orgDDLCodeOpt);
+
+            //set up the Role ddl html
+            var roleReplVal = "<option value='" + roles.find(role => role.PersonType === decodeHtml(editRow.find("TD").eq(1).html().trim())).personTypeID + "'>";
+            var roleReplValOpt = roleReplVal.replace('option value=', 'option selected value=');
+            var roleDDLCodeOpt = roleDDLCode.replace(roleReplVal, roleReplValOpt);
+            //alert(roleDDLCodeOpt)
+            $("#roleDDL").html(roleDDLCodeOpt);
+
+            //Copy unmodified values to the edit controls
+            $('#txtFullName').val(editRow.find("TD").eq(0).html().trim());
+            $('#txtPhone').val(editRow.find("TD").eq(1).html().trim());
+            $('#txtEmail').val(editRow.find("TD").eq(2).html().trim());
+            $('#txtLocation').val(editRow.find("TD").eq(3).html().trim());
+            $('#txtNotes').val(editRow.find("TD").eq(6).html().trim());
+
+            //Hide Save ALL button row, show footer
+            $("#trSaveAll").attr("hidden", true);
+            $("#tblMain tfoot>tr").show();
+            $("#tblMain TFOOT").attr("hidden", false);
+
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+
+        //Save edits via ajax
+        $("body").on("click", "#btnSaveEdit", function () {
+
+            var editRow = $("#btnSaveEdit").closest("TR");
+            var Person = {};
+            validateInput();
+
+            if (inputValid) {
+                //push modified editRow to the add list
+                Person.personID = parseInt($("#btnSaveEdit").attr('data-id'));
+                Person.FullName = editRow.find("input").eq(0).val();
+                Person.Phone = editRow.find("input").eq(2).val();
+                Person.Email = editRow.find("input").eq(3).val();
+                Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
+                Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
+                //NOTE: All inputs, and checkboxes match find("input")
+                Person.Notes = editRow.find("input").eq(4).val();
+                //alert(JSON.stringify(Person));
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdatePerson","Users")',
+                    data: JSON.stringify(Person),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Person(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+        $('html, body').animate({ scrollTop: '0px' }, 300);
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>

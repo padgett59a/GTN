@@ -24,5 +24,6 @@ namespace GlobalTeamNetwork.Data
         public DbSet<MasteringStep> MasteringSteps { get; set; }
         public DbSet<MediaType> MediaTypes {get; set; }
         public DbSet<Person> Persons {get; set; }
+        public DbSet<PersonType> PersonTypes { get; set; }
     }
 }
