@@ -47,7 +47,10 @@ namespace GlobalTeamNetwork.Models
                 newPersonOname.Phone = Person.Phone;
                 newPersonOname.Email = Person.Email;
                 newPersonOname.Location = Person.Location;
-                newPersonOname.Organization = orgList.First(o => o.orgID == Person.orgID).OrgName;
+                if (Person.orgID != null)
+                {
+                    newPersonOname.Organization = orgList.First(o => o.orgID == Person.orgID).OrgName;
+                }
                 newPersonOname.Role = personTypeList.First(pt => pt.personTypeID == Person.personTypeID).PersonTypeName;
                 newPersonOname.Location = Person.Location;
                 newPersonOname.Notes = Person.Notes;

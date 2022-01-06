@@ -17,7 +17,7 @@
     @*Filtering*@
     <table><tr><td nowrap>
     filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
-        <option value="??">All</option>
+        <option value='??'>All</option>
     </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
     </td></tr></table><br>   
@@ -222,7 +222,7 @@
             });
 
 
-            //set up semester drop downs
+            //set up semester drop downs semDDL code and semFilter options
             var semesterDdlCode = '<select id = "semesterDDL" name = "semesterDDL"> '
             semesterDdlCode += "<option value='??'>None Selected</option>";
             for (var key in semesters) {
@@ -396,113 +396,116 @@
         // Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
-            validateInput();
+            if (!allBlank()) {
 
-            if (inputValid) {
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                validateInput();
 
-                //Add a new row above the input row and move the added values to it
-                var row = tFoot.insertRow(0);
+                if (inputValid) {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                ////Add Course ID cell.
-                //var cell = $(row.insertCell(-1));
-                //cell.html(inp01.val());
-                //cell.addClass("CourseCode");
+                    //Add a new row above the input row and move the added values to it
+                    var row = tFoot.insertRow(0);
 
-                //Add Course Name cell.
-                cell = $(row.insertCell(-1));
-                cell.html( $("#txtCourseName").val());
+                    ////Add Course ID cell.
+                    //var cell = $(row.insertCell(-1));
+                    //cell.html(inp01.val());
+                    //cell.addClass("CourseCode");
 
-                //Add Semester select cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#semesterDDL option:selected").text());
+                    //Add Course Name cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtCourseName").val());
 
-                //Add Letter Code cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtCourseLetterCode").val());
+                    //Add Semester select cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#semesterDDL option:selected").text());
 
-                //Add Number Code cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtCourseNumberCode").val());
+                    //Add Letter Code cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtCourseLetterCode").val());
 
-                //Add Instructor select cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#instructorDDL option:selected").text());
+                    //Add Number Code cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtCourseNumberCode").val());
 
-                //Add Has Workbook
-                cell = $(row.insertCell(-1));
-                if ($("#txtHasWorkbook").is(':checked')) {
-                    cell.html(getCBhtml(true, true));
-                }
-                else {
-                    cell.html(getCBhtml(false, true));
-                }
+                    //Add Instructor select cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#instructorDDL option:selected").text());
 
-                //Add Has Video Text
-                cell = $(row.insertCell(-1));
-                if ($("#txtHasVideoText").is(':checked')) {
-                    cell.html(getCBhtml(true, true));
-                }
-                else {
-                    cell.html(getCBhtml(false, true));
-                }
+                    //Add Has Workbook
+                    cell = $(row.insertCell(-1));
+                    if ($("#txtHasWorkbook").is(':checked')) {
+                        cell.html(getCBhtml(true, true));
+                    }
+                    else {
+                        cell.html(getCBhtml(false, true));
+                    }
 
-                //Add Videos In Hand
-                cell = $(row.insertCell(-1));
-                if ($("#txtVideosInHand").is(':checked')) {
-                    cell.html(getCBhtml(true, true));
-                }
-                else {
-                    cell.html(getCBhtml(false, true));
-                }
+                    //Add Has Video Text
+                    cell = $(row.insertCell(-1));
+                    if ($("#txtHasVideoText").is(':checked')) {
+                        cell.html(getCBhtml(true, true));
+                    }
+                    else {
+                        cell.html(getCBhtml(false, true));
+                    }
 
-                //Add Mastering Files In Hand
-                cell = $(row.insertCell(-1));
-                if ($("#txtMasteringFilesInHand").is(':checked')) {
-                    cell.html(getCBhtml(true, true));
-                }
-                else {
-                    cell.html(getCBhtml(false, true));
-                }
+                    //Add Videos In Hand
+                    cell = $(row.insertCell(-1));
+                    if ($("#txtVideosInHand").is(':checked')) {
+                        cell.html(getCBhtml(true, true));
+                    }
+                    else {
+                        cell.html(getCBhtml(false, true));
+                    }
 
-                //Add Text Files In Hand
-                cell = $(row.insertCell(-1));
-                if ($("#txtTextFilesInHand").is(':checked')) {
-                    cell.html(getCBhtml(true, true));
-                }
-                else {
-                    cell.html(getCBhtml(false, true));
-                }
+                    //Add Mastering Files In Hand
+                    cell = $(row.insertCell(-1));
+                    if ($("#txtMasteringFilesInHand").is(':checked')) {
+                        cell.html(getCBhtml(true, true));
+                    }
+                    else {
+                        cell.html(getCBhtml(false, true));
+                    }
 
-                //Add Notes cell
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    //Add Text Files In Hand
+                    cell = $(row.insertCell(-1));
+                    if ($("#txtTextFilesInHand").is(':checked')) {
+                        cell.html(getCBhtml(true, true));
+                    }
+                    else {
+                        cell.html(getCBhtml(false, true));
+                    }
 
-                //Add Remove button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add Notes cell
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
-                //Clear the input control values of the new Add row
-                //inp01.val("");
+                    //Add Remove button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
+
+                    //Clear the input control values of the new Add row
+                    //inp01.val("");
                     $("#txtCourseName").val("");
-                //$("#semesterDDL select").val("??");
-                $("#txtCourseLetterCode").val("");
-                $("#txtCourseNumberCode").val("");
-                //$("#instructorDDL select").val("??");
-                $("#txtHasWorkbook").prop('checked', false);
-                $("#txtHasVideoText").prop('checked', false);
-                $("#txtVideosInHand").prop('checked', false);
-                $("#txtMasteringFilesInHand").prop('checked', false);
-                $("#txtTextFilesInHand").prop('checked', false);
-                $("#txtNotes").val("");
+                    //$("#semesterDDL select").val(NOSELECTION);
+                    $("#txtCourseLetterCode").val("");
+                    $("#txtCourseNumberCode").val("");
+                    //$("#instructorDDL select").val(NOSELECTION);
+                    $("#txtHasWorkbook").prop('checked', false);
+                    $("#txtHasVideoText").prop('checked', false);
+                    $("#txtVideosInHand").prop('checked', false);
+                    $("#txtMasteringFilesInHand").prop('checked', false);
+                    $("#txtTextFilesInHand").prop('checked', false);
+                    $("#txtNotes").val("");
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 

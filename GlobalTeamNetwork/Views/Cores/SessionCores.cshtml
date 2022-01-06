@@ -17,7 +17,7 @@
             <tr>
                 <td nowrap>
                     filtered&nbsp;for&nbsp;Course&nbsp;<select id="corsFilter" style="width:300px;">
-                        <option value="??">All</option>
+                        <option value='??'>All</option>
                     </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
                 </td>
@@ -305,53 +305,56 @@
         // Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
-            validateInput();
+            if (!allBlank()) {
 
-            if (inputValid) {
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                validateInput();
 
-                //Add a new row above the input row and move the added values to it
-                var row = tFoot.insertRow(0);
+                if (inputValid) {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                ////Add Session ID cell.
-                //var cell = $(row.insertCell(-1));
-                //cell.html(inp01.val());
-                //cell.addClass("SessionCode");
+                    //Add a new row above the input row and move the added values to it
+                    var row = tFoot.insertRow(0);
 
-                //Add Session Name cell.
-                cell = $(row.insertCell(-1));
-                cell.html( $("#txtSessionName").val());
+                    ////Add Session ID cell.
+                    //var cell = $(row.insertCell(-1));
+                    //cell.html(inp01.val());
+                    //cell.addClass("SessionCode");
 
-                //Add Course select cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#courseDDL option:selected").text());
+                    //Add Session Name cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtSessionName").val());
 
-                //Add Letter Code cell.
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtSessionCode").val());
+                    //Add Course select cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#courseDDL option:selected").text());
 
-                //Add Notes cell
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    //Add Letter Code cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtSessionCode").val());
 
-                //Add Remove button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add Notes cell
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
-                //Clear the input control values of the new Add row
-                //inp01.val("");
-                $("#txtSessionName").val("");
-                //$("#courseDDL select").val("??");
-                $("#txtSessionCode").val("");
-                $("#txtNotes").val("");
+                    //Add Remove button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //Clear the input control values of the new Add row
+                    //inp01.val("");
+                    $("#txtSessionName").val("");
+                    //$("#courseDDL select").val(NOSELECTION);
+                    $("#txtSessionCode").val("");
+                    $("#txtNotes").val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 

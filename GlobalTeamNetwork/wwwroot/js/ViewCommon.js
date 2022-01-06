@@ -15,6 +15,7 @@ const buttonType = {
     ADD: 1
 }
 
+const NOSELECTION = "??";
 
 //Sort Arrow enum
 const sortArrow = {
@@ -122,6 +123,21 @@ function waitSeconds(iMilliSeconds) {
     }
 }
 
+function phoneOnly(checkStr) {
+    if (checkStr.length == 0) {
+        return true;
+    }
+    else {
+        const reg = new RegExp('^[0-9\\.\\-\\s]+$');
+        if (reg.test(checkStr)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
 function digitsOnly(checkStr) {
     if (checkStr.length == 0) {
         return true;
@@ -168,6 +184,22 @@ function amountsOnly(checkStr) {
     }
 }
 
+///^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\.)+([A-Za-z0-9]{2,4}|museum)$/;
+function emailOnly (checkStr) {
+    if (checkStr.length == 0) {
+        return true;
+    }
+    else {
+        const reg = new RegExp("^[A-Za-z0-9._%+-]+@([A-Za-z0-9-]+\\.)+([A-Za-z0-9]{2,4})$");
+        if (reg.test(checkStr)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
 function decimalsOnly(checkStr) {
     if (checkStr.length == 0) {
         return true;
@@ -188,7 +220,7 @@ function alphaOnly(checkStr) {
         return true;
     }
     else {
-        const reg = new RegExp('^[A-Za-z]+$');
+        const reg = new RegExp('^[\\A-Za-z\\-\\s]+$');
         if (reg.test(checkStr)) {
             return true;
         }

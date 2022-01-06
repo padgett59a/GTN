@@ -137,36 +137,40 @@
 
         // Add another item
         $("body").on("click", "#btnAdd", function () {
-            //Reference the Name and Country TextBoxes.
-            var txt01 = $("#txtCurriculumName");
 
-            if (txt01.val().length == 0) {
-                alert("Please enter all " + pageObjectLabel + " data before proceeding.");
-            }
-            else {
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+            if (!allBlank()) {
 
-                //Add Row.
-                var row = tFoot.insertRow(0);
+                //Reference the Name and Country TextBoxes.
+                var txt01 = $("#txtCurriculumName");
 
-                //Add txtCurriculumCode cell.
-                var cell = $(row.insertCell(-1));
-                cell.html(txt01.val());
+                if (txt01.val().length == 0) {
+                    alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                }
+                else {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add Button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add Row.
+                    var row = tFoot.insertRow(0);
 
-                //Clear the input control values
-                txt01.val("");
+                    //Add txtCurriculumCode cell.
+                    var cell = $(row.insertCell(-1));
+                    cell.html(txt01.val());
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //Add Button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
+
+                    //Clear the input control values
+                    txt01.val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 

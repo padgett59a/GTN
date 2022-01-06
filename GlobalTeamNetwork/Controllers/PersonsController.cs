@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace GlobalTeamNetwork.Controllers
 {
-    public class UsersController : Controller
+    public class PersonsController : Controller
     {
         private readonly IPersonsRepository _personsRepository;
         private readonly IPersonTypeRepository _personTypeRepository;
 
-        public UsersController(IPersonsRepository personsRepository, IPersonTypeRepository personTypeRepository)
+        public PersonsController(IPersonsRepository personsRepository, IPersonTypeRepository personTypeRepository)
         {
             _personsRepository = personsRepository;
             _personTypeRepository = personTypeRepository;
@@ -33,7 +33,7 @@ namespace GlobalTeamNetwork.Controllers
         //    return retVal;
         //}
 
-        public string GetPersonTypeJson()
+        public string GetPersonTypesJson()
         {
             var personTypes = _personTypeRepository.AllPersonTypes;
             string retVal = JsonConvert.SerializeObject(personTypes);
@@ -67,7 +67,7 @@ namespace GlobalTeamNetwork.Controllers
             return Json(deleteCount);
         }
 
-        public JsonResult UpdateSemester([FromBody] Person updateItem)
+        public JsonResult UpdatePerson([FromBody] Person updateItem)
         {
             int updateCount = 0;
             if (updateItem == null)

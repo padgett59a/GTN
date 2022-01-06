@@ -62,37 +62,43 @@
       ]
     },
     {
-      "title": "Users",
+      "title": "Persons",
       "icon": "fal fa-user",
       "environment": "production",
       "items": [
         {
           "title": "All Persons",
           "showOnSeed": false,
-          "href": "persons_persons"
+          "href": "persons_persons?filter=0"
         },
         {
           "title": "Customers",
           "showOnSeed": false,
-          "href": "persons_customers"
+          "href": "persons_persons?filter=1"
         },
+        {
+          "title": "Instructors",
+          "showOnSeed": false,
+          "href": "persons_persons?filter=6"
+        },
+
         {
           "title": "Admins",
           "showOnSeed": false,
-          "href": "persons_admins"
+          "href": "persons_persons?filter=2"
         },
         {
           "title": "Translators",
           "showOnSeed": false,
-          "href": "persons_tranlators"
+          "href": "persons_persons?filter=3"
         },
         {
           "title": "Masterers",
-          "href": "persons_masterers"
+          "href": "persons_persons?filter=4"
         },
         {
           "title": "Archivers",
-          "href": "persons_archivers"
+          "href": "persons_persons?filter=5"
         }
       ]
     },

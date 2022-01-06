@@ -2,6 +2,7 @@ using GlobalTeamNetwork.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace GlobalTeamNetwork.Controllers
 {
@@ -23,7 +24,14 @@ namespace GlobalTeamNetwork.Controllers
             var organizations = _organizationRepository.AllOrganizations;
             return View(organizations);
         }
-        
+
+        public string GetOrganizationsJson()
+        {
+            var organizations = _organizationRepository.AllOrganizations;
+            string retVal = JsonConvert.SerializeObject(organizations);
+            return retVal;
+        }
+
         [HttpPost] 
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
         public JsonResult InsertOrgs([FromBody]List<Organization> newOrgs)

@@ -188,43 +188,46 @@
         // Add another item
         $("body").on("click", "#btnAdd", function () {
 
-            validateInput();
+            if (!allBlank()) {
 
-            if (inputValid) {
+                validateInput();
 
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                if (inputValid) {
 
-                //Add Row and copy input values in
-                var row = tFoot.insertRow(0);
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add txtStep cell
-                var cell = $(row.insertCell(-1));
-                cell.html($("#txtStep").val());
+                    //Add Row and copy input values in
+                    var row = tFoot.insertRow(0);
 
-                //Add txtDefaultAmount cell
-                var cell = $(row.insertCell(-1));
-                cell.html('$&nbsp;' + trimDecimal($("#txtDefaultPayDollars").val()));
+                    //Add txtStep cell
+                    var cell = $(row.insertCell(-1));
+                    cell.html($("#txtStep").val());
 
-                //Add txtNotes cell
-                var cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    //Add txtDefaultAmount cell
+                    var cell = $(row.insertCell(-1));
+                    cell.html('$&nbsp;' + trimDecimal($("#txtDefaultPayDollars").val()));
 
-                //Add Button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add txtNotes cell
+                    var cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
-                //Clear the input control values
-                $("#txtStep").val("");
-                $("#txtDefaultPayDollars").val("");
-                $("#txtNotes").val("");
+                    //Add Button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //Clear the input control values
+                    $("#txtStep").val("");
+                    $("#txtDefaultPayDollars").val("");
+                    $("#txtNotes").val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 

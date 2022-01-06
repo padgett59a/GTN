@@ -9,29 +9,29 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Session Cores</title>
+    <title>Persons</title>
 </head>
 <body>
-    <h1>Session Cores</h1>
+    <h1>Persons</h1>
     <table>
         <tr>
             <td nowrap>
                 filtered&nbsp;for&nbsp;Role&nbsp;<select id="roleFilter" style="width:300px;">
-                    <option value="??">All</option>
+                    <option value='??'>All</option>
                 </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
             </td>
         </tr>
     </table><br>
 
     <p>
-        <a id="createNew" href="javascript:void(0)">Add New User</a>
-        <!--     <button id="createNew">Add Session Core</button> -->
+        <a id="createNew" href="javascript:void(0)">Add New Person</a>
+        <!--     <button id="createNew">Add Person</button> -->
     </p>
     <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
         <thead>
             <!-- Top Labels-->
             <tr>
-                <th class="columnSort" style="width:20%">
+                <th class="columnSort" style="width:15%">
                     Full Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
                 <th class="columnSort" style="width:10%">
@@ -40,13 +40,13 @@
                 <th class="columnSort" style="width:15%">
                     @Html.DisplayNameFor(model => model.Email) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th style="width:15%">
+                <th class="columnSort" style="width:10%">
                     @Html.DisplayNameFor(model => model.Location) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th style="width:15%">
+                <th class="columnSort" style="width:15%">
                     Organization &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th style="width:15%">
+                <th class="columnSort" style="width:10%">
                     Role &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
                 <th>
@@ -119,11 +119,11 @@
             @*input controls for adding a new item*@
         <tr>
             <td><input type="text" id="txtFullName" class="itemInputClass" /></td>
-            <td><input type="text" id="txtPhone" class="itemInputClass" size="5" /></td>
-            <td><input type="text" id="txtEmail" class="itemInputClass" size="5" /></td>
-            <td><input type="text" id="txtLocation" class="itemInputClass" size="5" /></td>
-            <td id="orgDDL"><input type="text" id="tx.Phone" class="itemInputClass" /></td>
-            <td id="roleDDL"><input type="text" id="tx.Phone" class="itemInputClass" /></td>
+            <td><input type="text" id="txtPhone" class="itemInputClass" size="15" /></td>
+            <td><input type="text" id="txtEmail" class="itemInputClass" size="15" /></td>
+            <td><input type="text" id="txtLocation" class="itemInputClass" size="15" /></td>
+            <td id="orgDDL"><input type="text" class="itemInputClass" /></td>
+            <td id="roleDDL"><input type="text" class="itemInputClass" /></td>
             <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
             <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
         </tr>
@@ -138,7 +138,7 @@
     </table>
     <p>
         <a id="createNew2" href="javascript:void(0)">Add New Person</a>
-        <!--     <button id="createNew">Add Session Core</button> -->
+        <!--     <button id="createNew">Add Person</button> -->
     </p>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -147,17 +147,19 @@
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
-            var editItem;
-            var deleteItem;
+        var editItem;
+        var deleteItem;
 
         $(document).ready(function () {
+
+            //alert(phoneOnly('iiei ee'));
+            //alert(phoneOnly('999.999-333'));
 
             //pFilter is passed to the page via query string for page refresh, etc.
             var pFilter = (new URL(location.href)).searchParams.get('filter');
 
             //Set up the drop down value arrays
             var inputValid = false;
-            var courses;
             var delayMils = 900;
             var pageObjectLabel = 'Persons';
 
@@ -171,50 +173,51 @@
                     organizations = response;
                 }
             });
-            alert(JSON.stringify(organizations));
+            //alert(JSON.stringify(organizations));
 
             //set up Org drop down code
-            var orgDDLCode = '<select id = "orgDDL" name = "orgDDL"> '
+            var orgDDLCode = '<select id="orgDDL" name="orgDDL"> '
             orgDDLCode += "<option value='??'>None Selected</option>";
-            for (var key in courses) {
-                orgDDLCode += "<option value='" + courses[key].orgID + "'>" + courses[key].OrgName + "</option>";
-                $('#roleFilter').append($('<option>', {
-                    value: courses[key].orgID,
-                    text: courses[key].OrgName
-                }));
+            for (var key in organizations) {
+                orgDDLCode += "<option value='" + organizations[key].orgID + "'>" + organizations[key].OrgName + "</option>";
+            //    $('#orgDDL').append($('<option>', {
+            //        value: organizations[key].orgID,
+            //        text: organizations[key].OrgName
+            //    }));
             }
             orgDDLCode += '</select >';
+
 
             //Set up Roles drop down
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetPersonsJson","Admin")',
+                url: '@Url.Action("GetPersonTypesJson","Persons")',
                 dataType: "json",
                 async: false,
                 success: function (response) {
                     roles = response;
                 }
             });
+            //alert(JSON.stringify(roles));
 
-            alert(JSON.stringify(roles));
-
-            //set up Role drop down code [PersonType]
+            //set up Role drop downs roleDDL code and roleFilter options [from PersonTypes]
             var roleDDLCode = '<select id = "roleDDL" name = "roleDDL"> '
             roleDDLCode += "<option value='??'>None Selected</option>";
-            for (var key in courses) {
-                roleDDLCode += "<option value='" + courses[key].personTypeID + "'>" + courses[key].PersonType + "</option>";
+            for (var key in roles) {
+                roleDDLCode += "<option value='" + roles[key].personTypeID + "'>" + roles[key].PersonTypeName + "</option>";
                 $('#roleFilter').append($('<option>', {
-                    value: courses[key].personTypeID,
-                    text: courses[key].PersonType
+                    value: roles[key].personTypeID,
+                    text: roles[key].PersonTypeName
                 }));
             }
             roleDDLCode += '</select >';
 
+            //Show and Hide rows based on filter change
             $('#roleFilter').change(function () {
                 var roleFilter = this.options[this.selectedIndex].text;
                 if (roleFilter != "All") {
-                    $("#tblMain td:nth-child(5):contains('" + roleFilter + "')").parent().show();
-                    $("#tblMain td:nth-child(5):not(:contains('" + roleFilter + "'))").parent().hide();
+                    $("#tblMain td:nth-child(6):contains('" + roleFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(6):not(:contains('" + roleFilter + "'))").parent().hide();
                 }
                 else {
                     //show all rows
@@ -224,7 +227,7 @@
 
             })
 
-            //select the first role value or passed filter value and show the main table.
+            //select the first role value OR passed filter value and show the main table.
             //pFilter gets set from the Course filter passed in via query string
             if (pFilter != null) {
                 var boolFilterExists = roleDDLCode.indexOf("value='" + pFilter + "'") > -1;
@@ -240,7 +243,7 @@
 
             function refreshMe() {
                 //Refresh the page
-                var url = '@Url.Action("Persons", "Users")' + "?filter=" + $('#roleFilter option').filter(':selected').val() + getCurrentSort();
+                var url = '@Url.Action("Persons", "Persons")' + "?filter=" + $('#roleFilter option').filter(':selected').val() + getCurrentSort();
                 window.location.href = url;
             }
 
@@ -253,11 +256,13 @@
                 //Set up add button
                 changeSaveButton(buttonType.ADD, 0);
 
+                //set up org DDL
+                $("#orgDDL").html(orgDDLCode);
+
                 //Default role drop down to current filter value
                 var roleReplVal = "<option value='" + $('#roleFilter').val() + "'>";
                 var roleReplValOpt = roleReplVal.replace('option value=', 'option selected value=');
-                var roleDDLCodeOpt = orgDDLCode.replace(roleReplVal, roleReplValOpt);
-                //alert(orgDDLCodeOpt);
+                var roleDDLCodeOpt = roleDDLCode.replace(roleReplVal, roleReplValOpt);
                 $("#roleDDL").html(roleDDLCodeOpt);
 
                 //show footer
@@ -280,7 +285,7 @@
                 $("#txtEmail").val().length == 0 &&
                 $("#txtLocation").val().length == 0 &&
                 $('#orgDDL option:selected').val() == '??' &&
-                $('#roleDDL option:selected').val() == '??' &&
+                //$('#roleDDL option:selected').val() == '??' &&
                 $("#txtNotes").val().length == 0
             );
             return allAreBlank;
@@ -293,24 +298,29 @@
             inputValid = true;
 
             if (!allBlank()) {
+                //alert('not all blank');
 
                 //Validate input
                 if (//inp01.val().length == 0 ||
                     $("#txtFullName").val().length == 0 ||
-                    $("#txtEmail").val().length == 0 ||
-                    $('#orgDDL option:selected').val() == '??' ||
                     $('#roleDDL option:selected').val() == '??') {
                     inputValid = false;
                     alert("Please enter all " + pageObjectLabel + " data before proceeding.");
                 }
-                else if (!emailOnly($("#txtEmail").val().trim())) {
-                    inputValid = false;
-                    alert("Please input a valid email address before proceeding.");
+                if ($("#txtEmail").val().trim().length > 0) {
+                    if (!emailOnly($("#txtEmail").val().trim())) {
+                        inputValid = false;
+                        alert("Please input a valid email address before proceeding.");
+                    }
                 }
-                else if ($("#txtPhone").val().trim().length > 0) {
+                if ($("#txtPhone").val().trim().length > 0) {
                     if (!phoneOnly($("#txtPhone").val().trim())) {
                         inputValid = false;
                         alert("Please input a valid phone number before proceeding.");
+                    }
+                    if ($("#txtPhone").val().trim().replace(/-|\.|\s/g, '').length < 10) {
+                        inputValid = false;
+                        alert("Please input a phone number with at least 10 digits before proceeding.");
                     }
                 }
             }
@@ -321,8 +331,6 @@
             if (
                 //$('#txtpersonID').val().length > 0 &&
                 $('#txtFullName').val().length > 0 &&
-                $('#txtEmail').val().length > 0 &&
-                $('#orgDDL option:selected').val() != '??' &&
                 $('#roleDDL option:selected').val() != '??'
             ) {
                 $("#btnSave").prop('disabled', false);
@@ -333,13 +341,11 @@
         });
 
         //Enable or Disable the save button when required fields are completed and valid
-        $("body").on("change", "#orgDDL, #instructorDDL", function () {
+        $("body").on("change", "#orgDDL, #roleDDL", function () {
             if (
                 //$('#txtpersonID').val().length > 0 &&
                 $('#txtFullName').val().length > 0 &&
-                $('#txtEmail').val().length > 0 &&
-                $('#orgDDL option:selected').val() != '??' &&
-                $('#roleDDL option:selected').val() != '??'
+                $('#roleDDL option:selected').val() != NOSELECTION
             ) {
                 $("#btnSave").prop('disabled', false);
             }
@@ -351,54 +357,59 @@
         // Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
-            validateInput();
+            if (!allBlank()) {
 
-            if (inputValid) {
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                validateInput();
 
-                //Add a new row above the input row and move the added values to it
-                var row = tFoot.insertRow(0);
+                if (inputValid) {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                cell = $(row.insertCell(-1));
-                cell.html( $("#txtFullName").val());
+                    //Add a new row above the input row and move the added values to it
+                    var row = tFoot.insertRow(0);
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtPhone").val());
+                    cell = $(row.insertCell(-1));
+                    cell.html( $("#txtFullName").val());
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtEmail").val());
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtPhone").val());
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtLocation").val());
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtEmail").val());
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#orgDDL option:selected").text());
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtLocation").val());
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#roleDDL option:selected").text());
+                    cell = $(row.insertCell(-1));
+                    if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
+                        cell.html($("#orgDDL option:selected").text());
+                    }
 
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#roleDDL option:selected").text());
 
-                //Add Remove button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
-                //Clear the input control values of the new Add row
-                $("#txtFullName").val("");
-                $("#txtPhone").val("");
-                $("#txtEmail").val("");
-                $("#txtLocation").val("");
-                //$("#orgDDL select").val("??");
-                $("#txtNotes").val("");
+                    //Add Remove button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //Clear the input control values of the new Add row
+                    $("#txtFullName").val("");
+                    $("#txtPhone").val("");
+                    $("#txtEmail").val("");
+                    $("#txtLocation").val("");
+                    //$("#orgDDL select").val(NOSELECTION);
+                    $("#txtNotes").val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 
@@ -427,7 +438,9 @@
                                 Person.Phone = row.find("input").eq(1).val();
                                 Person.Email = row.find("input").eq(2).val();
                                 Person.Location = row.find("input").eq(3).val();
-                                Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
+                                if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
+                                    Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
+                                }
                                 Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
                                 //NOTE: All inputs, and checkboxes match find("input")
                                 Person.Notes = row.find("input").eq(4).val();
@@ -441,9 +454,12 @@
                             Person.Phone = row.find("TD").eq(1).html();
                             Person.Email = row.find("TD").eq(2).html();
                             Person.Location = row.find("TD").eq(3).html();
-                            Person.orgID = parseInt(organizations.find(organization => organization.OrgName === decodeHtml(row.find("TD").eq(1).html())).orgID);
-                            Person.personTypeID = parseInt(roles.find(person => role.PersonType === decodeHtml(row.find("TD").eq(1).html())).personTypeID);
-                            Person.Notes = row.find("TD").eq(3).html();
+                            if (row.find("TD").eq(4).html().trim().length > 0) {
+                                Person.orgID = parseInt(organizations.find(organization => organization.OrgName === decodeHtml(row.find("TD").eq(4).html())).orgID);
+                            }
+                            //alert(JSON.stringify(roles));
+                            Person.personTypeID = parseInt(roles.find(person => person.PersonTypeName === decodeHtml(row.find("TD").eq(5).html())).personTypeID);
+                            Person.Notes = row.find("TD").eq(6).html();
                             persons.push(Person);
                         }
                     }
@@ -452,7 +468,7 @@
                 //Serialize the object array and send the JSON to the Controller using AJAX.
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("InsertPersons","Users")',
+                    url: '@Url.Action("InsertPersons","Persons")',
                     data: JSON.stringify(persons),
                     dataType: 'JSON',
                     cache: false,
@@ -483,7 +499,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("deletePersons","Users")',
+                    url: '@Url.Action("deletePersons", "Persons")',
                     data: JSON.stringify(itemArray),
                     dataType: 'JSON',
                     cache: false,
@@ -512,15 +528,21 @@
             //Hide edit row
             editRow.hide();
 
-            //set up the Org ddl html
-            var orgReplVal = "<option value='" + organizations.find(organization => organization.OrgName === decodeHtml(editRow.find("TD").eq(1).html().trim())).orgID + "'>";
-            var orgReplValOpt = orgReplVal.replace('option value=', 'option selected value=');
-            var orgDDLCodeOpt = orgDDLCode.replace(orgReplVal, orgReplValOpt);
-            //alert(orgDDLCodeOpt)
-            $("#orgDDL").html(orgDDLCodeOpt);
+            //set up the Org ddl html, set to current value if exists
+            //alert(JSON.stringify(organizations));
+            if (editRow.find("TD").eq(4).html().trim().length > 0) {
+                var orgReplVal = "<option value='" + organizations.find(organization => organization.OrgName === decodeHtml(editRow.find("TD").eq(4).html().trim())).orgID + "'>";
+                var orgReplValOpt = orgReplVal.replace('option value=', 'option selected value=');
+                var orgDDLCodeOpt = orgDDLCode.replace(orgReplVal, orgReplValOpt);
+                $("#orgDDL").html(orgDDLCodeOpt);
+            }
+            else {
+                $("#orgDDL").html(orgDDLCode);
+            }
 
             //set up the Role ddl html
-            var roleReplVal = "<option value='" + roles.find(role => role.PersonType === decodeHtml(editRow.find("TD").eq(1).html().trim())).personTypeID + "'>";
+            //alert(JSON.stringify(roles));
+            var roleReplVal = "<option value='" + roles.find(role => role.PersonTypeName === decodeHtml(editRow.find("TD").eq(5).html().trim())).personTypeID + "'>";
             var roleReplValOpt = roleReplVal.replace('option value=', 'option selected value=');
             var roleDDLCodeOpt = roleDDLCode.replace(roleReplVal, roleReplValOpt);
             //alert(roleDDLCodeOpt)
@@ -554,8 +576,9 @@
                 //push modified editRow to the add list
                 Person.personID = parseInt($("#btnSaveEdit").attr('data-id'));
                 Person.FullName = editRow.find("input").eq(0).val();
-                Person.Phone = editRow.find("input").eq(2).val();
-                Person.Email = editRow.find("input").eq(3).val();
+                Person.Phone = editRow.find("input").eq(1).val();
+                Person.Email = editRow.find("input").eq(2).val();
+                Person.Location = editRow.find("input").eq(3).val();
                 Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
                 Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
                 //NOTE: All inputs, and checkboxes match find("input")
@@ -564,7 +587,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("UpdatePerson","Users")',
+                    url: '@Url.Action("UpdatePerson", "Persons")',
                     data: JSON.stringify(Person),
                     dataType: 'JSON',
                     cache: false,

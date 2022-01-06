@@ -19,7 +19,7 @@
         <tr>
             <td nowrap>
                 filtered&nbsp;for&nbsp;Curriculum&nbsp;<select id="currFilter" style="width:300px;">
-                    <option value="??">All</option>
+                    <option value='??'>All</option>
                 </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
             </td>
@@ -289,63 +289,66 @@
         // Add another item
         $("body").on("click", "#btnAdd", function () {
 
+            if (!allBlank()) {
 
-            validateInput();
-            if (inputValid) {
+                validateInput();
 
-                //Reference the input controls
-                var txt01 = $("#txtSemesterCode");
-                var txt02 = $("#txtSemesterName");
-                //var txt03 = $("#txtCurriculumID");
-                var selCurr = $("#curriculumDDL");
-                var curriculumText = $('#curriculumDDL option:selected').text();
-                var txt04 = $("#txtNumberOfVideoSessions");
-                var txt05 = $("#txtNotes");
+                if (inputValid) {
 
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                    //Reference the input controls
+                    var txt01 = $("#txtSemesterCode");
+                    var txt02 = $("#txtSemesterName");
+                    //var txt03 = $("#txtCurriculumID");
+                    var selCurr = $("#curriculumDDL");
+                    var curriculumText = $('#curriculumDDL option:selected').text();
+                    var txt04 = $("#txtNumberOfVideoSessions");
+                    var txt05 = $("#txtNotes");
 
-                //Add Row.
-                var row = tFoot.insertRow(0);
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add txtSemesterCode cell.
-                cell = $(row.insertCell(-1));
-                cell.html(txt01.val());
+                    //Add Row.
+                    var row = tFoot.insertRow(0);
 
-                //Add txtSemesterName cell.
-                cell = $(row.insertCell(-1));
-                cell.html(txt02.val());
+                    //Add txtSemesterCode cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txt01.val());
 
-                //Add currDDL cell.
-                cell = $(row.insertCell(-1));
-                cell.html(curriculumText);
+                    //Add txtSemesterName cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txt02.val());
 
-                //Add txtNumberOfVideoSessions cell.
-                cell = $(row.insertCell(-1));
-                cell.html(txt04.val());
+                    //Add currDDL cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(curriculumText);
 
-                //Add Notes cell
-                cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    //Add txtNumberOfVideoSessions cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txt04.val());
+
+                    //Add Notes cell
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
 
-                //Add Button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add Button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
 
-                //Clear the input control values
-                txt01.val("");
-                txt02.val("");
-                //$("#curriculumDDL").val("1").change();
-                txt04.val("");
-                txt05.val("");
+                    //Clear the input control values
+                    txt01.val("");
+                    txt02.val("");
+                    //$("#curriculumDDL").val("1").change();
+                    txt04.val("");
+                    txt05.val("");
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 

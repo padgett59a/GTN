@@ -82,39 +82,43 @@
         var delayMils = 900;
 
         $("body").on("click", "#btnAdd", function () {
-            //Reference the Name and Country TextBoxes.
-            var txtOrgName = $("#txtOrgName");
-            var txtOrgLocation = $("#txtOrgLocation");
 
-            if (txtOrgName.val().length == 0 || txtOrgLocation.val().length == 0) {
-                alert("Please enter the new Organization's Name and Location before proceeding.");
-            }
-            else {
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblOrgs > TFOOT")[0];
+            if (!allBlank()) {
 
-                //Add Row.
-                var row = tFoot.insertRow(0);
+                //Reference the Name and Country TextBoxes.
+                var txtOrgName = $("#txtOrgName");
+                var txtOrgLocation = $("#txtOrgLocation");
 
-                //Add OrgName cell.
-                var cell = $(row.insertCell(-1));
-                cell.html(txtOrgName.val());
+                if (txtOrgName.val().length == 0 || txtOrgLocation.val().length == 0) {
+                    alert("Please enter the new Organization's Name and Location before proceeding.");
+                }
+                else {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblOrgs > TFOOT")[0];
 
-                //Add OrgLocation cell.
-                cell = $(row.insertCell(-1));
-                cell.html(txtOrgLocation.val());
+                    //Add Row.
+                    var row = tFoot.insertRow(0);
 
-                //Add Remove button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add OrgName cell.
+                    var cell = $(row.insertCell(-1));
+                    cell.html(txtOrgName.val());
 
-                //Clear the TextBoxes.
-                txtOrgName.val("");
-                txtOrgLocation.val("");
+                    //Add OrgLocation cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html(txtOrgLocation.val());
+
+                    //Add Remove button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
+
+                    //Clear the TextBoxes.
+                    txtOrgName.val("");
+                    txtOrgLocation.val("");
+                }
             }
         });
 

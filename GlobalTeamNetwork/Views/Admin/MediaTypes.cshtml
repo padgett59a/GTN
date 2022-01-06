@@ -149,38 +149,41 @@
         // Add another item
         $("body").on("click", "#btnAdd", function () {
 
-            validateInput();
+            if (!allBlank()) {
 
-            if (inputValid) {
+                validateInput();
 
-                //Get the reference of the Table's TFOOT element.
-                var tFoot = $("#tblMain > TFOOT")[0];
+                if (inputValid) {
 
-                //Add Row.
-                var row = tFoot.insertRow(0);
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
 
-                //Add txtMediaTypeName cell
-                var cell = $(row.insertCell(-1));
-                cell.html($("#txtMediaTypeName").val());
+                    //Add Row.
+                    var row = tFoot.insertRow(0);
 
-                //Add txtNotes cell
-                var cell = $(row.insertCell(-1));
-                cell.html($("#txtNotes").val());
+                    //Add txtMediaTypeName cell
+                    var cell = $(row.insertCell(-1));
+                    cell.html($("#txtMediaTypeName").val());
 
-                //Add Button cell.
-                cell = $(row.insertCell(-1));
-                var btnRemove = $("<input />");
-                btnRemove.attr("type", "button");
-                btnRemove.attr("onclick", "removeRow(this);");
-                btnRemove.val("Remove");
-                cell.append(btnRemove);
+                    //Add txtNotes cell
+                    var cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
 
-                //Clear the input control values
-                $("#txtMediaTypeName").val("");
-                $("#txtNotes").val("");
+                    //Add Button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
 
-                //now there is something to save
-                $("#btnSave").prop('disabled', false);
+                    //Clear the input control values
+                    $("#txtMediaTypeName").val("");
+                    $("#txtNotes").val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
             }
         });
 
