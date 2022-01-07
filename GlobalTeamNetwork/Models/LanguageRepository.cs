@@ -21,6 +21,13 @@ namespace GlobalTeamNetwork.Models
         {
             get { return _appDbContext.Languages; }
         }
+        public IEnumerable<Language> AllLanguagesShortNotes
+        {
+            get
+            {
+                return GTNCommonRepository.TableShortNotes<Language>("Languages", _appDbContext);
+            }
+        }
 
         public Language GetLanguageById(int langId)
         {

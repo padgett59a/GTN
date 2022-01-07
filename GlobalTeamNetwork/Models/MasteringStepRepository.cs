@@ -21,6 +21,14 @@ namespace GlobalTeamNetwork.Models
         {
             get { return _appDbContext.MasteringSteps; }
         }
+        public IEnumerable<MasteringStep> AllMasteringStepsShortNotes
+        {
+            get
+            {
+                return GTNCommonRepository.TableShortNotes<MasteringStep>("MasteringSteps", _appDbContext);
+            }
+        }
+
         public MasteringStep GetMasteringStepById(int msId)
         {
             return _appDbContext.MasteringSteps.Find(msId);

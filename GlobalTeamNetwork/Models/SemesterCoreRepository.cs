@@ -25,6 +25,10 @@ namespace GlobalTeamNetwork.Models
                 return _appDbContext.SemesterCores;
             }
         }
+        public IEnumerable<SemesterCore> AllSemesterCoresShortNotes
+        {
+            get {return GTNCommonRepository.TableShortNotes<SemesterCore>("SemesterCores", _appDbContext); }
+        }
 
         public SemesterCore GetSemesterCoreById(string semesterCode)
         {

@@ -20,12 +20,10 @@
         <a id="createNew" href="javascript:void(0)">Add New Curriculum</a>
     </p>
 
-    <table id="tblMain" class="table table-bordered table-hover table-striped">
+    <table id="tblMain" class="table table-bordered table-hover table-striped" style="overflow-x: auto;">
         <thead>
+            <!-- Top Labels-->
             <tr>
-                @*<th>
-                        @Html.DisplayNameFor(model => model.CurriculumID)
-                    </th>*@
                 <th class="columnSort" style="width:70%">
                     @Html.DisplayNameFor(model => model.CurriculumName) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>

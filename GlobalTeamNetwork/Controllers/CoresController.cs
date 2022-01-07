@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,10 +34,9 @@ namespace GlobalTeamNetwork.Controllers
         }
 
 
-
         public IActionResult Curriculum()
         {
-            var curriculum = _curriculumRepository.AllCurriculum;
+            var curriculum = _curriculumRepository.AllCurriculumShortNotes;
             return View(curriculum);
         }
 
@@ -91,9 +91,10 @@ namespace GlobalTeamNetwork.Controllers
             return retVal;
         }
 
+        //Now returns a short Notes column for UI display
         public IActionResult SemesterCores()
         {
-            List<SemesterCore> semesterCores = _semesterCoreRepository.AllSemesterCores.ToList();
+            List<SemesterCore> semesterCores = _semesterCoreRepository.AllSemesterCoresShortNotes.ToList();
             IEnumerable<SemesterCoreCName> semesterCNames = _semesterCoreRepository.ConvertToCNames(semesterCores).OrderBy(i => i.CurriculumName).ThenBy(i => i.SemesterName);
             return View(semesterCNames);
         }
@@ -159,7 +160,7 @@ namespace GlobalTeamNetwork.Controllers
 
         public IActionResult CourseCores()
         {
-            List<CourseCore> CourseCores = _courseCoreRepository.AllCourseCores.ToList();
+            List<CourseCore> CourseCores = _courseCoreRepository.AllCourseCoreShortNotes.ToList();
             IEnumerable<CourseCoreSName> CourseCNames = _courseCoreRepository.ConvertCoursesToSNames(CourseCores).OrderBy(i => i.SemesterName);
             return View(CourseCNames);
         }
@@ -215,7 +216,7 @@ namespace GlobalTeamNetwork.Controllers
 
         public IActionResult SessionCores()
         {
-            List<SessionCore> SessionCores = _sessionCoreRepository.AllSessionCores.ToList();
+            List<SessionCore> SessionCores = _sessionCoreRepository.AllSessionCoresShortNotes.ToList();
             IEnumerable<SessionCoreCName> SessionCNames = _sessionCoreRepository.ConvertSessionsToCNames(SessionCores).OrderBy(i => i.CourseName).ThenBy(i => i.SessionName);
             return View(SessionCNames);
         }

@@ -7,6 +7,7 @@ namespace GlobalTeamNetwork.Models
     public interface ISessionCoreRepository
     {
         IEnumerable<SessionCore> AllSessionCores { get; }
+        IEnumerable<SessionCore> AllSessionCoresShortNotes { get;}
         SessionCore GetSessionCoreById(int SessionCode);
         EntityEntry<SessionCore> InsertSessionCore(SessionCore SessionCore);
         List<SessionCoreCName> ConvertSessionsToCNames(List<SessionCore> SessionCores);

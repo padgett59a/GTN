@@ -11,6 +11,7 @@ namespace GlobalTeamNetwork.Models
     public interface IOrganizationRepository
     {
         IEnumerable<Organization> AllOrganizations { get; }
+        IEnumerable<Organization> AllOrganizationsShortNotes { get; }
         Organization GetOrganizationById(int orgID);
         EntityEntry<Organization> AddOrg(Organization organization);
         EntityState UpdateOrg(Organization organization);

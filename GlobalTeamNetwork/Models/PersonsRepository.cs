@@ -21,6 +21,10 @@ namespace GlobalTeamNetwork.Models
         {
             get { return _appDbContext.Persons.ToList(); }
         }
+        public IEnumerable<Person> AllPersonsShortNotes
+        {
+            get { return GTNCommonRepository.TableShortNotes<Person>("Persons", _appDbContext); }
+        }
 
         public Person GetPersonById(int personID)
         {

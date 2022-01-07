@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using GlobalTeamNetwork.Data;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -12,17 +14,25 @@ namespace GlobalTeamNetwork.Models
     {
         private readonly ApplicationDbContext _appDbContext;
 
-        public SessionCoreRepository(ApplicationDbContext appDbContext)
+        public SessionCoreRepository(
+            ApplicationDbContext appDbContext
+            )
         {
             _appDbContext = appDbContext;
         }
 
         public IEnumerable<SessionCore> AllSessionCores
         {
-            //get { return _appDbContext.SessionCores; }
             get
             {
                 return _appDbContext.SessionCores;
+            }
+        }
+        public IEnumerable<SessionCore> AllSessionCoresShortNotes
+        {
+            get 
+            {
+                return GTNCommonRepository.TableShortNotes<SessionCore>("SessionCores", _appDbContext);
             }
         }
 

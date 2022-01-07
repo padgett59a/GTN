@@ -11,6 +11,7 @@ namespace GlobalTeamNetwork.Models
     public interface ICourseCoreRepository
     {
         IEnumerable<CourseCore> AllCourseCores { get; }
+        IEnumerable<CourseCore> AllCourseCoreShortNotes { get; }
         CourseCore GetCourseCoreById(int CourseCode);
         EntityEntry<CourseCore> InsertCourseCore(CourseCore CourseCore);
         List<CourseCoreSName> ConvertCoursesToSNames(List<CourseCore> CourseCores);

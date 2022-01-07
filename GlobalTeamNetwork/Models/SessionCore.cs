@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -21,5 +22,10 @@ namespace GlobalTeamNetwork.Models
         public string SessionName { get; set; }
         public decimal SessionCode { get; set; }
         public string Notes { get; set; }
+
+        public static explicit operator SessionCore(DbDataReader v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

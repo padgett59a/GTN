@@ -25,6 +25,13 @@ namespace GlobalTeamNetwork.Models
                 return _appDbContext.CourseCores;
             }
         }
+        public IEnumerable<CourseCore> AllCourseCoreShortNotes
+        {
+            get
+            {
+                return GTNCommonRepository.TableShortNotes<CourseCore>("CourseCores", _appDbContext);
+            }
+        }
 
         public CourseCore GetCourseCoreById(int CourseCode)
         {

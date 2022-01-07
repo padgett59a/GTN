@@ -24,6 +24,10 @@ namespace GlobalTeamNetwork.Models
                 return _appDbContext.Organizations;
             }
         }
+        public IEnumerable<Organization> AllOrganizationsShortNotes
+        {
+            get { return GTNCommonRepository.TableShortNotes<Organization>("Organizations", _appDbContext); }
+        }
 
         public Organization GetOrganizationById(int orgID)
         {

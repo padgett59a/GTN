@@ -21,6 +21,13 @@ namespace GlobalTeamNetwork.Models
         {
             get { return _appDbContext.TranslationSteps; }
         }
+        public IEnumerable<TranslationStep> AllTranslationStepsShortNotes
+        {
+            get
+            {
+                return GTNCommonRepository.TableShortNotes<TranslationStep>("TranslationSteps", _appDbContext);
+            }
+        }
 
         public TranslationStep GetTranslationStepById(int tsID)
         {

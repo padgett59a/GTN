@@ -21,7 +21,7 @@ namespace GlobalTeamNetwork.Controllers
         //Organization
         public IActionResult Organizations()
         {
-            var organizations = _organizationRepository.AllOrganizations;
+            var organizations = _organizationRepository.AllOrganizationsShortNotes;
             return View(organizations);
         }
 

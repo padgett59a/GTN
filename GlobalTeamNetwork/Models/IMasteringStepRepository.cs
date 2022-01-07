@@ -9,6 +9,7 @@ namespace GlobalTeamNetwork.Models
     public interface IMasteringStepRepository
     {
         IEnumerable<MasteringStep> AllMasteringSteps { get; }
+        IEnumerable<MasteringStep> AllMasteringStepsShortNotes { get; }
         MasteringStep GetMasteringStepById(int msId);
         int InsertMasteringStep(List<MasteringStep> masteringStepList);
 

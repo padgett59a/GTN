@@ -47,6 +47,7 @@ function setSortArrows(sortCol, pSortDir) {
 
 //execute Sorting
 $("body").on("click", ".columnSort", function () {
+
     var newSort = sortArrow.Down; //default
     //alternate arrows
     var currentSort = $(':nth-child(1)', this).html();
@@ -60,6 +61,7 @@ $("body").on("click", ".columnSort", function () {
 });
 
 function rowSort(tableBody, sortColumn, arrow) {
+
     var sortDirection = 1;
     var $tbody = tableBody;
     if (arrow == sortArrow.Down) { sortDirection = -1 }

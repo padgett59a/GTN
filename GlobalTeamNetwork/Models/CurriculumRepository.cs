@@ -23,6 +23,13 @@ namespace GlobalTeamNetwork.Models
                 return _appDbContext.Curriculums;
             }
         }
+        public IEnumerable<Curriculum> AllCurriculumShortNotes
+        {
+            get
+            {
+                return GTNCommonRepository.TableShortNotes<Curriculum>("Curriculums", _appDbContext);
+            }
+        }
 
         public Curriculum GetCurriculumById(Int32 curriculumID)
         {

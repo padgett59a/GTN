@@ -31,10 +31,10 @@ namespace GlobalTeamNetwork.Controllers
             return View();
         }
 
-        //*****************TranslationSteps*****************
+        //*****************Languages*****************
         public IActionResult Languages()
         {
-            var languages = _languageRepository.AllLanguages;
+            var languages = _languageRepository.AllLanguagesShortNotes;
             return View(languages);
         }
 
@@ -84,10 +84,10 @@ namespace GlobalTeamNetwork.Controllers
         //*****************TranslationSteps*****************
         public IActionResult TranslationSteps()
         {
-            var translationSteps = _translationStepRepository.AllTranslationSteps;
+            var translationSteps = _translationStepRepository.AllTranslationStepsShortNotes;
             return View(translationSteps);
         }
-        
+
         [HttpPost]
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
         public JsonResult InsertTranslationSteps([FromBody] List<TranslationStep> newTranslationStep)
@@ -133,7 +133,7 @@ namespace GlobalTeamNetwork.Controllers
         //*****************MasteringSteps*****************
         public IActionResult MasteringSteps()
         {
-            var masteringSteps = _masteringStepRepository.AllMasteringSteps;
+            var masteringSteps = _masteringStepRepository.AllMasteringStepsShortNotes;
             return View(masteringSteps);
         }
 
@@ -181,7 +181,7 @@ namespace GlobalTeamNetwork.Controllers
         //*****************MediaTypes*****************
         public IActionResult MediaTypes()
         {
-            var mediaTypes = _mediaTypeRepository.AllMediaTypes;
+            var mediaTypes = _mediaTypeRepository.AllMediaTypesShortNotes;
             return View(mediaTypes);
         }
         [HttpPost]

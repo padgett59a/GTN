@@ -18,16 +18,17 @@
         <a id="createNew" href="javascript:void(0)">Add New Organization</a>
         <!--     <button id="createNew">Add New Organization</button> -->
     </p>
-    <table id="tblOrgs" class="table">
+    <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;">
         <thead>
+            <!-- Top Labels-->
             <tr>
-                <th>
-                    Organization
+                <th class="columnSort" style="width:45%">
+                    Organization &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th>
-                    Location
+                <th class="columnSort" style="width:45%">
+                    Location &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
                 </th>
-                <th></th>
+                <th style="width:10%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -41,9 +42,9 @@
                         @Html.DisplayFor(modelItem => item.OrgLocation)
                     </td>
                     <td>
-                        <a onclick="editOrg(@item.orgID)" href="javascript:void(0)" id="@item.orgID">Edit</a> |
+                        <a onclick="editItem(@item.orgID)" href="javascript:void(0)" id="@item.orgID">Edit</a> |
                         <a asp-controller="Org" asp-action="OrgDetail" asp-route-id="@item.orgID">Details</a> |
-                        <a onclick="deleteOrg(@item.orgID, this)" href="javascript:void(0)" id="@item.orgID">Delete</a>
+                        <a onclick="deleteItem(@item.orgID, this)" href="javascript:void(0)" id="@item.orgID">Delete</a>
                     </td>
                 </tr>
             }
@@ -64,196 +65,259 @@
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
     <script type="text/javascript">
 
-        $("body").on("click", "#btnCancel", function () {
-            //Refresh the page
-            var url = '@Url.Action("Organizations", "Org")';
-            window.location.href = url;
-        });
 
-        $("#createNew").click(function () {
-            //Set up add button
-            changeSaveButton(buttonType.ADD, 0);
-            //show footer
-            $("#tblOrgs TFOOT").attr("hidden", false);
-            //scroll to bottom
-            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-        });
+        //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
 
-        var delayMils = 900;
+        //scope functions declared inside of document.ready
+        var editItem;
+        var deleteItem;
 
-        $("body").on("click", "#btnAdd", function () {
+        $(document).ready(function () {
 
-            if (!allBlank()) {
-
-                //Reference the Name and Country TextBoxes.
-                var txtOrgName = $("#txtOrgName");
-                var txtOrgLocation = $("#txtOrgLocation");
-
-                if (txtOrgName.val().length == 0 || txtOrgLocation.val().length == 0) {
-                    alert("Please enter the new Organization's Name and Location before proceeding.");
-                }
-                else {
-                    //Get the reference of the Table's TFOOT element.
-                    var tFoot = $("#tblOrgs > TFOOT")[0];
-
-                    //Add Row.
-                    var row = tFoot.insertRow(0);
-
-                    //Add OrgName cell.
-                    var cell = $(row.insertCell(-1));
-                    cell.html(txtOrgName.val());
-
-                    //Add OrgLocation cell.
-                    cell = $(row.insertCell(-1));
-                    cell.html(txtOrgLocation.val());
-
-                    //Add Remove button cell.
-                    cell = $(row.insertCell(-1));
-                    var btnRemove = $("<input />");
-                    btnRemove.attr("type", "button");
-                    btnRemove.attr("onclick", "removeRow(this);");
-                    btnRemove.val("Remove");
-                    cell.append(btnRemove);
-
-                    //Clear the TextBoxes.
-                    txtOrgName.val("");
-                    txtOrgLocation.val("");
-                }
-            }
-        });
-
-        $("body").on("click", "#btnSave", function () {
-            //Loop through the Table rows and build a JSON array.
-            var orgs = new Array();
-
-            $("#tblOrgs TFOOT TR").each(function () {
-                var row = $(this);
-                var org = {};
-
-                if (row.find('td:last-child').html().includes('value="Remove"')) {
-                    //alert('Remove row found');
-                    org.OrgName = row.find("TD").eq(0).html();
-                    org.OrgLocation = row.find("TD").eq(1).html();
-                    org.orgID = 0;
-                    orgs.push(org);
-                }
-                if (row.find('td:last-child').html().includes('value="Add Another"')) {
-                    org.OrgName = row.find("input").eq(0).val();
-                    org.OrgLocation = row.find("input").eq(1).val()
-                    org.orgID = 0;
-                    if (org.OrgName.length > 0 && org.OrgLocation.length > 0) {
-                        orgs.push(org);
-                    }
-                }
-            });
-
-            //Send the JSON array to Controller using AJAX.
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("InsertOrgs","Org")',
-                data: JSON.stringify(orgs),
-                dataType: 'JSON',
-                cache: false,
-                contentType: "application/json; charset=utf-8",
-                //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                success: function (r) {
-                    //alert(r + " record(s) inserted.");
-                }
-            });
-
-            //Give the db a minute to recognize the new records
-            waitSeconds(delayMils);
-
-            //Refresh the page
-            var url = '@Url.Action("Organizations", "Org")';
-            window.location.href = url;
-        });
-
-        //Delete an org via AJAX
-        function deleteOrg(orgId, button) {
-            //Determine the reference of the Row using the Button.
-            var row = $(button).closest("TR");
-            var name = $("TD", row).eq(0).html().trim();
-            if (confirm("Do you want to delete: " + name + " ?")) {
-                //Get the reference of the Table.
-                var table = $("#tblOrgs")[0];
-                var orgArray = new Array;
-                orgArray[0] = orgId;
-
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("DeleteOrgs","Org")',
-                    data: JSON.stringify(orgArray),
-                    dataType: 'JSON',
-                    cache: false,
-                    contentType: "application/json; charset=utf-8",
-                    //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                    success: function (r) {
-                        //alert(r + " record(s) have been deleted.");
-                    }
-                });
-
-                //Give the db a minute to recognize the new records
-                waitSeconds(delayMils);
+            $("body").on("click", "#btnCancel", function () {
                 //Refresh the page
                 var url = '@Url.Action("Organizations", "Org")';
                 window.location.href = url;
+            });
+
+            var pageObjectLabel = 'Organizations';
+
+            $("#createNew").click(function () {
+                //Set up add button
+                changeSaveButton(buttonType.ADD, 0);
+                //show footer
+                $("#tblMain TFOOT").attr("hidden", false);
+                //scroll to bottom
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            });
+
+            var delayMils = 900;
+
+            //See if all input values are blank
+            function allBlank() {
+                var allAreBlank = (
+                    $("#txtOrgName").val().length == 0 &&
+                    $("#txtOrgLocation").val().length == 0 
+                );
+                return allAreBlank;
             }
-        }
 
-        //Edit an org
-        function editOrg(orgId) {
-            //Set up Save Changes button
-            changeSaveButton(buttonType.SAVECHANGES, orgId);
 
-            //Hide edit row
-            $('#tr' + orgId).hide();
+            //validate input and set inputValid global boolean
+            function validateInput() {
+                //default to true
+                inputValid = true;
+                if (!allBlank()) {
+                    //Validate input
+                    if (//inp01.val().length == 0 ||
+                        $("#txtOrgName").val().length == 0 ||
+                        $("#txtOrgLocation").val().length == 0 
+                    ) {
+                        inputValid = false;
+                        alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                    }
+                }
+            }
 
-            //Copy in existing values
-            var orgCellStr = '#orgName' + orgId + ''
-            var orgCell = $(orgCellStr);
-            $('#txtOrgName').val(orgCell.html().trim());
+            $("body").on("click", "#btnAdd", function () {
 
-            var orgCellStr = '#orgLoc' + orgId + ''
-            var orgCell = $(orgCellStr);
-            $('#txtOrgLocation').val(orgCell.html().trim());
+                if (!allBlank()) {
 
-            //Show footer
-            $("#trSaveAll").attr("hidden", true);
-            //$("#btnCancel").attr("hidden", false);
+                    validateInput();
 
-            $("#tblOrgs TFOOT").attr("hidden", false);
-            //scroll to bottom
-            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-        }
+                    if (inputValid) {
 
-        //Save edits to an Org via ajax
-        $("body").on("click", "#btnSaveEdit", function () {
-            //alert($("#btnSaveEdit").attr("data-id"));
-            var row = $("#tblOrgs TFOOT TR:first");
-            var org = {};
-            org.OrgName = row.find("INPUT").eq(0).val();
-            org.OrgLocation = row.find("INPUT").eq(1).val();
-            //org.orgID = 0;
-            org.orgID = parseInt($("#btnSaveEdit").attr("data-id"));
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("UpdateOrg","Org")',
-                data: JSON.stringify(org),
-                dataType: 'JSON',
-                cache: false,
-                contentType: "application/json; charset=utf-8",
-                //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                success: function (r) {
-                    alert(r + " record(s) have been modified.");
+                        //Reference the Name and Country TextBoxes.
+                        var txtOrgName = $("#txtOrgName");
+                        var txtOrgLocation = $("#txtOrgLocation");
+
+                        if (txtOrgName.val().length == 0 || txtOrgLocation.val().length == 0) {
+                            alert("Please enter the new Organization's Name and Location before proceeding.");
+                        }
+                        else {
+                            //Get the reference of the Table's TFOOT element.
+                            var tFoot = $("#tblMain > TFOOT")[0];
+
+                            //Add Row.
+                            var row = tFoot.insertRow(0);
+
+                            //Add OrgName cell.
+                            var cell = $(row.insertCell(-1));
+                            cell.html(txtOrgName.val());
+
+                            //Add OrgLocation cell.
+                            cell = $(row.insertCell(-1));
+                            cell.html(txtOrgLocation.val());
+
+                            //Add Remove button cell.
+                            cell = $(row.insertCell(-1));
+                            var btnRemove = $("<input />");
+                            btnRemove.attr("type", "button");
+                            btnRemove.attr("onclick", "removeRow(this);");
+                            btnRemove.val("Remove");
+                            cell.append(btnRemove);
+
+                            //Clear the TextBoxes.
+                            txtOrgName.val("");
+                            txtOrgLocation.val("");
+                        }
+                    }
                 }
             });
 
-            //Give the db a minute to recognize the new records
-            waitSeconds(delayMils);
-            //Refresh the page
-            var url = '@Url.Action("Organizations", "Org")';
-            window.location.href = url;
+            //Save all added rows
+            $("body").on("click", "#btnSave", function () {
+
+                //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+                validateInput();
+
+                if (inputValid) {
+
+                    //Loop through the Table rows and build a JSON array.
+                    var orgs = new Array();
+
+                    $("#tblMain TFOOT TR").each(function () {
+                        var row = $(this);
+                        var org = {};
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //alert('Remove row found');
+                            org.OrgName = row.find("TD").eq(0).html();
+                            org.OrgLocation = row.find("TD").eq(1).html();
+                            org.orgID = 0;
+                            orgs.push(org);
+                        }
+
+                        if (!allBlank()) {
+                            if (row.find('td:last-child').html().includes('value="Add Another"')) {
+                                org.OrgName = row.find("input").eq(0).val();
+                                org.OrgLocation = row.find("input").eq(1).val()
+                                org.orgID = 0;
+                                if (org.OrgName.length > 0 && org.OrgLocation.length > 0) {
+                                    orgs.push(org);
+                                }
+                            }
+                        }
+                    });
+
+                    //Send the JSON array to Controller using AJAX.
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("InsertOrgs","Org")',
+                        data: JSON.stringify(orgs),
+                        dataType: 'JSON',
+                        cache: false,
+                        contentType: "application/json; charset=utf-8",
+                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                        success: function (r) {
+                            //alert(r + " record(s) inserted.");
+                        }
+                    });
+
+                    //Give the db a minute to recognize the new records
+                    waitSeconds(delayMils);
+
+                    //Refresh the page
+                    var url = '@Url.Action("Organizations", "Org")';
+                    window.location.href = url;
+                }
+            });
+
+            //Delete an org via AJAX
+            deleteItem = function deleteItem(orgId, button) {
+                //Determine the reference of the Row using the Button.
+                var row = $(button).closest("TR");
+                var name = $("TD", row).eq(0).html().trim();
+                if (confirm("Do you want to delete: " + name + " ?")) {
+                    //Get the reference of the Table.
+                    var table = $("#tblMain")[0];
+                    var orgArray = new Array;
+                    orgArray[0] = orgId;
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("DeleteOrgs","Org")',
+                        data: JSON.stringify(orgArray),
+                        dataType: 'JSON',
+                        cache: false,
+                        contentType: "application/json; charset=utf-8",
+                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                        success: function (r) {
+                            //alert(r + " record(s) have been deleted.");
+                        }
+                    });
+
+                    //Give the db a minute to recognize the new records
+                    waitSeconds(delayMils);
+                    //Refresh the page
+                    var url = '@Url.Action("Organizations", "Org")';
+                    window.location.href = url;
+                }
+            }
+
+            //Edit an org
+            editItem = function editItem(orgId) {
+                //Set up Save Changes button
+                changeSaveButton(buttonType.SAVECHANGES, orgId);
+
+                //Hide edit row
+                $('#tr' + orgId).hide();
+
+                //Copy in existing values
+                var orgCellStr = '#orgName' + orgId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtOrgName').val(orgCell.html().trim());
+
+                var orgCellStr = '#orgLoc' + orgId + ''
+                var orgCell = $(orgCellStr);
+                $('#txtOrgLocation').val(orgCell.html().trim());
+
+                //Show footer
+                $("#trSaveAll").attr("hidden", true);
+                //$("#btnCancel").attr("hidden", false);
+
+                $("#tblMain TFOOT").attr("hidden", false);
+                //scroll to bottom
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            }
+
+            //Save edits to an Org via ajax
+            $("body").on("click", "#btnSaveEdit", function () {
+                //alert($("#btnSaveEdit").attr("data-id"));
+
+                validateInput();
+
+                if (inputValid) {
+
+                    var row = $("#tblMain TFOOT TR:first");
+                    var org = {};
+                    org.OrgName = row.find("INPUT").eq(0).val();
+                    org.OrgLocation = row.find("INPUT").eq(1).val();
+                    //org.orgID = 0;
+                    org.orgID = parseInt($("#btnSaveEdit").attr("data-id"));
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("UpdateOrg","Org")',
+                        data: JSON.stringify(org),
+                        dataType: 'JSON',
+                        cache: false,
+                        contentType: "application/json; charset=utf-8",
+                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                        success: function (r) {
+                            alert(r + " record(s) have been modified.");
+                        }
+                    });
+
+                    //Give the db a minute to recognize the new records
+                    waitSeconds(delayMils);
+
+                    //Refresh the page
+                    var url = '@Url.Action("Organizations", "Org")';
+                    window.location.href = url;
+                }
+            });
+
+            /*end document.ready*/
         });
 
     </script>

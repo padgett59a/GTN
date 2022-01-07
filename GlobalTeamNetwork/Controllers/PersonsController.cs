@@ -20,18 +20,11 @@ namespace GlobalTeamNetwork.Controllers
 
         public IActionResult Persons()
         {
-            List<Person> persons = _personsRepository.AllPersons.ToList();
+            List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
             IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             return View(personOnames);
         }
 
-        //Get this from Org Controller
-        //public string GetOrganizationJson()
-        //{
-        //    var curriculum = _curriculumRepository.AllCurriculum;
-        //    string retVal = JsonConvert.SerializeObject(curriculum);
-        //    return retVal;
-        //}
 
         public string GetPersonTypesJson()
         {

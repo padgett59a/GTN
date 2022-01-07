@@ -64,7 +64,6 @@ namespace GlobalTeamNetwork
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
-            //services.AddScoped<ICourseCoreRepository, CourseCoreRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

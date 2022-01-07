@@ -11,6 +11,7 @@ namespace GlobalTeamNetwork.Models
     public interface ISemesterCoreRepository
     {
         IEnumerable<SemesterCore> AllSemesterCores { get; }
+        IEnumerable<SemesterCore> AllSemesterCoresShortNotes { get; }
         SemesterCore GetSemesterCoreById(string semesterCode);
         EntityEntry<SemesterCore> InsertSemesterCore(SemesterCore SemesterCore);
         List<SemesterCoreCName> ConvertToCNames(List<SemesterCore> SemesterCores);

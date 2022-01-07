@@ -22,6 +22,11 @@ namespace GlobalTeamNetwork.Models
             get { return _appDbContext.MediaTypes; }
         }
 
+        public IEnumerable<MediaType> AllMediaTypesShortNotes
+        {
+            get { return GTNCommonRepository.TableShortNotes<MediaType>("MediaTypes", _appDbContext); }
+        }
+
         public MediaType GetMediaTypeById(int id)
         {
             return _appDbContext.MediaTypes.Find(id);
