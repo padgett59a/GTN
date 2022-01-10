@@ -314,7 +314,12 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        if (r > 0) {
+                            alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        }
+                        else {
+                            HandleError(r, pageObjectLabel);
+                        }
                     }
                 });
 

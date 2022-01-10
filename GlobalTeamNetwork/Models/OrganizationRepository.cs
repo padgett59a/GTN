@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using GlobalTeamNetwork.Data;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Data;
 
 namespace GlobalTeamNetwork.Models
 {
@@ -34,7 +35,7 @@ namespace GlobalTeamNetwork.Models
             //may need to replace with paramaterized call to SP
             return _appDbContext.Organizations.Find(orgID);
         }
-        public EntityEntry<Organization> AddOrg (Organization organization)
+        public EntityEntry<Organization> AddOrg(Organization organization)
         {
             //may need to replace with paramaterized call to SP
             return _appDbContext.Organizations.Add(organization);
@@ -66,9 +67,22 @@ namespace GlobalTeamNetwork.Models
             {
                 delOrg = _appDbContext.Organizations.Find(delOrgId);
                 _appDbContext.Organizations.Remove(delOrg);
-                delCount++;
             }
-            _appDbContext.SaveChanges();
+            try
+            {
+                _appDbContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException.Message.Contains(GTN_SQL_ERR.REF_KEY_VIOLATION)) {
+                    return GTN_SQL_ERR.RKEY_VIOL;
+                }
+                else
+                {
+                    return GTN_SQL_ERR.SQL_ERROR;
+                }
+            }
+            delCount++;
             return delCount;
         }
     }

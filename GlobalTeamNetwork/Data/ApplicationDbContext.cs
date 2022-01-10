@@ -25,5 +25,6 @@ namespace GlobalTeamNetwork.Data
         public DbSet<MediaType> MediaTypes {get; set; }
         public DbSet<Person> Persons {get; set; }
         public DbSet<PersonType> PersonTypes { get; set; }
+        public DbSet<TableName> TableNames{ get; set; }
     }
 }

@@ -8,11 +8,17 @@
 //function decodeHtml(html) {
 //function changeSaveButton(changeTo, selCurr ) {
 //function rowSort(tableBody, sortColumn, arrow) {
+//function HandleError(e, tName) {
 
 //Button type enum
 const buttonType = {
     SAVECHANGES: 0,
     ADD: 1
+}
+
+const GTNErrors = {
+    RKEY_VIOL: -2,
+    SQL_ERROR: -99
 }
 
 const NOSELECTION = "??";
@@ -267,4 +273,45 @@ function changeSaveButton(changeTo, selCurr ) {
             break;
     }
     $('#tdBtnCell').html(btnHtml);
+    $('#tdBtnCell').attr("nowrap", "nowrap");
+}
+
+//Note: tName MUST exactly match the table to query for foreign keyed tables
+function HandleError(e, tName) {
+    switch (e) {
+        case GTNErrors.RKEY_VIOL:
+
+            var fkTables;
+
+            //Get names of FK tables
+            $.ajax({
+                type: "POST",
+                url: '../GTNCommon\/GetFKTablesJson',
+                dataType: "json",
+                data: JSON.stringify(tName),
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    fkTables = response;
+                }
+            });
+
+            //could more than one
+            var fkTableStr = "";
+            for (var key in fkTables) {
+                fkTableStr += fkTables[key].keyedTable + " and ";
+                if (fkTableStr.substring(0,3) == "XXX") {
+                    alert("Please contact your system administrator. [HandleError] ERROR: Passed table '" + tName + "' does not exist.");
+                    return;
+                }
+            };
+            fkTableStr = fkTableStr.substring(0, fkTableStr.length - 5);
+
+            alert("You must delete the corresponding " + fkTableStr + " records before removing this record. Please try again.");
+            break;
+
+        default:
+            alert("A data base error has occurred. Please contact the System Administrator.");
+            break;
+    }
 }

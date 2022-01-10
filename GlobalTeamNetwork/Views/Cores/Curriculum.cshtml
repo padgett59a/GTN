@@ -85,7 +85,7 @@
     $(document).ready(function () {
 
         var delayMils = 900;
-        var pageObjectLabel = 'Curriculum';
+        var pageObjectLabel = 'Curriculums';
 
         function refreshMe() {
             //Refresh the page
@@ -262,7 +262,12 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        if (r > 0) {
+                            alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        }
+                        else {
+                            HandleError(r, pageObjectLabel);
+                        }
                     }
                 });
 
