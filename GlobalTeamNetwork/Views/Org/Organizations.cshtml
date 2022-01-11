@@ -253,7 +253,7 @@
                                 alert(r + " " + pageObjectLabel + "(s) have been deleted.");
                             }
                             else {
-                                HandleError(r, pageObjectLabel);
+                                HandleError(r, pageObjectLabel, name);
                             }
                         }
                     });
@@ -325,11 +325,11 @@
                     });
 
                     //Give the db a minute to recognize the new records
-                    waitSeconds(delayMils);
+                    //waitSeconds(delayMils);
 
                     //Refresh the page
-                    var url = '@Url.Action("Organizations", "Org")';
-                    window.location.href = url;
+                    //var url = '@Url.Action("Organizations", "Org")';
+                    //window.location.href = url;
                 }
             });
 

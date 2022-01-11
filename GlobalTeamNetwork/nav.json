@@ -18,8 +18,8 @@
         },
         {
           "title": "Mastering Steps",
-          "showOnSeed": false,
-          "href": "admin_masteringsteps"
+          "href": "admin_masteringsteps",
+          "environment": "production"
         },
         {
           "title": "Media Types",
@@ -27,8 +27,8 @@
         },
         {
           "title": "Payments",
-          "href": "admin_payments",
           "icon": "fal fa-money-bill",
+          "href": "admin_payments",
           "environment": "production"
         }
       ]
@@ -103,13 +103,38 @@
       ]
     },
 
-
     {
-      "title": "Customers",
+      "title": "Organizations",
       "href": "org_organizations",
       "icon": "fal fa-book",
       "environment": "production"
     },
+
+
+    {
+      "title": "WorkFlow",
+      "icon": "fal fa-user",
+      "environment": "production",
+      "items": [
+        {
+          "title": "Translate",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Master",
+          "showOnSeed": false,
+          "href": "persons_persons?filter=1"
+        },
+        {
+          "title": "Pay",
+          "showOnSeed": false,
+          "href": "persons_persons?filter=6"
+        }
+      ]
+    },
+
+
     {
       "title": "DEV MENU - Design Options"
     },

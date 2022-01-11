@@ -276,8 +276,8 @@ function changeSaveButton(changeTo, selCurr ) {
     $('#tdBtnCell').attr("nowrap", "nowrap");
 }
 
-//Note: tName MUST exactly match the table to query for foreign keyed tables
-function HandleError(e, tName) {
+//Note: keyedTableName MUST exactly match the table to query for foreign keyed tables
+function HandleError(e, keyedTableName, keyedRow) {
     switch (e) {
         case GTNErrors.RKEY_VIOL:
 
@@ -288,7 +288,7 @@ function HandleError(e, tName) {
                 type: "POST",
                 url: '../GTNCommon\/GetFKTablesJson',
                 dataType: "json",
-                data: JSON.stringify(tName),
+                data: JSON.stringify(keyedTableName),
                 async: false,
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
@@ -300,14 +300,13 @@ function HandleError(e, tName) {
             var fkTableStr = "";
             for (var key in fkTables) {
                 fkTableStr += fkTables[key].keyedTable + " and ";
-                if (fkTableStr.substring(0,3) == "XXX") {
-                    alert("Please contact your system administrator. [HandleError] ERROR: Passed table '" + tName + "' does not exist.");
+                if (fkTableStr.substring(0, 3) == "XXX") {
+                    alert("Please contact your system administrator. [HandleError]: Passed table '" + keyedTableName + "' does not exist.");
                     return;
                 }
             };
             fkTableStr = fkTableStr.substring(0, fkTableStr.length - 5);
-
-            alert("You must delete the corresponding " + fkTableStr + " records before removing this record. Please try again.");
+            alert("You must delete all " + fkTableStr + " records referencing '" + keyedRow + "' before removing this record. Please try again.");
             break;
 
         default:
