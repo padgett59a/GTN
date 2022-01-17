@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>Persons</title>
 </head>
-<body>
+<body style="height:100%">
     <h1>Persons</h1>
     <table>
         <tr>
@@ -20,6 +20,9 @@
                     <option value='??'>All</option>
                 </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
             </td>
+            <td align="right">
+                Search <input type="text" id=txtSearch size="15">
+            </td>
         </tr>
     </table><br>
 
@@ -27,6 +30,9 @@
         <a id="createNew" href="javascript:void(0)">Add New Person</a>
         <!--     <button id="createNew">Add Person</button> -->
     </p>
+
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+
     <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
         <thead>
             <!-- Top Labels-->
@@ -136,6 +142,10 @@
             </tr>
         </tfoot>
     </table>
+
+    </div>
+
+
     <p>
         <a id="createNew2" href="javascript:void(0)">Add New Person</a>
         <!--     <button id="createNew">Add Person</button> -->

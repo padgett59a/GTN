@@ -29,6 +29,53 @@ const sortArrow = {
     Down: '&#8595;'
 }
 
+
+
+//On Page Search
+$("body").on("input", "#txtSearch", function () {
+
+    rBody = $('#tblMain tbody');
+    var searchText = $('#txtSearch').val();
+    var loopStop = false;
+    $container = $('#divMain');
+
+    if (searchText.length > 2) {
+
+        //find matching rows
+        $('#tblMain tbody tr').each(function () {
+
+            //alert(searchText);
+            $(this).find('td').each(function () {
+
+                // skip the button Action button tds 
+                if (!$(this).html().includes('editItem(')) {
+
+                    if ($(this).html().toLowerCase().includes(searchText.toLowerCase())) {
+
+                        //alert('found!');
+                        loopStop = true;
+                        return false;
+                    }
+                }
+            });
+
+            if (loopStop) {
+                $scrollTo = $(this);
+                $container.animate({
+                    scrollTop: $scrollTo.offset().top - $container.offset().top + $container.scrollTop()
+                });
+                return false;
+            }
+        });
+
+    }
+    else {
+        $container.animate({
+            scrollTop: 0
+        });
+    }
+});
+
 //execute sort on passed qstring value
 var setSort = (new URL(location.href)).searchParams.get('sort');
 
