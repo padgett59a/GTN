@@ -14,42 +14,68 @@
 <body style="height:100%">
     <h1>Translation Workflow</h1>
 
-    @foreach (var item in Model)
-    {
-    }
-
-<div id="divMain" style="height:100vh;overflow-y:auto">
-    <label>Create Entire Semester</label>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked><br>
-    <label>Create Selected Courses Only</label>&nbsp;&nbsp;<input type="radio" id="partial" name="fullSem" value="partial"><br><br>
-    Select a Semester to Translate&nbsp;<select id="semDDL" name="semDDL"></select><br>
-    <br>
-    <div id="divSelectCourses" style="display:none">
-        Select One or More Courses to Translate&nbsp;<select id="corsDDL" name="corsDDL"></select>&nbsp;<br><br>
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+        <table>
+            <tr>
+                <td width="30%">
+                    <div style="border: 2px solid blue;background-color:lightgrey">
+                        <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></b>&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;<input type="radio" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp;&nbsp;&nbsp;&nbsp;<br><br>
+                    </div>
+                </td>
+                <td width="5%">
+                </td>
+                <td>
+                    Select a Semester to Translate&nbsp;<select id="semDDL" name="semDDL"></select><br>
+                    <br>
+                    Select a Language <select id="langDDL" name="langDDL"></select><br>
+                </td>
+            </tr>
+        </table>
+        <br><br>
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: none">
+            <thead>
+                <!-- Top Labels-->
+                <tr>
+                    <th class="columnSort" style="width:85%">
+                    </th>
+                    <th class="columnSort" style="text-align: center; align-items:center">
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="dataRows">
+            </tbody>
+        </table>
+        <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
     </div>
-    Select a Language <select id="langDDL" name="langDDL"></select><br>
-    <br>
-    <input type="button" id="GenTranSteps" value="Generate Translation Steps" />
-</div>
 
-
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
-    <script type="text/javascript">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+        <script type="text/javascript">
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
         var editItem;
         var deleteItem;
+        var radioClick;
+
 
         $(document).ready(function () {
 
-            $('input[type=radio][name=fullSem]').change(function () {
-                if (this.value == 'partial') {
-                    $('#divSelectCourses').show();
+            radioClick = function (label) {
+                //alert(label.id);
+                //alert(label.id.toLowerCase().indexOf('full'));
+                if (label.id.toLowerCase().indexOf('full') > -1) {
+                    $('input[name=fullSem]:eq(0)').click();
                 }
                 else {
-                    $('#divSelectCourses').hide();
+                    $('input[name=fullSem]:eq(1)').click();
                 }
+            }
+
+            $('input[type=radio][name=fullSem]').change(function () {
+                //trigger row changes based on semester selected
+                $("#semDDL").change();
             });
 
             //pFilter is passed to the page via query string for page refresh, etc.
@@ -60,9 +86,10 @@
             var delayMils = 900;
             var pageObjectLabel = 'Translation Workflow';
 
-            //Set up Org drop down
+            //Set up Semester drop down
             $.ajax({
                 type: "GET",
+                //url: '@Url.Action("GetUntranslatedSemestersJson", "Cores")',
                 url: '@Url.Action("GetSemestersJson", "Cores")',
                 dataType: "json",
                 async: false,
@@ -70,23 +97,127 @@
                     semesters = response;
                 }
             });
-            //alert(JSON.stringify(organizations));
+            //set up Semester drop down code
+            //***TBD: Don't show Semesters already in translation***
+            for (var key in semesters) {
+                //semDDLCode += "<option value='" + semesters[key].SemesterCode + "'>" + semesters[key].SemesterName + "</option>";
+                $('#semDDL').append($('<option>', {
+                    value: semesters[key].SemesterCode,
+                    text: semesters[key].SemesterName
+                }));
+            }
 
-            //set up Org drop down code
-            //var orgDDLCode = '<select id="orgDDL" name="orgDDL"> '
-            //orgDDLCode += "<option value='??'>None Selected</option>";
-            //for (var key in organizations) {
-            //    orgDDLCode += "<option value='" + organizations[key].orgID + "'>" + organizations[key].OrgName + "</option>";
-            ////    $('#orgDDL').append($('<option>', {
-            ////        value: organizations[key].orgID,
-            ////        text: organizations[key].OrgName
-            ////    }));
-            //}
-            //orgDDLCode += '</select >';
+            //Set up Course drop down
+            $.ajax({
+                type: "GET",
+                //url: '@Url.Action("GetUntranslatedCoursesJson", "Cores")',
+                url: '@Url.Action("GetCoursesJson", "Cores")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    courses = response;
+                }
+            });
 
-    });
 
-    </script>
+            //set up Course drop down code filtered on selected Seminar
+            $("#semDDL").change(function () {
+                $('#corsDDL').empty(); //remove previous set of options
+                populateTranslationRows();
+            });
+
+            //page load only
+            $("#semDDL").change();
+
+            //Set up Language drop down
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetLanguagesJson", "Admin")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    languages = response;
+                }
+            });
+            //set up Language drop down code
+            for (var key in languages) {
+                $('#langDDL').append($('<option>', {
+                    value: languages[key].langID,
+                    text: languages[key].LangName
+                }));
+            }
+
+
+            function populateTranslationRows() {
+
+                var tHeadRow = $("#tblMain THEAD TR")[0];
+                var tBody = $("#tblMain TBODY")[0];
+
+                //Remove any existing TBody rows
+                $(tBody).empty();
+
+                if ($('input[name=fullSem]:checked').val() == 'full') {
+                    //Populate THEAD TDs
+                    $(tHeadRow).find("TH").eq(0).html("Translate Semester");
+                    $(tHeadRow).find("TH").eq(1).html("Select");
+
+                    //Create tBody row for the selected Semester and check the box
+                    var row = tBody.insertRow(0);
+                    cell = $(row.insertCell(-1));
+                    cell.html($('#semDDL option').filter(':selected').text());
+                    cell = $(row.insertCell(-1));
+                    cell.html("<div style='text-align: center'><input type=checkbox checked id=" + $('#semDDL option').filter(':selected').val() + " disabled></div>");
+
+                }
+                else { //'partial'
+                    //Populate THEAD TDs
+                    $(tHeadRow).find("TH").eq(0).html("Translate one or more Courses");
+                    $(tHeadRow).find("TH").eq(1).html("Select");
+
+                    //Create tBody rows for the selected Semester's courses with unchecked the boxes
+                    for (var key in courses) {
+                        //Populate courses for selected semester
+                        //***TBD: Don't show courses already in translation***
+                        if (courses[key].SemesterCode == $('#semDDL').val()) {
+                            var row = tBody.insertRow(0);
+                            cell = $(row.insertCell(-1));
+                            cell.html(courses[key].CourseName);
+                            cell = $(row.insertCell(-1));
+                            cell.html("<div style='text-align: center'><input type=checkbox id=" + courses[key].CourseCoreID + "></div>");
+                        }
+                    }
+                }
+                $('#tblMain').show();
+            }
+
+            $("body").on("click", "#GenTranSteps", function () {
+                if ($('input[name=fullSem]:checked').val() == 'full') {
+                    //Get id of Semester to translate
+                    var tBodyRow = $("#tblMain TBODY TR")[0];
+                    var semVal = $(tBodyRow).find('input:checkbox')[0].id;
+                    //alert('Semester: ' + semVal);
+                }
+                else { //'partial'
+                    var courseList = [];
+                    $("#tblMain TBODY TR").each(function () {
+                        var cb = $(this).find('input:checkbox:checked');
+                        if (cb.length == 1) {
+                            courseList.push(parseInt(cb[0].id));
+                        }
+                    });
+                    //alert(courseList.length + ' Courses');
+                    //alert(JSON.stringify(courseList));
+                }
+
+                if (semVal.length == 0 && courseList.length ==0) {
+                    alert("Please select items to translate before continuing.");
+                }
+
+            });
+
+        });
+
+        </script>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace GlobalTeamNetwork.Controllers
 {
@@ -36,6 +38,13 @@ namespace GlobalTeamNetwork.Controllers
         {
             var languages = _languageRepository.AllLanguagesShortNotes;
             return View(languages);
+        }
+
+        public string GetLanguagesJson()
+        {
+            List<Language> languages = _languageRepository.AllLanguages.OrderBy(l => l.LangName).ToList();
+            string retVal = JsonConvert.SerializeObject(languages);
+            return retVal;
         }
 
         [HttpPost]

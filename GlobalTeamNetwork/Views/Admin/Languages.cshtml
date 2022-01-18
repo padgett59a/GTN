@@ -278,13 +278,11 @@
                     cache: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        success: function (r) {
-                            if (r > 0) {
-                                alert(r + " " + pageObjectLabel + "(s) have been deleted.");
-                            }
-                            else {
-                                HandleError(r, pageObjectLabel, name);
-                            }
+                        if (r > 0) {
+                            alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        }
+                        else {
+                            HandleError(r, pageObjectLabel, name);
                         }
                     }
                 });
