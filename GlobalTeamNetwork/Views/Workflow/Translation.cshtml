@@ -1,0 +1,92 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.PersonOname>
+
+@{
+    ViewData["Title"] = "Translation Workflow";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Translation Workflow</title>
+</head>
+<body style="height:100%">
+    <h1>Translation Workflow</h1>
+
+    @foreach (var item in Model)
+    {
+    }
+
+<div id="divMain" style="height:100vh;overflow-y:auto">
+    <label>Create Entire Semester</label>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked><br>
+    <label>Create Selected Courses Only</label>&nbsp;&nbsp;<input type="radio" id="partial" name="fullSem" value="partial"><br><br>
+    Select a Semester to Translate&nbsp;<select id="semDDL" name="semDDL"></select><br>
+    <br>
+    <div id="divSelectCourses" style="display:none">
+        Select One or More Courses to Translate&nbsp;<select id="corsDDL" name="corsDDL"></select>&nbsp;<br><br>
+    </div>
+    Select a Language <select id="langDDL" name="langDDL"></select><br>
+    <br>
+    <input type="button" id="GenTranSteps" value="Generate Translation Steps" />
+</div>
+
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+        var editItem;
+        var deleteItem;
+
+        $(document).ready(function () {
+
+            $('input[type=radio][name=fullSem]').change(function () {
+                if (this.value == 'partial') {
+                    $('#divSelectCourses').show();
+                }
+                else {
+                    $('#divSelectCourses').hide();
+                }
+            });
+
+            //pFilter is passed to the page via query string for page refresh, etc.
+            var pFilter = (new URL(location.href)).searchParams.get('filter');
+
+            //Set up the drop down value arrays
+            var inputValid = false;
+            var delayMils = 900;
+            var pageObjectLabel = 'Translation Workflow';
+
+            //Set up Org drop down
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSemestersJson", "Cores")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    semesters = response;
+                }
+            });
+            //alert(JSON.stringify(organizations));
+
+            //set up Org drop down code
+            //var orgDDLCode = '<select id="orgDDL" name="orgDDL"> '
+            //orgDDLCode += "<option value='??'>None Selected</option>";
+            //for (var key in organizations) {
+            //    orgDDLCode += "<option value='" + organizations[key].orgID + "'>" + organizations[key].OrgName + "</option>";
+            ////    $('#orgDDL').append($('<option>', {
+            ////        value: organizations[key].orgID,
+            ////        text: organizations[key].OrgName
+            ////    }));
+            //}
+            //orgDDLCode += '</select >';
+
+    });
+
+    </script>
+
+</body>
+</html>

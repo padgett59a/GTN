@@ -13,177 +13,188 @@
 </head>
 <body>
     <h1>Course Cores</h1>
-    
-    @*Filtering*@
-    <table><tr><td nowrap>
-    filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
-        <option value='??'>All</option>
-    </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
 
-    </td></tr></table><br>   
+    @*Filtering*@
+    <table>
+        <tr>
+            <td nowrap>
+                filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
+            </td>
+            <td align="right">
+                Search <input type="text" id=txtSearch size="15">
+            </td>
+        </tr>
+    </table><br>
 
     <p>
         <a id="createNew" href="javascript:void(0)">Add New Course Core</a>
         <!--     <button id="createNew">Add Course Core</button> -->
     </p>
-    <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
-        <thead>
-            <!-- Top Labels-->
-            <tr>
-                @*<th>
-                        ID
-                    </th>*@
-                <th class="columnSort">
-                    @Html.DisplayNameFor(model => model.CourseName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    @Html.DisplayNameFor(model => model.SemesterName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Letter&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Number&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    @Html.DisplayNameFor(model => model.InstructorName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Workbook&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Video Text&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Videos&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    Mastering Files&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th class="columnSort">
-                    TextFiles&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Notes)
-                </th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr id="@(" tr" + @item.CourseCoreID)">
-                    @*<td class="CourseCode">
-                            @Html.DisplayFor(model => item.CourseCoreID)
-                        </td>*@
-                    <td>
-                        @Html.DisplayFor(model => item.CourseName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.SemesterName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.CourseLetterCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.CourseNumberCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.InstructorName)
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(model => item.HasWorkbook, new { disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(model => item.HasVideoText, new { disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(model => item.VideosInHand, new { disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(model => item.MasteringFilesInHand, new { disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(model => item.TextFilesInHand, new { disabled = "disabled" })
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Notes)
-                    </td>
-                    <td>
-                        <a onclick="editItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Edit</a> |
-                        <a asp-controller="Cores" asp-action="CourseCoreDetail" asp-route-id="@item.CourseCoreID">Details</a> |
-                        <a onclick="deleteItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-        <tfoot hidden>
-            <!-- Bottom Labels-->
-            <tr class="bottomLabels">
-                @*<th>
-                ID
-            </th>*@
-                <th>
-                    @Html.DisplayNameFor(model => model.CourseName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SemesterName)
-                </th>
-                <th>
-                    Letter
-                </th>
-                <th>
-                    Number
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.InstructorName)
-                </th>
-                <th>
-                    Workbook
-                </th>
-                <th>
-                    Video Text
-                </th>
-                <th>
-                    Videos
-                </th>
-                <th>
-                    Mastering Files
-                </th>
-                <th>
-                    TextFiles
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Notes)
-                </th>
-                <th>Actions</th>
-            </tr>
 
-            @*input controls for adding a new item*@
-            <tr>
-                @*<td><input type="text" id="txtCourseCoreID" class="courseInputClass" size="5" /></td>*@
-                <td><input type="text" id="txtCourseName" class="courseInputClass" /></td>
-                <td id="semesterDDL"><input type="text" id="txtSemesterName" class="courseInputClass" /></td>
-                <td><input type="text" id="txtCourseLetterCode" class="courseInputClass" size="5" /></td>
-                <td><input type="text" id="txtCourseNumberCode" class="courseInputClass" size="5" /></td>
-                <td id="instructorDDL"><input type="text" id="txtInstructorID" class="courseInputClass" /></td>
-                <td><input type="checkbox" id="txtHasWorkbook" class="courseInputClass" size="3" /></td>
-                <td><input type="checkbox" id="txtHasVideoText" class="courseInputClass" size="3" /></td>
-                <td><input type="checkbox" id="txtVideosInHand" class="courseInputClass" size="3" /></td>
-                <td><input type="checkbox" id="txtMasteringFilesInHand" class="courseInputClass" size="3" /></td>
-                <td><input type="checkbox" id="txtTextFilesInHand" class="courseInputClass" size="3" /></td>
-                <td><input type="text" id="txtNotes" class="courseInputClass" /></td>
-                <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
-            </tr>
-            <tr id="trSaveAll">
-                <td style="white-space:nowrap">
-                    <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
-                    <input type="button" id="btnCancel" value="Cancel" />
-                </td>
-                <td colspan="100%"></td>
-            </tr>
-        </tfoot>
-    </table>
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
+            <thead>
+                <!-- Top Labels-->
+                <tr>
+                    @*<th>
+                            ID
+                        </th>*@
+                    <th class="columnSort">
+                        @Html.DisplayNameFor(model => model.CourseName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        @Html.DisplayNameFor(model => model.SemesterName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Letter&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Number&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        @Html.DisplayNameFor(model => model.InstructorName)&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Workbook&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Video Text&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Videos&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        Mastering Files&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th class="columnSort">
+                        TextFiles&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id="@(" tr" + @item.CourseCoreID)">
+                        @*<td class="CourseCode">
+                                @Html.DisplayFor(model => item.CourseCoreID)
+                            </td>*@
+                        <td>
+                            @Html.DisplayFor(model => item.CourseName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.SemesterName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.CourseLetterCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.CourseNumberCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.InstructorName)
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => item.HasWorkbook, new { disabled = "disabled" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => item.HasVideoText, new { disabled = "disabled" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => item.VideosInHand, new { disabled = "disabled" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => item.MasteringFilesInHand, new { disabled = "disabled" })
+                        </td>
+                        <td>
+                            @Html.CheckBoxFor(model => item.TextFilesInHand, new { disabled = "disabled" })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Notes)
+                        </td>
+                        <td>
+                            <a onclick="editItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Edit</a> |
+                            <a asp-controller="Cores" asp-action="CourseCoreDetail" asp-route-id="@item.CourseCoreID">Details</a> |
+                            <a onclick="deleteItem('@item.CourseCoreID', this)" href="javascript:void(0)" id="@item.CourseCoreID">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot hidden>
+                <!-- Bottom Labels-->
+                <tr class="bottomLabels">
+                    @*<th>
+                            ID
+                        </th>*@
+                    <th>
+                        @Html.DisplayNameFor(model => model.CourseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SemesterName)
+                    </th>
+                    <th>
+                        Letter
+                    </th>
+                    <th>
+                        Number
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.InstructorName)
+                    </th>
+                    <th>
+                        Workbook
+                    </th>
+                    <th>
+                        Video Text
+                    </th>
+                    <th>
+                        Videos
+                    </th>
+                    <th>
+                        Mastering Files
+                    </th>
+                    <th>
+                        TextFiles
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+
+                @*input controls for adding a new item*@
+                <tr>
+                    @*<td><input type="text" id="txtCourseCoreID" class="courseInputClass" size="5" /></td>*@
+                    <td><input type="text" id="txtCourseName" class="courseInputClass" /></td>
+                    <td id="semesterDDL"><input type="text" id="txtSemesterName" class="courseInputClass" /></td>
+                    <td><input type="text" id="txtCourseLetterCode" class="courseInputClass" size="5" /></td>
+                    <td><input type="text" id="txtCourseNumberCode" class="courseInputClass" size="5" /></td>
+                    <td id="instructorDDL"><input type="text" id="txtInstructorID" class="courseInputClass" /></td>
+                    <td><input type="checkbox" id="txtHasWorkbook" class="courseInputClass" size="3" /></td>
+                    <td><input type="checkbox" id="txtHasVideoText" class="courseInputClass" size="3" /></td>
+                    <td><input type="checkbox" id="txtVideosInHand" class="courseInputClass" size="3" /></td>
+                    <td><input type="checkbox" id="txtMasteringFilesInHand" class="courseInputClass" size="3" /></td>
+                    <td><input type="checkbox" id="txtTextFilesInHand" class="courseInputClass" size="3" /></td>
+                    <td><input type="text" id="txtNotes" class="courseInputClass" /></td>
+                    <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                </tr>
+                <tr id="trSaveAll">
+                    <td style="white-space:nowrap">
+                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btnCancel" value="Cancel" />
+                    </td>
+                    <td colspan="100%"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
     <p>
         <a id="createNew2" href="javascript:void(0)">Add New Course Core</a>
         <!--     <button id="createNew">Add Course Core</button> -->
@@ -191,10 +202,10 @@
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
-
     <script type="text/javascript">
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+
     //scope functions declared inside of document.ready
     var editItem;
     var deleteItem;
@@ -690,7 +701,7 @@
                 courseCore.MasteringFilesInHand = editRow.find("TD").eq(8).find('input:checkbox:first').is(':checked');
                 courseCore.TextFilesInHand = editRow.find("TD").eq(9).find('input:checkbox:first').is(':checked');
                 //NOTE: All inputs, and checkboxes match find("input")
-                courseCore.Notes = editRow.find("input").eq(8).val(); 
+                courseCore.Notes = editRow.find("input").eq(8).val();
 
                 $.ajax({
                     type: "POST",
@@ -716,7 +727,7 @@
     /*end document.ready*/
     });
 
-    </script>
+        </script>
 
 </body>
 </html>

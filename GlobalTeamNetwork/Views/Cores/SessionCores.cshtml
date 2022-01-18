@@ -19,8 +19,11 @@
                     filtered&nbsp;for&nbsp;Course&nbsp;<select id="corsFilter" style="width:300px;">
                         <option value='??'>All</option>
                     </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
-
                 </td>
+                <td align="right">
+                    Search <input type="text" id=txtSearch size="15">
+                </td>
+
             </tr>
         </table><br>
 
@@ -28,95 +31,99 @@
             <a id="createNew" href="javascript:void(0)">Add New Session Core</a>
             <!--     <button id="createNew">Add Session Core</button> -->
         </p>
-        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
-            <thead>
-                <!-- Top Labels-->
-                <tr>
-                    @*<th>
-                        ID &nbsp; &nbsp; &nbsp; <span class="nobreak">T</span>
-                    </th>*@
-                    <th class="columnSort" style="width:35%">
-                        Session Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:35%">
-                        Course Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:10%">
-                        Session Code&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th style="width:10%">
-                        @Html.DisplayNameFor(model => model.Notes)
-                    </th>
-                    <th style="width:10%">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="dataRows">
-                @foreach (var item in Model)
-                {
-                    <tr id="@(" tr" + @item.SessionCoreID)">
-                        @*<td class="SessionCode">
-                    @Html.DisplayFor(model => item.SessionCoreID)
-                </td>*@
-                        <td>
-                            @Html.DisplayFor(model => item.SessionName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(model => item.CourseName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(model => item.SessionCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(model => item.Notes)
-                        </td>
-                        <td>
-                            <a onclick="editItem('@item.SessionCoreID', this)" href="javascript:void(0)" id="@item.SessionCoreID">Edit</a> |
-                            <a asp-controller="Cores" asp-action="SessionCoreDetail" asp-route-id="@item.SessionCoreID">Details</a> |
-                            <a onclick="deleteItem('@item.SessionCoreID', this)" href="javascript:void(0)" id="@item.SessionCoreID">Delete</a>
-                        </td>
+        <div id="divMain" style="height:100vh;overflow-y:auto">
+
+            <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
+                <thead>
+                    <!-- Top Labels-->
+                    <tr>
+                        @*<th>
+                            ID &nbsp; &nbsp; &nbsp; <span class="nobreak">T</span>
+                        </th>*@
+                        <th class="columnSort" style="width:35%">
+                            Session Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th class="columnSort" style="width:35%">
+                            Course Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th class="columnSort" style="width:10%">
+                            Session Code&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th style="width:10%">
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </th>
+                        <th style="width:10%">Actions</th>
                     </tr>
-                }
-            </tbody>
-            <tfoot hidden>
+                </thead>
+                <tbody class="dataRows">
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@(" tr" + @item.SessionCoreID)">
+                            @*<td class="SessionCode">
+                                @Html.DisplayFor(model => item.SessionCoreID)
+                            </td>*@
+                            <td>
+                                @Html.DisplayFor(model => item.SessionName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.CourseName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.SessionCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Notes)
+                            </td>
+                            <td>
+                                <a onclick="editItem('@item.SessionCoreID', this)" href="javascript:void(0)" id="@item.SessionCoreID">Edit</a> |
+                                <a asp-controller="Cores" asp-action="SessionCoreDetail" asp-route-id="@item.SessionCoreID">Details</a> |
+                                <a onclick="deleteItem('@item.SessionCoreID', this)" href="javascript:void(0)" id="@item.SessionCoreID">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot hidden>
 
-                <!-- Bottom Labels-->
-                <tr id="bottomLabels" class="bottomLabels">
-                    @*<th>
-                        ID
-                    </th>*@
-                    <th>
-                        Session Name
-                    </th>
-                    <th>
-                        Course Name
-                    </th>
-                    <th>
-                        Session Code
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Notes)
-                    </th>
-                    <th>Actions</th>
-                </tr>
+                    <!-- Bottom Labels-->
+                    <tr id="bottomLabels" class="bottomLabels">
+                        @*<th>
+                            ID
+                        </th>*@
+                        <th>
+                            Session Name
+                        </th>
+                        <th>
+                            Course Name
+                        </th>
+                        <th>
+                            Session Code
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </th>
+                        <th>Actions</th>
+                    </tr>
 
-                @*input controls for adding a new item*@
-                <tr>
-                    @*<td><input type="text" id="txtSessionCoreID" class="SessionInputClass" size="5" /></td>*@
-                    <td><input type="text" id="txtSessionName" class="SessionInputClass" /></td>
-                    <td id="courseDDL"><input type="text" id="tx.CourseName" class="SessionInputClass" /></td>
-                    <td><input type="text" id="txtSessionCode" class="SessionInputClass" size="5" /></td>
-                    <td><input type="text" id="txtNotes" class="SessionInputClass" /></td>
-                    <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
-                </tr>
-                <tr id="trSaveAll">
-                    <td style="white-space:nowrap">
-                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
-                        <input type="button" id="btnCancel" value="Cancel" />
-                    </td>
-                    <td colspan="100%"></td>
-                </tr>
-            </tfoot>
-        </table>
+                    @*input controls for adding a new item*@
+                    <tr>
+                        @*<td><input type="text" id="txtSessionCoreID" class="SessionInputClass" size="5" /></td>*@
+                        <td><input type="text" id="txtSessionName" class="SessionInputClass" /></td>
+                        <td id="courseDDL"><input type="text" id="tx.CourseName" class="SessionInputClass" /></td>
+                        <td><input type="text" id="txtSessionCode" class="SessionInputClass" size="5" /></td>
+                        <td><input type="text" id="txtNotes" class="SessionInputClass" /></td>
+                        <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                    </tr>
+                    <tr id="trSaveAll">
+                        <td style="white-space:nowrap">
+                            <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnCancel" value="Cancel" />
+                        </td>
+                        <td colspan="100%"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
         <p>
             <a id="createNew2" href="javascript:void(0)">Add New Session Core</a>
             <!--     <button id="createNew">Add Session Core</button> -->
@@ -528,7 +535,7 @@
     /*end document.ready*/
     });
 
-        </script>
+            </script>
 
     </body>
 </html>
