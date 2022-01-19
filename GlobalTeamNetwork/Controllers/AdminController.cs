@@ -13,17 +13,20 @@ namespace GlobalTeamNetwork.Controllers
     {
         private readonly ILanguageRepository _languageRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
+        private readonly IExamTranslationStepRepository _examTranslationStepRepository;
         private readonly IMasteringStepRepository _masteringStepRepository;
         private readonly IMediaTypeRepository _mediaTypeRepository;
 
         public AdminController(
             ILanguageRepository languageRepository,
             ITranslationStepRepository tranlationStepRepository,
+            IExamTranslationStepRepository examTranlationStepRepository,
             IMasteringStepRepository masteringStepRepository,
             IMediaTypeRepository mediaTypeRepository)
         {
             _languageRepository = languageRepository;
             _translationStepRepository = tranlationStepRepository;
+            _examTranslationStepRepository = examTranlationStepRepository;
             _masteringStepRepository = masteringStepRepository;
             _mediaTypeRepository = mediaTypeRepository;
         }
@@ -132,6 +135,56 @@ namespace GlobalTeamNetwork.Controllers
             }
 
             EntityState retVal = _translationStepRepository.UpdateTranslationStep(updateItem);
+            if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+            {
+                updateCount = 1;
+            }
+            return Json(updateCount);
+        }
+
+
+        //*****************ExamTranslationSteps*****************
+        public IActionResult ExamTranslationSteps()
+        {
+            var examTranslationSteps = _examTranslationStepRepository.AllExamTranslationStepsShortNotes;
+            return View(examTranslationSteps);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult InsertExamTranslationSteps([FromBody] List<ExamTranslationStep> newExamTranslationStep)
+        {
+            if (newExamTranslationStep == null)
+            {
+                newExamTranslationStep = new List<ExamTranslationStep>();
+            }
+
+            int insertCount = _examTranslationStepRepository.InsertExamTranslationStep(newExamTranslationStep);
+            return Json(insertCount);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult deleteExamTranslationStep([FromBody] List<int> delItemList)
+        {
+            if (delItemList == null)
+            {
+                delItemList = new List<int>();
+            }
+
+            int deleteCount = _examTranslationStepRepository.DeleteExamTranslationStep(delItemList);
+            return Json(deleteCount);
+        }
+
+        public JsonResult UpdateExamTranslationStep([FromBody] ExamTranslationStep updateItem)
+        {
+            int updateCount = 0;
+            if (updateItem == null)
+            {
+                updateItem = new ExamTranslationStep();
+            }
+
+            EntityState retVal = _examTranslationStepRepository.UpdateExamTranslationStep(updateItem);
             if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
             {
                 updateCount = 1;

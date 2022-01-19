@@ -37,7 +37,7 @@
             <thead>
                 <!-- Top Labels-->
                 <tr>
-                    <th class="columnSort" style="width:85%">
+                    <th class="columnSort" style="width:85%" valign="middle">
                     </th>
                     <th class="columnSort" style="text-align: center; align-items:center">
                     </th>
@@ -46,6 +46,10 @@
             <tbody class="dataRows">
             </tbody>
         </table>
+        <div id="semExamOpts">
+            <input type=checkbox checked id="semExams">&nbsp;Generate Semester Exams<br>
+            <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
+        </div>
         <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
     </div>
 
@@ -58,9 +62,12 @@
         var editItem;
         var deleteItem;
         var radioClick;
-
+        var checkAll;
 
         $(document).ready(function () {
+
+            checkAll = function () {
+            }
 
             radioClick = function (label) {
                 //alert(label.id);
@@ -77,6 +84,17 @@
                 //trigger row changes based on semester selected
                 $("#semDDL").change();
             });
+
+            $("#semExams").change(function () {
+                if (!$(this).is(":checked")) {
+                    $("#semExamsOnly").hide();
+                }
+                else {
+                    $("#semExamsOnly").show();
+                }
+            });
+
+
 
             //pFilter is passed to the page via query string for page refresh, etc.
             var pFilter = (new URL(location.href)).searchParams.get('filter');
@@ -157,6 +175,7 @@
                 $(tBody).empty();
 
                 if ($('input[name=fullSem]:checked').val() == 'full') {
+                    $('#semExamOpts').show();
                     //Populate THEAD TDs
                     $(tHeadRow).find("TH").eq(0).html("Translate Semester");
                     $(tHeadRow).find("TH").eq(1).html("Select");
@@ -170,9 +189,10 @@
 
                 }
                 else { //'partial'
+                    $('#semExamOpts').hide();
                     //Populate THEAD TDs
-                    $(tHeadRow).find("TH").eq(0).html("Translate one or more Courses");
-                    $(tHeadRow).find("TH").eq(1).html("Select");
+                    $(tHeadRow).find("TH").eq(0).html("Translate one or more <br>Courses");
+                    $(tHeadRow).find("TH").eq(1).html("Select<br><input type=checkbox onclick='checkAll();'>");
 
                     //Create tBody rows for the selected Semester's courses with unchecked the boxes
                     for (var key in courses) {
@@ -205,8 +225,6 @@
                             courseList.push(parseInt(cb[0].id));
                         }
                     });
-                    //alert(courseList.length + ' Courses');
-                    //alert(JSON.stringify(courseList));
                 }
 
                 if (semVal.length == 0 && courseList.length ==0) {

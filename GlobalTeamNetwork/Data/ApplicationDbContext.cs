@@ -21,6 +21,7 @@ namespace GlobalTeamNetwork.Data
         public DbSet<SessionCore> SessionCores { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<TranslationStep> TranslationSteps { get; set; }
+        public DbSet<ExamTranslationStep> ExamTranslationSteps { get; set; }
         public DbSet<MasteringStep> MasteringSteps { get; set; }
         public DbSet<MediaType> MediaTypes {get; set; }
         public DbSet<Person> Persons {get; set; }

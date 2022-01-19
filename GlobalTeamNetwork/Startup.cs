@@ -61,6 +61,7 @@ namespace GlobalTeamNetwork
             services.AddScoped<IPersonsRepository, PersonsRepository>();
             services.AddScoped<IPersonTypeRepository, PersonTypeRepository>();
             services.AddScoped<ITranslationStepRepository, TranslationStepRepository>();
+            services.AddScoped<IExamTranslationStepRepository, ExamTranslationStepRepository>();
             services.AddScoped<IMasteringStepRepository, MasteringStepRepository>();
             services.AddScoped<IMediaTypeRepository, MediaTypeRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();

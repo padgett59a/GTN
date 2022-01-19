@@ -17,6 +17,11 @@
           "href": "admin_translationsteps"
         },
         {
+          "title": "Exam Translation Steps",
+          "showOnSeed": false,
+          "href": "admin_examtranslationsteps"
+        },
+        {
           "title": "Mastering Steps",
           "href": "admin_masteringsteps",
           "environment": "production"
@@ -112,24 +117,29 @@
 
 
     {
-      "title": "WorkFlow",
+      "title": "Manage Work",
       "icon": "fal fa-user",
       "environment": "production",
       "items": [
         {
-          "title": "Translate",
+          "title": "Translation",
           "showOnSeed": false,
           "href": "workflow_translation"
         },
         {
-          "title": "Master",
+          "title": "Mastering",
           "showOnSeed": false,
-          "href": "persons_persons?filter=1"
+          "href": "TBD"
         },
         {
-          "title": "Pay",
+          "title": "Distribution",
           "showOnSeed": false,
-          "href": "persons_persons?filter=6"
+          "href": "TBD"
+        },
+        {
+          "title": "Accounting",
+          "showOnSeed": false,
+          "href": "TBD"
         }
       ]
     },
