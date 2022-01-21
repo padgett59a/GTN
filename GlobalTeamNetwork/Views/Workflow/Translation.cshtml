@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GlobalTeamNetwork.Models.PersonOname>
 
 @{
-    ViewData["Title"] = "Translation Workflow";
+    ViewData["Title"] = "New Translation Workflow";
 }
 
 <!DOCTYPE html>
@@ -14,12 +14,23 @@
 <body style="height:100%">
     <h1>Translation Workflow</h1>
 
+    <table width="25%" border="1">
+        <tr>
+            <td align="center">
+                Create New Work
+            </td>
+            <td align="center">
+                Manage Existing Work
+            </td>
+        </tr>
+    </table>
+    <br>
     <div id="divMain" style="height:100vh;overflow-y:auto">
         <table>
             <tr>
                 <td width="30%">
                     <div style="border: 2px solid blue;background-color:lightgrey">
-                        <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></b>&nbsp;&nbsp;<br>
+                        <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></br>&nbsp;&nbsp;<br>
                         &nbsp;&nbsp;<input type="radio" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp;&nbsp;&nbsp;&nbsp;<br><br>
                     </div>
                 </td>
@@ -51,6 +62,11 @@
             <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
         </div>
         <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
+    </div>
+
+    <div id="gendSteps" style="display: none">
+        <table id="tblGend">
+        </table>
     </div>
 
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -211,24 +227,63 @@
             }
 
             $("body").on("click", "#GenTranSteps", function () {
+
+                var goAjax = true;
+                var tBodyRow = $("#tblMain TBODY TR")[0];
+                semVal = $(tBodyRow).find('input:checkbox')[0].id;
+
+                //set up JSON send data
+                const transSem = new Object();
+                var gExams = 0;
+                if ($('#semExams').is(':checked')) { gExams = 1 }
+                transSem.GenExams = parseInt(gExams);
+                transSem.SemesterCode = semVal;
+                transSem.CourseCodes = "";
+                transSem.LangID = parseInt($("#langDDL").val());
+
+                //TBD Need an IF for Semester Exams Only
                 if ($('input[name=fullSem]:checked').val() == 'full') {
-                    //Get id of Semester to translate
-                    var tBodyRow = $("#tblMain TBODY TR")[0];
-                    var semVal = $(tBodyRow).find('input:checkbox')[0].id;
-                    //alert('Semester: ' + semVal);
+                    if (semVal.length == 0) {
+                        alert("Please select items to translate before continuing.");
+                    }
                 }
+
                 else { //'partial'
-                    var courseList = [];
+                    var courseList = "";
                     $("#tblMain TBODY TR").each(function () {
                         var cb = $(this).find('input:checkbox:checked');
                         if (cb.length == 1) {
-                            courseList.push(parseInt(cb[0].id));
+                            courseList += cb[0].id + ",";
                         }
                     });
+                    //remove trailing comma
+                    courseList = courseList.substring(0, courseList.length - 1);
+
+                    if (courseList.length == 0) {
+                        goAjax  = false;
+                        alert("Please select items to translate before continuing.");
+                    }
+                    else {
+                        transSem.GenExams = parseInt(0);
+                        transSem.CourseCodes = courseList;
+                    }
                 }
 
-                if (semVal.length == 0 && courseList.length ==0) {
-                    alert("Please select items to translate before continuing.");
+                if (goAjax) {
+                    //alert(JSON.stringify(transSem));
+                    //Get gen'd session translation records
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("trxSemester","Workflow")',
+                        data: JSON.stringify(transSem),
+                        dataType: 'JSON',
+                        cache: false,
+                        contentType: "application/json; charset=utf-8",
+                        success: function (txSessions) {
+                            alert(JSON.stringify(txSessions))
+                            alert(transSessions.length + " " + pageObjectLabel + "(s) inserted.");
+                        }
+                    });
                 }
 
             });

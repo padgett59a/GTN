@@ -1,3 +1,4 @@
+using GlobalTeamNetwork.Data;
 using GlobalTeamNetwork.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,20 +11,35 @@ namespace GlobalTeamNetwork.Controllers
     public class WorkflowController : Controller
     {
         private readonly IPersonsRepository _personsRepository;
-        private readonly IPersonTypeRepository _personTypeRepository;
+        private readonly IWorkflowRepository _workflowRepository;
+        private readonly ApplicationDbContext _appDbContext;
 
-        public WorkflowController(IPersonsRepository personsRepository, IPersonTypeRepository personTypeRepository)
+        public WorkflowController(IPersonsRepository personsRepository, IWorkflowRepository workflowRepository, ApplicationDbContext appDbContext)
         {
             _personsRepository = personsRepository;
-            _personTypeRepository = personTypeRepository;
+            _workflowRepository = workflowRepository;
+            _appDbContext = appDbContext;
         }
 
+        //page load
         public IActionResult Translation()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
             IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             IEnumerable<PersonOname> translators = personOnames.Where(p => p.Role == "Translator");
             return View(translators);
+        }
+
+        [HttpPost]
+        //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        public JsonResult trxSemester([FromBody] TxSemester txSem)
+        {
+            if (txSem == null)
+            {
+                txSem = new TxSemester();
+            }
+            List<TxLog> retVal = _workflowRepository.TranslateLanguage(txSem, _appDbContext);
+            return Json(retVal);
         }
 
 
