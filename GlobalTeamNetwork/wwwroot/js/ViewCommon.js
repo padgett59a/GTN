@@ -8,7 +8,18 @@
 //function decodeHtml(html) {
 //function changeSaveButton(changeTo, selCurr ) {
 //function rowSort(tableBody, sortColumn, arrow) {
-//function HandleError(e, tName) {
+//function HandleError(e, tName) 
+//function getCurrentSort()
+//function rowSort(tableBody, sortColumn, arrow)
+//function setSortArrows(sortCol, pSortDir)
+//function checkForNull(testStr)
+//function phoneOnly(checkStr) 
+//function digitsOnly(checkStr) 
+//function trimDollar(inStr) 
+//function trimDecimal(inStr) 
+//function amountsOnly(checkStr) 
+//function emailOnly(checkStr) 
+
 
 //Button type enum
 const buttonType = {
@@ -29,7 +40,15 @@ const sortArrow = {
     Down: '&#8595;'
 }
 
-
+function checkForNull(testStr) {
+    var retVal;
+    if (!testStr) {
+        return "";
+    }
+    else {
+        return testStr;
+    }
+}
 
 //On Page Search
 $("body").on("input", "#txtSearch", function () {

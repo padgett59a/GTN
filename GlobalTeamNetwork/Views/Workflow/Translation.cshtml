@@ -46,7 +46,7 @@
         <br><br>
         <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: none">
             <thead>
-                <!-- Top Labels-->
+                 Top Labels
                 <tr>
                     <th class="columnSort" style="width:85%" valign="middle">
                     </th>
@@ -64,8 +64,32 @@
         <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
     </div>
 
-    <div id="gendSteps" style="display: none">
-        <table id="tblGend">
+    <div id="divGendSteps" style="display: none">
+        <table id="tblGendSteps" class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <td>Language</td>
+                    <td>Semester</td>
+                    <td>Course</td>
+                    <td>Session</td>
+                    <td>Translator</td>
+                    <td>Status</td>
+                    <td>Notes</td>
+                    <td>Select</td>
+                </tr>
+            </thead>
+            <tbody>
+                @*<tr style="height:1px;display: none">
+                    <td>Language</td>
+                    <td>Semester</td>
+                    <td>Course</td>
+                    <td>Session</td>
+                    <td>Translator</td>
+                    <td>Status</td>
+                    <td>Notes</td>
+                    <td>Select</td>
+                </tr>*@
+            </tbody>
         </table>
     </div>
 
@@ -228,6 +252,7 @@
 
             $("body").on("click", "#GenTranSteps", function () {
 
+                //var txNewTrxSessions;
                 var goAjax = true;
                 var tBodyRow = $("#tblMain TBODY TR")[0];
                 semVal = $(tBodyRow).find('input:checkbox')[0].id;
@@ -278,12 +303,34 @@
                         data: JSON.stringify(transSem),
                         dataType: 'JSON',
                         cache: false,
+                        async: false,
                         contentType: "application/json; charset=utf-8",
-                        success: function (txSessions) {
-                            alert(JSON.stringify(txSessions))
-                            alert(transSessions.length + " " + pageObjectLabel + "(s) inserted.");
+                        success: function (txNewTrxSessions) {
+
+                            //alert(JSON.stringify(txNewTrxSessions[0].translatorID));
+
+                            //Show TranslationLog records just put into working status
+                            logTable = $('#tblGendSteps tbody');
+                            var tdString;
+                            var logRow;
+                            for (var key in txNewTrxSessions) {
+                                tdString = "";
+                                tdString += "<td>" + txNewTrxSessions[key].langName + "</td>";
+                                tdString += "<td>" + txNewTrxSessions[key].semesterName + "</td>";
+                                tdString += "<td>" + txNewTrxSessions[key].courseName + "</td>";
+                                tdString += "<td>" + checkForNull(txNewTrxSessions[key].sessionName) + "</td>";
+                                tdString += "<td>" + checkForNull(txNewTrxSessions[key].translatorID) + "</td>";
+                                tdString += "<td>" + checkForNull(txNewTrxSessions[key].statusID) + "</td>";
+                                tdString += "<td>" + checkForNull(txNewTrxSessions[key].notes) + "</td>";
+                                tdString += "<td><input type=checkbox id='" + txNewTrxSessions[key].tlID + "'></td>";
+                                logRow = "<tr>" + tdString + "</tr>";
+                                logTable.append(logRow);
+                                $('#divMain').hide();
+                                $('#divGendSteps').show();
+                            }
                         }
                     });
+
                 }
 
             });
