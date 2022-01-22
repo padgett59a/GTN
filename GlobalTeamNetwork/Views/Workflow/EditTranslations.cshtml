@@ -1,0 +1,533 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.TxLog>
+
+@{
+    ViewData["Title"] = "EditTranslations";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit Translations</title>
+</head>
+<body>
+    <h1>Edit Translations</h1>
+    <table>
+        <tr>
+            <td nowrap>
+                filtered&nbsp;for&nbsp;Course&nbsp;<select id="corsFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllRows" href="javascript:void(0)">Show All</a>
+            </td>
+            <td align="right">
+                Search <input type="text" id=txtSearch size="15">
+            </td>
+
+        </tr>
+    </table><br>
+
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
+            <thead>
+                <!-- Top Labels-->
+                <tr>
+                <tr>
+                    <th nowrap class="columnSort">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Translator &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Step &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Status &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th>Notes</th>
+                    <th>Select</th>
+                    <th style="width:10%">Actions</th>
+                    <th style="width:10%">Select</th>
+                </tr>
+            </thead>
+            <tbody class="dataRows">
+                @foreach (var item in Model)
+                {
+                <tr id="@(" tr" + @item.tlID)">
+                    <td>
+                        @Html.DisplayFor(model => item.LangName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.SemesterName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.CourseName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.SessionName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.translatorID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Step)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Notes)
+                    </td>
+                    <td>
+                        <a onclick="editItem('@item.tlID', this)" href="javascript:void(0)" id="@item.tlID">Edit</a> |
+                    </td>
+                    <td>
+                        @Html.Raw("<div style = 'text-align: center'>< input type = checkbox id = '" + @item.tlID + "' ></ div >")
+                    </td>
+                </tr>
+                }
+            </tbody>
+            <tfoot hidden>
+
+                <!-- Bottom Labels-->
+                <tr id="bottomLabels" class="bottomLabels">
+                    <th nowrap class="columnSort">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Translator &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Step &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Status &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th>Notes</th>
+                    <th>Select</th>
+                    <th style="width:10%">Actions</th>
+                    <th style="width:10%">Select</th>
+                </tr>
+
+                @*input controls for adding a new item*@
+                <tr>
+                    @*<td><input type="text" id="txtSessionName" class="SessionInputClass" /></td>
+                    <td id="courseDDL"><input type="text" id="tx.CourseName" class="SessionInputClass" /></td>
+                    <td><input type="text" id="txtSessionCode" class="SessionInputClass" size="5" /></td>
+                    <td><input type="text" id="txtNotes" class="SessionInputClass" /></td>
+                    <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>*@
+                </tr>
+                <tr id="trSaveAll">
+                    <td style="white-space:nowrap">
+                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btnCancel" value="Cancel" />
+                    </td>
+                    <td colspan="100%"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+            var editItem;
+            var deleteItem;
+
+        $(document).ready(function () {
+
+            //pFilter is passed to the page via query string for page refresh, etc.
+            var pFilter = (new URL(location.href)).searchParams.get('filter');
+
+            //Set up the drop down value arrays
+            var inputValid = false;
+            var courses;
+            var delayMils = 900;
+            var pageObjectLabel = 'Translation';
+
+            //Set up Courses drop down
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCoursesJson","Cores")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    courses = response;
+                }
+            });
+
+            //set up course drop down code
+            var courseDDLCode = '<select id = "courseDDL" name = "courseDDL"> '
+            courseDDLCode += "<option value='??'>All Courses</option>";
+            for (var key in courses) {
+                courseDDLCode += "<option value='" + courses[key].CourseCoreID + "'>" + courses[key].CourseName + "</option>";
+                $('#corsFilter').append($('<option>', {
+                    value: courses[key].CourseCoreID,
+                    text: courses[key].CourseName
+                }));
+            }
+            courseDDLCode += '</select >';
+
+            $('#corsFilter').change(function () {
+                var courseFilter = this.options[this.selectedIndex].text;
+                if (courseFilter != "All") {
+                    $("#tblMain td:nth-child(3):contains('" + courseFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(3):not(:contains('" + courseFilter + "'))").parent().hide();
+                }
+                else {
+                    //show all rows
+                    $("#tblMain tr").show();
+                }
+                $("#tblMain TFOOT").attr("hidden", true);
+
+            })
+
+            //select the first semester value or passed filter value and show the main table.
+            //pFilter gets set from the Course filter passed in via query string
+            if (pFilter != null) {
+                var boolFilterExists = courseDDLCode.indexOf("value='" + pFilter + "'") > -1;
+                //alert('boolFilterExists: '+ boolFilterExists);
+                if (boolFilterExists) {
+                    $('#corsFilter').val(pFilter).change();
+                }
+            }
+            else {
+                //Set to first option in the list
+                //$('#corsFilter').prop('selectedIndex', 1).change();
+            }
+            $('#tblMain').removeAttr('hidden');
+
+            function refreshMe() {
+                //Refresh the page
+                var url = '@Url.Action("EditTranslations", "WorkFlow")' + "?filter=" + $('#corsFilter option').filter(':selected').val() + getCurrentSort();
+                window.location.href = url;
+            }
+
+            $("body").on("click", "#btnCancel", function () {
+                refreshMe();
+            });
+
+            //$(".sortArrow").hide();
+
+            //$("[id^=createNew]").click(function () {
+
+            //    //Set up add button
+            //    changeSaveButton(buttonType.ADD, 0);
+
+            //    //Default Course drop down to current filter value
+            //    var crsReplVal = "<option value='" + $('#corsFilter').val() + "'>";
+            //    var crsReplValOpt = crsReplVal.replace('option value=', 'option selected value=');
+            //    var courseDDLCodeOpt = courseDDLCode.replace(crsReplVal, crsReplValOpt);
+            //    //alert(courseDDLCodeOpt);
+            //    $("#courseDDL").html(courseDDLCodeOpt);
+
+            //    //show footer
+            //    $("#tblMain tfoot>tr").show();
+            //    $("#tblMain TFOOT").attr("hidden", false);
+            //    //scroll to bottom
+            //    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            //});
+
+            $("#showAllRows").click(function () {
+                //Set filter to 'All'
+                $('#corsFilter').prop('selectedIndex', 0).change();
+            });
+
+        //See if all input values are blank
+        function allBlank() {
+            var allAreBlank = (
+                $("#txtSessionName").val().length == 0 &&
+                $('#courseDDL option:selected').val() == '??' &&
+                $("#txtSessionCode").val().length == 0 &&
+                $("#txtNotes").val().length == 0
+            );
+            return allAreBlank;
+        }
+
+        //validate input and set inputValid global boolean
+        function validateInput() {
+
+            //default to true
+            inputValid = true;
+
+            if (!allBlank()) {
+
+                //Validate input
+                if (//inp01.val().length == 0 ||
+                    $("#txtSessionName").val().length == 0 ||
+                    $('#courseDDL option:selected').val() == '??' ||
+                    $("#txtSessionCode").val().length == 0 ) {
+                    inputValid = false;
+                    alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                    }
+                    else if (!decimalsOnly($("#txtSessionCode").val().trim())) {
+                    inputValid = false;
+                    alert("The Session Code must be number in the format 'N.NN' e.g. (0.23). Please correct this before proceeding.");
+                }
+                //else if (CourseCodeExists(inp01.val())) {
+                //    inputValid = false;
+                //    alert(pageObjectLabel + " IDs must be unique. Please correct this before proceeding.");
+                //}
+            }
+        }
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("input", ".SessionInputClass", function () {
+            if (
+                //$('#txttlID').val().length > 0 &&
+                $('#txtSessionName').val().length > 0 &&
+                $('#txtSessionCode').val().length > 0 &&
+                $('#courseDDL option:selected').val() != '??'
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop('disabled', true);
+            }
+        });
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("change", "#courseDDL, #instructorDDL", function () {
+            if (
+                //$('#txttlID').val().length > 0 &&
+                $('#txtSessionName').val().length > 0 &&
+                $('#txtSessionCode').val().length > 0 &&
+                $('#courseDDL option:selected').val() != '??'
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop('disabled', true);
+            }
+        });
+
+        // Add another item - validate input
+        $("body").on("click", "#btnAdd", function () {
+
+            if (!allBlank()) {
+
+                validateInput();
+
+                if (inputValid) {
+                    //Get the reference of the Table's TFOOT element.
+                    var tFoot = $("#tblMain > TFOOT")[0];
+
+                    //Add a new row above the input row and move the added values to it
+                    var row = tFoot.insertRow(0);
+
+                    ////Add Session ID cell.
+                    //var cell = $(row.insertCell(-1));
+                    //cell.html(inp01.val());
+                    //cell.addClass("SessionCode");
+
+                    //Add Session Name cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtSessionName").val());
+
+                    //Add Course select cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#courseDDL option:selected").text());
+
+                    //Add Letter Code cell.
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtSessionCode").val());
+
+                    //Add Notes cell
+                    cell = $(row.insertCell(-1));
+                    cell.html($("#txtNotes").val());
+
+                    //Add Remove button cell.
+                    cell = $(row.insertCell(-1));
+                    var btnRemove = $("<input />");
+                    btnRemove.attr("type", "button");
+                    btnRemove.attr("onclick", "removeRow(this);");
+                    btnRemove.val("Remove");
+                    cell.append(btnRemove);
+
+                    //Clear the input control values of the new Add row
+                    //inp01.val("");
+                    $("#txtSessionName").val("");
+                    //$("#courseDDL select").val(NOSELECTION);
+                    $("#txtSessionCode").val("");
+                    $("#txtNotes").val("");
+
+                    //now there is something to save
+                    $("#btnSave").prop('disabled', false);
+                }
+            }
+        });
+
+        //Save all added rows
+        $("body").on("click", "#btnSave", function () {
+
+            //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
+            validateInput();
+
+            if (inputValid) {
+                //Loop through the Table rows and build a JSON array.
+                var Sessions = new Array();
+
+                $("#tblMain TFOOT TR").each(function () {
+                    var row = $(this);
+                    var Translation = {};
+
+                    //Skip the bottomLabels row
+                    if (!row.hasClass("bottomLabels")) {
+
+                        //push new rows to the add list
+                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+
+                            if (!allBlank()) {
+                                Translation.SessionName = row.find("input").eq(0).val();
+                                Translation.CourseCoreID = parseInt($('#courseDDL option').filter(':selected').val());
+                                Translation.SessionCode = parseFloat(row.find("input").eq(1).val());
+                                //NOTE: All inputs, and checkboxes match find("input")
+                                Translation.Notes = row.find("input").eq(2).val();
+                                Sessions.push(Translation);
+                            }
+                        }
+
+                        if (row.find('td:last-child').html().includes('value="Remove"')) {
+                            //Translation.tlID = null; //IDENTITY value
+                            Translation.SessionName = row.find("TD").eq(0).html();
+                            Translation.CourseCoreID = parseInt(courses.find(course => course.CourseName === decodeHtml(row.find("TD").eq(1).html())).CourseCoreID);
+                            Translation.SessionCode = parseFloat(row.find("TD").eq(2).html());
+                            Translation.Notes = row.find("TD").eq(3).html();
+                            Sessions.push(Translation);
+                        }
+                    }
+                });
+
+                //Serialize the object array and send the JSON to the Controller using AJAX.
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("InsertSessions","Cores")',
+                    data: JSON.stringify(Sessions),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " " + pageObjectLabel + "(s) inserted.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+        //Delete item via AJAX
+        deleteItem = function (itemId, button) {
+
+            //Determine the reference of the calling Row
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(0).html().trim();
+
+            if (confirm("Do you want to delete Session: " + name + " ?")) {
+                //Get the reference to the Table.
+                //var table = $("#tblMain")[0];
+                var itemArray = new Array;
+                itemArray[0] = parseInt(itemId);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("deleteSessions","Cores")',
+                    data: JSON.stringify(itemArray),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        if (r > 0) {
+                            alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                        }
+                        else {
+                            HandleError(r, pageObjectLabel + "s", name);
+                        }
+                    }                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        }
+
+        //Edit an item
+        editItem = function editItem(itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            //var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+
+            var crsReplVal = "<option value='" + courses.find(course => course.CourseName === decodeHtml(editRow.find("TD").eq(1).html().trim())).CourseCoreID + "'>";
+            var crsReplValOpt = crsReplVal.replace('option value=', 'option selected value=');
+            var courseDDLCodeOpt = courseDDLCode.replace(crsReplVal, crsReplValOpt);
+            //alert(courseDDLCodeOpt)
+
+            ////set up the Course ddl html
+            $("#courseDDL").html(courseDDLCodeOpt);
+
+            //Copy unmodified values to the edit controls
+            $('#txtSessionName').val(editRow.find("TD").eq(0).html().trim());
+            $('#txtSessionCode').val(editRow.find("TD").eq(2).html().trim());
+            $('#txtNotes').val(editRow.find("TD").eq(3).html().trim());
+
+            //Hide Save ALL button row, show footer
+            $("#trSaveAll").attr("hidden", true);
+            $("#tblMain tfoot>tr").show();
+            $("#tblMain TFOOT").attr("hidden", false);
+
+            //scroll to bottom
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+
+        //Save edits via ajax
+        $("body").on("click", "#btnSaveEdit", function () {
+
+            var editRow = $("#btnSaveEdit").closest("TR");
+            var Translation = {};
+            validateInput();
+
+            if (inputValid) {
+                //push modified editRow to the add list
+                Translation.tlID = parseInt($("#btnSaveEdit").attr('data-id'));
+                Translation.SessionName = editRow.find("input").eq(0).val();
+                Translation.CourseCoreID = parseInt($('#courseDDL option').filter(':selected').val());
+                Translation.SessionCode = parseFloat(editRow.find("input").eq(1).val());
+                //NOTE: All inputs, and checkboxes match find("input")
+                Translation.Notes = editRow.find("input").eq(2).val();
+                //alert(JSON.stringify(Translation));
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateSession","Cores")',
+                    data: JSON.stringify(Translation),
+                    dataType: 'JSON',
+                    cache: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Translation(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+        });
+
+        $('html, body').animate({ scrollTop: '0px' }, 300);
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>

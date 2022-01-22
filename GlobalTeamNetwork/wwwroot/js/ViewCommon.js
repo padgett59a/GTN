@@ -10,7 +10,6 @@
 //function rowSort(tableBody, sortColumn, arrow) {
 //function HandleError(e, tName) 
 //function getCurrentSort()
-//function rowSort(tableBody, sortColumn, arrow)
 //function setSortArrows(sortCol, pSortDir)
 //function checkForNull(testStr)
 //function phoneOnly(checkStr) 
@@ -140,6 +139,8 @@ function rowSort(tableBody, sortColumn, arrow) {
 
     //see if we are sorting a text box
     var isCheckBox = $tbody.find('tr td:eq(' + sortColumn + ') input:checkbox').length > 0
+    //alert($tbody.find('tr').length);
+    //alert($tbody.html());
 
     $tbody.find('tr').sort(function (a, b) {
 
@@ -149,7 +150,9 @@ function rowSort(tableBody, sortColumn, arrow) {
         }
         else {
             var tda = $(a).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+            //alert(tda);
             var tdb = $(b).find('td:eq(' + sortColumn + ')').text().toLowerCase();
+            //alert(tdb);
         }
 
         //Numeric Sort if both numbers

@@ -100,6 +100,14 @@ namespace GlobalTeamNetwork.Controllers
             return View(translationSteps);
         }
 
+        public JsonResult GetTranslationStepsJson()
+        {
+            var translationSteps = _translationStepRepository.AllTranslationStepsShortNotes;
+            //string retVal = JsonConvert.SerializeObject(translationSteps);
+            return Json(translationSteps);
+        }
+
+
         [HttpPost]
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
         public JsonResult InsertTranslationSteps([FromBody] List<TranslationStep> newTranslationStep)
@@ -198,6 +206,14 @@ namespace GlobalTeamNetwork.Controllers
             var masteringSteps = _masteringStepRepository.AllMasteringStepsShortNotes;
             return View(masteringSteps);
         }
+
+        public JsonResult GetMasteringStepsJson()
+        {
+            var masteringSteps = _masteringStepRepository.AllMasteringStepsShortNotes;
+            //string retVal = JsonConvert.SerializeObject(translationSteps);
+            return Json(masteringSteps);
+        }
+
 
         [HttpPost]
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload

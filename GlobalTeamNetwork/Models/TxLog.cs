@@ -20,6 +20,9 @@ namespace GlobalTeamNetwork.Models
         public String CourseName { get; set; }
         public String SemesterName { get; set; }
         public String LangName { get; set; }
+        public String Step { get; set; }
+        public String status { get; set; }
+        public String translatorName { get; set; }
 
     }
 }
