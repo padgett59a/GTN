@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GlobalTeamNetwork.Models.TranslationStep>
+﻿@*@model IEnumerable<GlobalTeamNetwork.Models.TrxStatus>*@
 
 @{
     ViewData["Title"] = "New Translation Workflow";
@@ -24,38 +24,39 @@
             </tr>
         </table>
         <br>
+        <table>
+            <tr>
+                <td width="30%">
+                    <div style="border: 2px solid blue;background-color:lightgrey">
+                        <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></br>&nbsp; &nbsp;<br>
+                        &nbsp; &nbsp;<input type="radio" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
+                    </div>
+                </td>
+                <td width="5%">
+                </td>
+                <td>
+                    Select a Language <select id="langDDL" name="langDDL"></select><br>
+                    <br>
+                    Select a Semester to Translate&nbsp;<select id="semDDL" name="semDDL"></select><br>
+                </td>
+            </tr>
+        </table>
+        <br><br>
+        Note: Greyed out items are already in Translation
         <div id="divMain" style="height:100vh;overflow-y:auto">
-            <table>
-                <tr>
-                    <td width="30%">
-                        <div style="border: 2px solid blue;background-color:lightgrey">
-                            <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></br>&nbsp; &nbsp;<br>
-                            &nbsp; &nbsp;<input type="radio" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
-                        </div>
-                    </td>
-                    <td width="5%">
-                    </td>
-                    <td>
-                        Select a Semester to Translate&nbsp;<select id="semDDL" name="semDDL"></select><br>
-                        <br>
-                        Select a Language <select id="langDDL" name="langDDL"></select><br>
-                    </td>
-                </tr>
-            </table>
-            <br><br>
-            <table id="tblSelect" class="table table-bordered table-hover table-striped" style="display: none">
+            <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: none">
                 <thead>
-                    Top Labels
                     <tr>
-                        <th style="width:85%" valign="middle">
-                        </th>
-                        <th style="text-align: center; align-items:center">
-                        </th>
+                        <th nowrap class="columnSort" width="15%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                        <th nowrap class="columnSort" width="25%">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                        <th nowrap class="columnSort" width="40%">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                        <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Select</div></th>
                     </tr>
                 </thead>
                 <tbody class="dataRows">
                 </tbody>
             </table>
+
             <div id="semExamOpts">
                 <input type=checkbox checked id="semExams">&nbsp;Generate Semester Exams<br>
                 <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
@@ -93,27 +94,32 @@
         var deleteItem;
         var radioClick;
         var checkAll;
+        var checkAllChecked;
+        var trxStatuses = new Object();
 
         $(document).ready(function () {
 
-            checkAll = function () {
+            checkAll = function (bCheck) {
+                $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
             }
 
             radioClick = function (label) {
-                //alert(label.id);
-                //alert(label.id.toLowerCase().indexOf('full'));
                 if (label.id.toLowerCase().indexOf('full') > -1) {
+                    checkAll(true);
                     $('input[name=fullSem]:eq(0)').click();
+                    $("#semExamsOnly").show();
+                    $("#semExams").prop("checked", true)
+                    $("#semExams").prop("disabled", false)
                 }
                 else {
+                    //partial
+                    checkAll(false);
+                    $("#semExamsOnly").hide();
+                    $("#semExams").prop("checked", false)
+                    $("#semExams").prop("disabled", true)
                     $('input[name=fullSem]:eq(1)').click();
                 }
             }
-
-            $('input[type=radio][name=fullSem]').change(function () {
-                //trigger row changes based on semester selected
-                $("#semDDL").change();
-            });
 
             $("#semExams").change(function () {
                 if (!$(this).is(":checked")) {
@@ -135,7 +141,6 @@
             //Set up Semester drop down
             $.ajax({
                 type: "GET",
-                //url: '@Url.Action("GetUntranslatedSemestersJson", "Cores")',
                 url: '@Url.Action("GetSemestersJson", "Cores")',
                 dataType: "json",
                 async: false,
@@ -152,28 +157,6 @@
                     text: semesters[key].SemesterName
                 }));
             }
-
-            //Set up Course drop down
-            $.ajax({
-                type: "GET",
-                //url: '@Url.Action("GetUntranslatedCoursesJson", "Cores")',
-                url: '@Url.Action("GetCoursesJson", "Cores")',
-                dataType: "json",
-                async: false,
-                success: function (response) {
-                    courses = response;
-                }
-            });
-
-
-            //set up Course drop down code filtered on selected Seminar
-            $("#semDDL").change(function () {
-                $('#corsDDL').empty(); //remove previous set of options
-                populateTranslationRows();
-            });
-
-            //page load only
-            $("#semDDL").change();
 
             //Set up Language drop down
             $.ajax({
@@ -193,49 +176,75 @@
                 }));
             }
 
+            //Set up TrxStatuses Array
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetTrxStatusJson", "Workflow")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    trxStatuses = response;
+                }
+
+            });
+
+            //change rows on Semester change
+            $("#semDDL").change(function () {
+                populateTranslationRows();
+            });
+
+            //change rows on Language change
+            $("#langDDL").change(function () {
+                populateTranslationRows();
+            });
+
+            checkAllChecked = function() {
+                //alert('checking');
+                if ($("#tblMain tbody input:checkbox:enabled:not(:checked)").length == 0) {
+                    //all enabled are checked
+                    $("#semExams").prop("disabled", false)
+                    $("#semExams").prop("checked", true)
+                    $("#semExamsOnly").show();
+                }
+                else {
+                    $("#semExams").prop("disabled", true)
+                    $("#semExams").prop("checked", false)
+                    $("#semExamsOnly").hide();
+                }
+            }
 
             function populateTranslationRows() {
 
-                var tHeadRow = $("#tblSelect THEAD TR")[0];
-                var tBody = $("#tblSelect TBODY")[0];
+                //Filter rows based on drop down values
+                var semesterFilter = $("#semDDL option:selected").val();
+                //alert(semesterFilter);
+                var langFilter = $("#langDDL option:selected").val();
+                var disAbText;
 
-                //Remove any existing TBody rows
+                var filteredList = trxStatuses.filter(function (ts) {
+                    return ts.semesterCode == semesterFilter && ts.langID == langFilter;
+                });
+
+                //var tHeadRow = $("#tblMain THEAD TR")[0];
+                var tBody = $("#tblMain TBODY")[0];
+
+                ////Remove any existing TBody rows
                 $(tBody).empty();
 
-                if ($('input[name=fullSem]:checked').val() == 'full') {
-                    $('#semExamOpts').show();
-                    //Populate THEAD TDs
-                    $(tHeadRow).find("TH").eq(0).html("Translate Semester");
-                    $(tHeadRow).find("TH").eq(1).html("Select");
-
-                    //Create tBody row for the selected Semester and check the box
+                for (var key in filteredList) {
                     var row = tBody.insertRow(0);
+                    disAbText = ' disabled';
                     cell = $(row.insertCell(-1));
-                    cell.html($('#semDDL option').filter(':selected').text());
+                    cell.html(filteredList[key].langName);
                     cell = $(row.insertCell(-1));
-                    cell.html("<div style='text-align: center'><input type=checkbox checked id=" + $('#semDDL option').filter(':selected').val() + " disabled></div>");
-
+                    cell.html(filteredList[key].semesterName);
+                    cell = $(row.insertCell(-1));
+                    cell.html(filteredList[key].courseName);
+                    cell = $(row.insertCell(-1));
+                    if (filteredList[key].inTranslation != 1) { disAbText = ''}
+                    cell.html("<div style='text-align: center'><input type=checkbox onclick='checkAllChecked();' checked id=" + filteredList[key].courseCoreID + disAbText + "></div>");
                 }
-                else { //'partial'
-                    $('#semExamOpts').hide();
-                    //Populate THEAD TDs
-                    $(tHeadRow).find("TH").eq(0).html("Translate one or more <br>Courses");
-                    $(tHeadRow).find("TH").eq(1).html("Select<br><input type=checkbox onclick='checkAll();'>");
-
-                    //Create tBody rows for the selected Semester's courses with unchecked the boxes
-                    for (var key in courses) {
-                        //Populate courses for selected semester
-                        //***TBD: Don't show courses already in translation***
-                        if (courses[key].SemesterCode == $('#semDDL').val()) {
-                            var row = tBody.insertRow(0);
-                            cell = $(row.insertCell(-1));
-                            cell.html(courses[key].CourseName);
-                            cell = $(row.insertCell(-1));
-                            cell.html("<div style='text-align: center'><input type=checkbox id=" + courses[key].CourseCoreID + "></div>");
-                        }
-                    }
-                }
-                $('#tblSelect').show();
+                $('#tblMain').show();
             }
 
             $("body").on("click", "#GenTranSteps", function () {
@@ -283,109 +292,48 @@
 
                     //var txNewTrxSessions;
                     var goAjax = true;
-                    var tBodyRow = $("#tblSelect TBODY TR")[0];
-                    semVal = $(tBodyRow).find('input:checkbox')[0].id;
-
-                    //set up JSON send data
+                    var courseList = "";
                     const transSem = new Object();
-                    var gExams = 0;
-                    if ($('#semExams').is(':checked')) { gExams = 1 }
-                    transSem.GenExams = parseInt(gExams);
-                    transSem.SemesterCode = semVal;
-                    transSem.CourseCodes = "";
-                    transSem.LangID = parseInt($("#langDDL").val());
 
-                    //TBD Need an IF for Semester Exams Only
-                    if ($('input[name=fullSem]:checked').val() == 'full') {
-                        if (semVal.length == 0) {
-                            alert("Please select items to translate before continuing.");
-                        }
+                    if ($("#tblMain tbody input:checkbox:enabled:checked").length == 0) {
+                        alert("Please select items to translate before continuing.");
                     }
-
-                    else { //'partial'
-                        var courseList = "";
-                        $("#tblSelect TBODY TR").each(function () {
-                            var cb = $(this).find('input:checkbox:checked');
-                            if (cb.length == 1) {
-                                courseList += cb[0].id + ",";
-                            }
+                    else {
+                        $("#tblMain tbody input:checkbox:enabled:checked").each(function () {
+                            courseList += $(this).attr('id') + ",";
                         });
                         //remove trailing comma
                         courseList = courseList.substring(0, courseList.length - 1);
 
-                        if (courseList.length == 0) {
-                            goAjax  = false;
-                            alert("Please select items to translate before continuing.");
-                        }
-                        else {
-                            transSem.GenExams = parseInt(0);
-                            transSem.CourseCodes = courseList;
-                            transSem.SemesterCode = "";
-                        }
+                        ////set up JSON send data
+                        var gExams = 0;
+                        if ($('#semExams').is(':checked')) { gExams = 1 }
+                        transSem.GenExams = parseInt(gExams);
+                        transSem.SemesterCode = "";
+                        transSem.CourseCodes = courseList;
+                        transSem.LangID = parseInt($("#langDDL").val());
+                        //alert(JSON.stringify(transSem))
                     }
 
+                    //TBD Need an IF for Semester Exams Only
 
-                    if (goAjax) {
-                        $.ajax({
-                            type: "POST",
-                            url: '@Url.Action("EditTranslations","Workflow")',
-                            data: JSON.stringify(transSem),
-                            dataType: 'JSON',
-                            cache: false,
-                            async: false,
-                            contentType: "application/json; charset=utf-8",
-                        });
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("EditTranslations","Workflow")',
+                        data: JSON.stringify(transSem),
+                        dataType: 'JSON',
+                        cache: false,
+                        async: false,
+                        contentType: "application/json; charset=utf-8",
+                    });
 
-
-                        //alert(JSON.stringify(transSem));
-                        //Get gen'd session translation records
-
-                        //alert(JSON.stringify(transSem));
-
-                        //var url = '@Url.Action("EditTranslations", "Workflow")?getTrans=' + JSON.stringify(transSem);
-                        //alert(url);
-                        //window.location.href = url;
-
-                        @*$.ajax({
-                            type: "POST",
-                            url: '@Url.Action("trxSemester","Workflow")',
-                            data: JSON.stringify(transSem),
-                            dataType: 'JSON',
-                            cache: false,
-                            async: false,
-                            contentType: "application/json; charset=utf-8",
-                            success: function (txNewTrxSessions) {
-
-                                //alert(JSON.stringify(txNewTrxSessions[0]));
-
-                                //Show TranslationLog records just put into working status
-                                logTable = $('#tblMain tbody');
-                                var tdString;
-                                var logRow;
-                                for (var key in txNewTrxSessions) {
-                                //for (key = 0; key < 1; key++) {
-                                    tdString = "";
-                                    tdString += "<td>" + txNewTrxSessions[key].langName + "</td>";
-                                    tdString += "<td>" + txNewTrxSessions[key].semesterName + "</td>";
-                                    tdString += "<td>" + txNewTrxSessions[key].courseName + "</td>";
-                                    tdString += "<td>" + txNewTrxSessions[key].sessionName + "</td>";
-                                    tdString += "<td>" + checkForNull(txNewTrxSessions[key].translatorID) + "</td>";
-                                    tdString += "<td>" + txNewTrxSessions[key].step + "</td>";
-                                    tdString += "<td>" + txNewTrxSessions[key].status + "</td>";
-                                    tdString += "<td>" + checkForNull(txNewTrxSessions[key].notes) + "</td>";
-                                    tdString += "<td><div style='text-align: center'><input type=checkbox id='" + txNewTrxSessions[key].tlID + "'></div></td>";
-                                    logRow = "<tr>" + tdString + "</tr>";
-                                    logTable.append(logRow);
-                                }
-                                $('#divMain').hide();
-                                $('#divGendSteps').show();
-                            }
-                        });*@
-
-                    }
+                    //window.location.href = '@Url.Action("EditTranslations", "Workflow")?getTrans=' + JSON.stringify(transSem);
                 }
 
             });
+
+            //on page load only
+            $("#semDDL").change();
 
         });
 

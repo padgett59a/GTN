@@ -10,5 +10,6 @@ namespace GlobalTeamNetwork.Models
     public interface IWorkflowRepository
     {
         List<TxLog> TranslateLanguage(TxSemester trxSem, ApplicationDbContext dbContext);
+        List<TrxStatus> GetTrxStatuses(ApplicationDbContext dbContext);
     }
 }

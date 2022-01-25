@@ -21,7 +21,8 @@ namespace GlobalTeamNetwork.Controllers
         public IActionResult Persons()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            //Do not return system record [Not Started]
+            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 1).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             return View(personOnames);
         }
 

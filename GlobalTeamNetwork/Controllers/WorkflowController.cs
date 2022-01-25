@@ -27,12 +27,15 @@ namespace GlobalTeamNetwork.Controllers
         //page load
         public IActionResult Translation()
         {
-            var translationSteps = _translationStepRepository.AllTranslationStepsShortNotes;
-            return View(translationSteps);
-            //List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            //IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).OrderBy(p => p.FullName).ThenBy(p => p.Location);
-            //IEnumerable<PersonOname> translators = personOnames.Where(p => p.Role == "Translator");
-            //return View(translators);
+            //var trxStatuses = _workflowRepository.GetTrxStatuses(_appDbContext);
+            //return View(trxStatuses);
+            return View();
+        }
+
+        public JsonResult GetTrxStatusJson()
+        {
+            List<TrxStatus> retVal = _workflowRepository.GetTrxStatuses(_appDbContext);
+            return Json(retVal);
         }
 
         [HttpPost]

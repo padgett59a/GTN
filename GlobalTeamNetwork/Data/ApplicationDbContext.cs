@@ -28,5 +28,6 @@ namespace GlobalTeamNetwork.Data
         public DbSet<PersonType> PersonTypes { get; set; }
         public DbSet<TableName> TableNames { get; set; }
         public DbSet<TxLog> TxLogs { get; set; }
+        public DbSet<TrxStatus> TrxStatuses { get; set; }
     }
 }

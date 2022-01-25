@@ -18,11 +18,14 @@ namespace GlobalTeamNetwork.Models
             _appDbContext = appDbContext;
         }
 
-        //takes a TxSemester obj, returns translation ready TrxLog (with Courses), ExamsTrxLog (might be empty), MasteringLog (with Courses)
-        //public TrxReadyList TranslateLanguage(TxSemester trxSem)
-        //{
-        //}
+        //Gets all Course/Languages and shows which are in translation
+        public List<TrxStatus> GetTrxStatuses(ApplicationDbContext dbContext)
+        {
+            var retVal = dbContext.Set<TrxStatus>().FromSqlRaw("[dbo].[SP_GetUnTrxCourses]" );
+            return retVal.ToList();
+        }
 
+        //takes a TxSemester obj, returns translation ready TrxLog (with Courses), ExamsTrxLog (might be empty), MasteringLog (with Courses)
         public List<TxLog> TranslateLanguage(TxSemester trxSem, ApplicationDbContext dbContext)
         {
             var param = new SqlParameter[] {
