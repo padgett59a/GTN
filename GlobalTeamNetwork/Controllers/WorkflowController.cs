@@ -3,6 +3,7 @@ using GlobalTeamNetwork.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,70 +50,84 @@ namespace GlobalTeamNetwork.Controllers
             List<TxLog> retVal = _workflowRepository.TranslateLanguage(txSem, _appDbContext);
             return Json(retVal);
         }
-        public IActionResult EditTranslations([FromBody] TxSemester getTrans)
+
+        public IActionResult EditTranslations(string genExams, string semesterCode, string courseCodes, string langID)
         {
+
+            var getTrans = new TxSemester();
+            getTrans.GenExams = Int32.Parse(genExams);
+            if (semesterCode == null) {
+                getTrans.SemesterCode = "";
+            }
+            else {
+                getTrans.SemesterCode = semesterCode;
+            } 
+            getTrans.CourseCodes = courseCodes;
+            getTrans.LangID = Int32.Parse(langID);
 
             List<TxLog> retVal = _workflowRepository.TranslateLanguage(getTrans, _appDbContext);
             return View(retVal);
         }
 
-
-            //public string GetPersonTypesJson()
-            //{
-            //    var personTypes = _personTypeRepository.AllPersonTypes;
-            //    string retVal = JsonConvert.SerializeObject(personTypes);
-            //    return retVal;
-            //}
-
-
-            //[HttpPost]
-            ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-            //public JsonResult InsertWorkflow([FromBody] List<Person> newWorkflow)
-            //{
-            //    if (newWorkflow == null)
-            //    {
-            //        newWorkflow = new List<Person>();
-            //    }
-
-            //    int insertCount = _personsRepository.InsertWorkflow(newWorkflow);
-            //    return Json(insertCount);
-            //}
-
-            //[HttpPost]
-            ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-            //public JsonResult deleteWorkflow([FromBody] List<int> delItemList)
-            //{
-            //    if (delItemList == null)
-            //    {
-            //        delItemList = new List<int>();
-            //    }
-
-            //    int deleteCount = _personsRepository.DeleteWorkflow(delItemList);
-            //    return Json(deleteCount);
-            //}
-
-            //public JsonResult UpdatePerson([FromBody] Person updateItem)
-            //{
-            //    int updateCount = 0;
-            //    if (updateItem == null)
-            //    {
-            //        updateItem = new Person();
-            //    }
-
-            //    EntityState retVal = _personsRepository.UpdatePerson(updateItem);
-            //    if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
-            //    {
-            //        updateCount = 1;
-            //    }
-            //    return Json(updateCount);
-            //}
-
-            //public string GetWorkflowJson()
-            //{
-            //    List<Person> persons = _personsRepository.AllWorkflow.OrderBy(p => p.FullName).ToList();
-            //    string retVal = JsonConvert.SerializeObject(persons);
-            //    return retVal;
-            //}
-
+        public JsonResult UpdateTranslationLogs([FromBody] List<TranslationLogUpdate> updateItems)
+        {
+            int updateCount = 0;
+            foreach (TranslationLogUpdate updateItem in updateItems)
+            {
+                var tLog = _workflowRepository.GetTranslationLogById(updateItem.tlID);
+                tLog.translatorID = updateItem.translatorID;
+                tLog.statusID = updateItem.statusID;
+                tLog.Notes = updateItem.Notes;
+                EntityState retVal = _workflowRepository.UpdateTranslationLog(tLog);
+                if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+                {
+                    updateCount += 1;
+                }
+            }
+            return Json(updateCount);
         }
+
+        //public string GetPersonTypesJson()
+        //{
+        //    var personTypes = _personTypeRepository.AllPersonTypes;
+        //    string retVal = JsonConvert.SerializeObject(personTypes);
+        //    return retVal;
+        //}
+
+
+        //[HttpPost]
+        ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        //public JsonResult InsertWorkflow([FromBody] List<Person> newWorkflow)
+        //{
+        //    if (newWorkflow == null)
+        //    {
+        //        newWorkflow = new List<Person>();
+        //    }
+
+        //    int insertCount = _personsRepository.InsertWorkflow(newWorkflow);
+        //    return Json(insertCount);
+        //}
+
+        //[HttpPost]
+        ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
+        //public JsonResult deleteWorkflow([FromBody] List<int> delItemList)
+        //{
+        //    if (delItemList == null)
+        //    {
+        //        delItemList = new List<int>();
+        //    }
+
+        //    int deleteCount = _personsRepository.DeleteWorkflow(delItemList);
+        //    return Json(deleteCount);
+        //}
+
+
+        //public string GetWorkflowJson()
+        //{
+        //    List<Person> persons = _personsRepository.AllWorkflow.OrderBy(p => p.FullName).ToList();
+        //    string retVal = JsonConvert.SerializeObject(persons);
+        //    return retVal;
+        //}
+
     }
+}

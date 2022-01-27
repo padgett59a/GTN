@@ -11,6 +11,7 @@ namespace GlobalTeamNetwork.Controllers
 {
     public class AdminController : Controller
     {
+        private readonly IStatusRepository _statusRepository;
         private readonly ILanguageRepository _languageRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
         private readonly IExamTranslationStepRepository _examTranslationStepRepository;
@@ -18,12 +19,14 @@ namespace GlobalTeamNetwork.Controllers
         private readonly IMediaTypeRepository _mediaTypeRepository;
 
         public AdminController(
+            IStatusRepository statusRepository,
             ILanguageRepository languageRepository,
             ITranslationStepRepository tranlationStepRepository,
             IExamTranslationStepRepository examTranlationStepRepository,
             IMasteringStepRepository masteringStepRepository,
             IMediaTypeRepository mediaTypeRepository)
         {
+            _statusRepository = statusRepository;
             _languageRepository = languageRepository;
             _translationStepRepository = tranlationStepRepository;
             _examTranslationStepRepository = examTranlationStepRepository;
@@ -307,6 +310,20 @@ namespace GlobalTeamNetwork.Controllers
         public IActionResult Payments()
         {
             return View();
+        }
+
+        //*****************Statuss*****************
+        public IActionResult Statuses()
+        {
+            var statuss = _statusRepository.AllStatuses;
+            return View(statuss);
+        }
+
+        public string GetStatusesJson()
+        {
+            List<Status> statuses = _statusRepository.AllStatuses.ToList();
+            string retVal = JsonConvert.SerializeObject(statuses);
+            return retVal;
         }
 
     }

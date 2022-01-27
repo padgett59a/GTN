@@ -26,6 +26,13 @@ namespace GlobalTeamNetwork.Controllers
             return View(personOnames);
         }
 
+        public JsonResult GetTranslatorsJson()
+        {
+            List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
+            //Do not return system record [Not Started]
+            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.TRANSLATORTYPE).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            return Json(retVal);
+        }
 
         public string GetPersonTypesJson()
         {

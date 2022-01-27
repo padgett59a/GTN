@@ -122,17 +122,22 @@
       "environment": "production",
       "items": [
         {
-          "title": "Translation",
+          "title": "Create Translations",
           "showOnSeed": false,
           "href": "workflow_translation"
         },
         {
-          "title": "Mastering",
+          "title": "Manage Translation",
           "showOnSeed": false,
           "href": "TBD"
         },
         {
-          "title": "Distribution",
+          "title": "Manage Mastering",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Manage Distribution",
           "showOnSeed": false,
           "href": "TBD"
         },

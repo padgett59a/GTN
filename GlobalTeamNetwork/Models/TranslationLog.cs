@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GlobalTeamNetwork.Models
 {
-    public class TxLog
+    public class TranslationLog
     {
 
         //This is the type returned from the SP_Trx_Sem stored procedure
@@ -16,13 +16,6 @@ namespace GlobalTeamNetwork.Models
         public string Notes { get; set; }
         public Int32? translatorID { get; set; }
         public Decimal? StepPaymentAmount { get; set; }
-        public String SessionName { get; set; }
-        public String CourseName { get; set; }
-        public String SemesterName { get; set; }
-        public String LangName { get; set; }
-        public String Step { get; set; }
-        public String status { get; set; }
-        public String FullName { get; set; }
 
     }
 }

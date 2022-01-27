@@ -11,5 +11,8 @@ namespace GlobalTeamNetwork.Models
     {
         List<TxLog> TranslateLanguage(TxSemester trxSem, ApplicationDbContext dbContext);
         List<TrxStatus> GetTrxStatuses(ApplicationDbContext dbContext);
+        EntityState UpdateTranslationLog(TranslationLog tLog);
+        TranslationLog GetTranslationLogById(int tLogID);
+
     }
 }

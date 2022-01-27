@@ -52,6 +52,7 @@ namespace GlobalTeamNetwork
             services.AddRazorPages();
 
             //Add scoped repositories
+            services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<ICurriculumRepository, CurriculumRepository>();

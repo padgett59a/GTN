@@ -29,5 +29,8 @@ namespace GlobalTeamNetwork.Data
         public DbSet<TableName> TableNames { get; set; }
         public DbSet<TxLog> TxLogs { get; set; }
         public DbSet<TrxStatus> TrxStatuses { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+        public DbSet<TranslationLog> TranslationLog { get; set; }
+
     }
 }

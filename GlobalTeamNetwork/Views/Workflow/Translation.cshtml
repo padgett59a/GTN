@@ -1,7 +1,7 @@
 ﻿@*@model IEnumerable<GlobalTeamNetwork.Models.TrxStatus>*@
 
 @{
-    ViewData["Title"] = "New Translation Workflow";
+    ViewData["Title"] = "Create Translation Workflow";
 }
     <!DOCTYPE html>
 
@@ -11,25 +11,13 @@
         <title>Translation Workflow</title>
     </head>
     <body style="height:100%">
-        <h1>Translation Workflow</h1>
-
-        <table width="25%" border="1">
-            <tr>
-                <td align="center">
-                    Create New Work
-                </td>
-                <td align="center">
-                    Manage Existing Work
-                </td>
-            </tr>
-        </table>
-        <br>
+        <h1>Create Translation Workflow</h1>
         <table>
             <tr>
                 <td width="30%">
                     <div style="border: 2px solid blue;background-color:lightgrey">
-                        <br>&nbsp;&nbsp;<input type="radio" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></br>&nbsp; &nbsp;<br>
-                        &nbsp; &nbsp;<input type="radio" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
+                        <br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full" checked>&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Translate Entire Semester</label></br>&nbsp; &nbsp;<br>
+                        &nbsp; &nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial">&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Translate Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
                     </div>
                 </td>
                 <td width="5%">
@@ -64,26 +52,6 @@
             <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
         </div>
 
-        @*<div id="divGendSteps" style="display: none">
-            <table id="tblMain" class="table table-bordered table-hover table-striped">
-                <thead>
-                    <tr>
-                        <th nowrap class="columnSort">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Translator &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Step &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort">Status &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th>Notes</th>
-                        <th>Select</th>
-                    </tr>
-                </thead>
-                <tbody class="dataRows">
-                </tbody>
-            </table>
-        </div>*@
-
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
         <script type="text/javascript">
@@ -97,38 +65,39 @@
         var checkAllChecked;
         var trxStatuses = new Object();
 
-        $(document).ready(function () {
+            $(document).ready(function () {
 
-            checkAll = function (bCheck) {
-                $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
-            }
+                checkAll = function (bCheck) {
+                    $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
+                }
 
-            radioClick = function (label) {
-                if (label.id.toLowerCase().indexOf('full') > -1) {
-                    checkAll(true);
-                    $('input[name=fullSem]:eq(0)').click();
-                    $("#semExamsOnly").show();
-                    $("#semExams").prop("checked", true)
-                    $("#semExams").prop("disabled", false)
+                radioClick = function (label) {
+                    if (label.id.toLowerCase().indexOf('full') > -1) {
+                        checkAll(true);
+                        $('input[name=fullSem]:eq(0)').click();
+                        $("#semExamsOnly").show();
+                        $("#semExams").prop("checked", true)
+                        $("#semExams").prop("disabled", false)
+                    }
+                    else {
+                        //partial
+                        checkAll(false);
+                        $("#semExamsOnly").hide();
+                        $("#semExams").prop("checked", false)
+                        $("#semExams").prop("disabled", true)
+                        $('input[name=fullSem]:eq(1)').click();
+                    }
                 }
-                else {
-                    //partial
-                    checkAll(false);
-                    $("#semExamsOnly").hide();
-                    $("#semExams").prop("checked", false)
-                    $("#semExams").prop("disabled", true)
-                    $('input[name=fullSem]:eq(1)').click();
-                }
-            }
 
-            $("#semExams").change(function () {
-                if (!$(this).is(":checked")) {
-                    $("#semExamsOnly").hide();
-                }
-                else {
-                    $("#semExamsOnly").show();
-                }
-            });
+                $("#semExams").change(function () {
+                    if (!$(this).is(":checked")) {
+                        $("#semExamsOnly").hide();
+                    }
+                    else {
+                        $("#semExamsOnly").show();
+                    }
+                });
+
 
             //pFilter is passed to the page via query string for page refresh, etc.
             var pFilter = (new URL(location.href)).searchParams.get('filter');
@@ -188,14 +157,16 @@
 
             });
 
-            //change rows on Semester change
-            $("#semDDL").change(function () {
-                populateTranslationRows();
-            });
 
-            //change rows on Language change
-            $("#langDDL").change(function () {
+            //change rows on Semester or Language change
+            $("#semDDL, #langDDL").change(function () {
                 populateTranslationRows();
+                if ($("input:radio[class='clsFull']").is(":checked")) {
+                    checkAll(true);
+                }
+                else {
+                    checkAll(false);
+                }
             });
 
             checkAllChecked = function() {
@@ -205,11 +176,14 @@
                     $("#semExams").prop("disabled", false)
                     $("#semExams").prop("checked", true)
                     $("#semExamsOnly").show();
+                    $('input[name=fullSem]:eq(0)').click();
                 }
                 else {
                     $("#semExams").prop("disabled", true)
                     $("#semExams").prop("checked", false)
                     $("#semExamsOnly").hide();
+                    $('input[name=fullSem]:eq(1)').click();
+
                 }
             }
 
@@ -242,7 +216,7 @@
                     cell.html(filteredList[key].courseName);
                     cell = $(row.insertCell(-1));
                     if (filteredList[key].inTranslation != 1) { disAbText = ''}
-                    cell.html("<div style='text-align: center'><input type=checkbox onclick='checkAllChecked();' checked id=" + filteredList[key].courseCoreID + disAbText + "></div>");
+                    cell.html("<div style='text-align: center'><input class='courseCB' type=checkbox onclick='checkAllChecked();' checked id=" + filteredList[key].courseCoreID + disAbText + "></div>");
                 }
                 $('#tblMain').show();
             }
@@ -250,6 +224,8 @@
             $("body").on("click", "#GenTranSteps", function () {
 
                 var stepsValid = true;
+
+
 
                 //Check for default pay populated - TranslationSteps
                 $.ajax({
@@ -312,22 +288,15 @@
                         transSem.SemesterCode = "";
                         transSem.CourseCodes = courseList;
                         transSem.LangID = parseInt($("#langDDL").val());
-                        //alert(JSON.stringify(transSem))
                     }
 
                     //TBD Need an IF for Semester Exams Only
 
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("EditTranslations","Workflow")',
-                        data: JSON.stringify(transSem),
-                        dataType: 'JSON',
-                        cache: false,
-                        async: false,
-                        contentType: "application/json; charset=utf-8",
-                    });
-
-                    //window.location.href = '@Url.Action("EditTranslations", "Workflow")?getTrans=' + JSON.stringify(transSem);
+                    var qStr = 'genExams=' + transSem.GenExams;
+                    qStr += '&semesterCode=' + transSem.SemesterCode;
+                    qStr += '&courseCodes=' + transSem.CourseCodes;
+                    qStr += '&langID=' + transSem.LangID;
+                    window.location.href = '@Url.Action("EditTranslations", "Workflow")?' + qStr;
                 }
 
             });

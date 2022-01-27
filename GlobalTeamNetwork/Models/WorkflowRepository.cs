@@ -55,8 +55,24 @@ namespace GlobalTeamNetwork.Models
                         }
                 };
             var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams", param);
+            //var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams");
+            //var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem]", param);
             return retVal.ToList();
         }
 
+        
+
+        public EntityState UpdateTranslationLog(TranslationLog tLog)
+        {
+            EntityEntry<TranslationLog> retVal = _appDbContext.TranslationLog.Update(tLog);
+            EntityState updateState = retVal.State;
+            _appDbContext.SaveChanges();
+            return updateState;
+        }
+
+        public TranslationLog GetTranslationLogById(int tLogID)
+        {
+            return _appDbContext.TranslationLog.Find(tLogID);
+        }
     }
 }
