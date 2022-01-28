@@ -54,9 +54,10 @@ namespace GlobalTeamNetwork.Models
                             Value = trxSem.GenExams
                         }
                 };
+            
+            //this one can take some time if the db is 'cold'
+            dbContext.Database.SetCommandTimeout(120);
             var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams", param);
-            //var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams");
-            //var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem]", param);
             return retVal.ToList();
         }
 

@@ -20,6 +20,7 @@ namespace GlobalTeamNetwork.Models
         public const int ARCHIVERTYPE = 5;
         public const int INSTRUCTORTYPE = 6;
         public static Int16 NotesCharCount = 50;
+        public static String VALUE_NOT_SET = "~~~ Not Set ~~~";
     }
 
     public static class GTN_SQL_ERR

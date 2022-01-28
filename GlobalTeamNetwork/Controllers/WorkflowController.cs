@@ -75,9 +75,17 @@ namespace GlobalTeamNetwork.Controllers
             foreach (TranslationLogUpdate updateItem in updateItems)
             {
                 var tLog = _workflowRepository.GetTranslationLogById(updateItem.tlID);
-                tLog.translatorID = updateItem.translatorID;
-                tLog.statusID = updateItem.statusID;
-                tLog.Notes = updateItem.Notes;
+                if (updateItem.translatorID != -1) {
+                    tLog.translatorID = updateItem.translatorID;
+                }
+                if (updateItem.statusID != -1)
+                {
+                    tLog.statusID = updateItem.statusID;
+                }
+                if (updateItem.Notes != GTN_Globals.VALUE_NOT_SET)
+                {
+                    tLog.Notes = updateItem.Notes;
+                }
                 EntityState retVal = _workflowRepository.UpdateTranslationLog(tLog);
                 if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
                 {

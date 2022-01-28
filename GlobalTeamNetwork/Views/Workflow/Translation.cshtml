@@ -1,7 +1,7 @@
 ﻿@*@model IEnumerable<GlobalTeamNetwork.Models.TrxStatus>*@
 
 @{
-    ViewData["Title"] = "Create Translation Workflow";
+    ViewData["Title"] = "Create Translations";
 }
     <!DOCTYPE html>
 
@@ -11,7 +11,7 @@
         <title>Translation Workflow</title>
     </head>
     <body style="height:100%">
-        <h1>Create Translation Workflow</h1>
+        <h1>Create Translations</h1>
         <table>
             <tr>
                 <td width="30%">
@@ -31,26 +31,27 @@
         </table>
         <br><br>
         Note: Greyed out items are already in Translation
-        <div id="divMain" style="height:100vh;overflow-y:auto">
-            <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: none">
-                <thead>
-                    <tr>
-                        <th nowrap class="columnSort" width="15%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort" width="25%">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort" width="40%">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                        <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Select</div></th>
-                    </tr>
-                </thead>
-                <tbody class="dataRows">
-                </tbody>
-            </table>
+            <div id="divMain" style="height:100vh;overflow-y:auto">
+                <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: none">
+                    <thead>
+                        <tr>
+                            <th nowrap class="columnSort" width="15%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                            <th nowrap class="columnSort" width="25%">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                            <th nowrap class="columnSort" width="40%">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                            <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Select</div></th>
+                        </tr>
+                    </thead>
+                    <tbody class="dataRows">
+                    </tbody>
+                </table>
 
-            <div id="semExamOpts">
-                <input type=checkbox checked id="semExams">&nbsp;Generate Semester Exams<br>
-                <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
+                <div id="semExamOpts">
+                    <input type=checkbox checked id="semExams">&nbsp;Generate Semester Exams<br>
+                    <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
+                </div>
+                <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" />
+                &nbsp;(This can take up to 120 seconds.)
             </div>
-            <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" /><br>
-        </div>
 
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
@@ -224,8 +225,8 @@
             $("body").on("click", "#GenTranSteps", function () {
 
                 var stepsValid = true;
-
-
+                document.body.style.cursor = 'wait';
+                $(this).prop('disabled', true);
 
                 //Check for default pay populated - TranslationSteps
                 $.ajax({
