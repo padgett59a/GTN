@@ -26,16 +26,30 @@ namespace GlobalTeamNetwork.Controllers
         }
 
         //page load
-        public IActionResult Translation()
+        public IActionResult CreateTranslations()
         {
-            //var trxStatuses = _workflowRepository.GetTrxStatuses(_appDbContext);
-            //return View(trxStatuses);
+            return View();
+        }
+        public IActionResult GetManagedTranslations()
+        {
+            return View();
+        }
+        public IActionResult ManageMastering()
+        {
             return View();
         }
 
+        //Get all Translation Status for all Courses
         public JsonResult GetTrxStatusJson()
         {
-            List<TrxStatus> retVal = _workflowRepository.GetTrxStatuses(_appDbContext);
+            List<TrxStatus> retVal = _workflowRepository.GetTrxStatuses(0, _appDbContext);
+            return Json(retVal);
+        }
+
+        //Get all Translation Status for Courses already in Translation
+        public JsonResult GetTrxMgmtJson()
+        {
+            List<TrxStatus> retVal = _workflowRepository.GetTrxStatuses(1, _appDbContext);
             return Json(retVal);
         }
 
@@ -51,7 +65,7 @@ namespace GlobalTeamNetwork.Controllers
             return Json(retVal);
         }
 
-        public IActionResult EditTranslations(string genExams, string semesterCode, string courseCodes, string langID)
+        public IActionResult EditNewTranslations(string genExams, string semesterCode, string courseCodes, string langID)
         {
 
             var getTrans = new TxSemester();
@@ -65,6 +79,28 @@ namespace GlobalTeamNetwork.Controllers
             getTrans.CourseCodes = courseCodes;
             getTrans.LangID = Int32.Parse(langID);
 
+            List<TxLog> retVal = _workflowRepository.TranslateLanguage(getTrans, _appDbContext);
+            return View(retVal);
+        }
+
+        public IActionResult ManageTranslations(string genExams, string semesterCode, string courseCodes, string langID)
+        {
+
+            var getTrans = new TxSemester();
+            getTrans.GenExams = 0;
+            if (semesterCode == null)
+            {
+                getTrans.SemesterCode = "";
+            }
+            else
+            {
+                getTrans.SemesterCode = semesterCode;
+            }
+            getTrans.CourseCodes = courseCodes;
+            getTrans.LangID = Int32.Parse(langID);
+
+            //The underyling SP checks to see if these are already in translation.
+            //It should not be possible to request semesters/courses not already in translation when calling this page
             List<TxLog> retVal = _workflowRepository.TranslateLanguage(getTrans, _appDbContext);
             return View(retVal);
         }
@@ -94,48 +130,5 @@ namespace GlobalTeamNetwork.Controllers
             }
             return Json(updateCount);
         }
-
-        //public string GetPersonTypesJson()
-        //{
-        //    var personTypes = _personTypeRepository.AllPersonTypes;
-        //    string retVal = JsonConvert.SerializeObject(personTypes);
-        //    return retVal;
-        //}
-
-
-        //[HttpPost]
-        ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-        //public JsonResult InsertWorkflow([FromBody] List<Person> newWorkflow)
-        //{
-        //    if (newWorkflow == null)
-        //    {
-        //        newWorkflow = new List<Person>();
-        //    }
-
-        //    int insertCount = _personsRepository.InsertWorkflow(newWorkflow);
-        //    return Json(insertCount);
-        //}
-
-        //[HttpPost]
-        ////NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-        //public JsonResult deleteWorkflow([FromBody] List<int> delItemList)
-        //{
-        //    if (delItemList == null)
-        //    {
-        //        delItemList = new List<int>();
-        //    }
-
-        //    int deleteCount = _personsRepository.DeleteWorkflow(delItemList);
-        //    return Json(deleteCount);
-        //}
-
-
-        //public string GetWorkflowJson()
-        //{
-        //    List<Person> persons = _personsRepository.AllWorkflow.OrderBy(p => p.FullName).ToList();
-        //    string retVal = JsonConvert.SerializeObject(persons);
-        //    return retVal;
-        //}
-
     }
 }

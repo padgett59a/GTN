@@ -19,9 +19,18 @@ namespace GlobalTeamNetwork.Models
         }
 
         //Gets all Course/Languages and shows which are in translation
-        public List<TrxStatus> GetTrxStatuses(ApplicationDbContext dbContext)
+        public List<TrxStatus> GetTrxStatuses(Int16 @inTrxOnly, ApplicationDbContext dbContext)
         {
-            var retVal = dbContext.Set<TrxStatus>().FromSqlRaw("[dbo].[SP_GetUnTrxCourses]" );
+            var param = new SqlParameter[] {
+                        new SqlParameter() {
+                            ParameterName = "@inTrxOnly",
+                            SqlDbType =  System.Data.SqlDbType.Bit,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = inTrxOnly
+                        }
+                };
+
+            var retVal = dbContext.Set<TrxStatus>().FromSqlRaw("[dbo].[SP_GetTrxCourses] @inTrxOnly", param);
             return retVal.ToList();
         }
 

@@ -124,17 +124,17 @@
         {
           "title": "Create Translations",
           "showOnSeed": false,
-          "href": "workflow_translation"
+          "href": "workflow_createtranslations"
         },
         {
-          "title": "Manage Translation",
+          "title": "Manage Translations",
           "showOnSeed": false,
-          "href": "TBD"
+          "href": "workflow_getmanagedtranslations"
         },
         {
           "title": "Manage Mastering",
           "showOnSeed": false,
-          "href": "TBD"
+          "href": "workflow_managemastering"
         },
         {
           "title": "Manage Distribution",

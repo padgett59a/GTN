@@ -18,6 +18,8 @@
 //function trimDecimal(inStr) 
 //function amountsOnly(checkStr) 
 //function emailOnly(checkStr) 
+//bool function checkTrxDefaultPay() 
+//bool function checkMrxDefaultPay() 
 
 
 //Button type enum
@@ -47,6 +49,48 @@ function checkForNull(testStr) {
     else {
         return testStr;
     }
+}
+
+//Check for default pay populated - TranslationSteps
+function emptyTrxDefaultPay() {
+
+    var emptyPay = false;
+    $.ajax({
+        type: "GET",
+        url: '..\/admin/GetTranslationStepsJson',
+        dataType: "json",
+        async: false,
+        success: function (trxSteps) {
+            //alert(JSON.stringify(trxSteps));
+            for (var key in trxSteps) {
+                if (checkForNull(trxSteps[key].defaultPayDollars).length == 0) {
+                    emptyPay = true;
+                    break;
+                }
+            }
+        }
+    });
+    return emptyPay;
+}
+
+//Check for default pay populated - MasteringSteps
+function emptyMrxDefaultPay() {
+    var emptyPay = false;
+    $.ajax({
+        type: "GET",
+        url: '..\/admin/GetMasteringStepsJson',
+        dataType: "json",
+        async: false,
+        success: function (mrxSteps) {
+            for (var key in mrxSteps) {
+                if (checkForNull(mrxSteps[key].defaultPayDollars).length == 0) {
+                    emptyPay = true;
+                    break;
+                }
+            }
+        }
+    });
+    return emptyPay;
 }
 
 //On Page Search

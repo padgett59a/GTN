@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GlobalTeamNetwork.Models.TxLog>
 
 @{
-    ViewData["Title"] = "EditTranslations";
+    ViewData["Title"] = "ManageTranslations";
 }
 
 <!DOCTYPE html>
@@ -9,10 +9,10 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Edit Translations</title>
+    <title>Manage Translation Status</title>
 </head>
 <body>
-    <h1>Edit Translations</h1>
+    <h1>Manage Translation Status</h1>
     <table>
         <tr>
             <td nowrap>
@@ -52,7 +52,7 @@
                     <input type="text" id=txtNotesCb size="25">
                 </td>
                 <td style="text-align:center" nowrap>
-                    For checked rows<br>
+                    Checked rows:<br>
                     <input type="button" value="Save" id=buttonApplyCb>
                 </td>
             </tr>
@@ -320,13 +320,14 @@
                 if (confirm(confirmText)) {
 
                     $("#buttonApplyCb").prop("disabled", true);
-                    $('#tblMain').css('cursor', 'wait');
-                    waitSeconds(500);
+                    //$('#tblMain').css('cursor', 'wait');
+                    //$('*').css('cursor', 'wait');
+                    //waitSeconds(2500);
                     //document.body.classList.add('waiting');
-                    //document.body.style.cursor = 'wait';
+                    //$("html").addClass("wait");
+                    //document.documentElement.style.cursor = 'wait';
 
                     updateLogs = [];
-
                     $('.itemCB:visible:checked').each(function () {
                         var Translation = new Object;
                         Translation.tlID = parseInt($(this).attr("id"));
@@ -354,8 +355,6 @@
                         updateLogs.push(Translation);
                     });
 
-                    //alert(JSON.stringify(updateLogs));
-                    //return;
 
                     $.ajax({
                         type: "POST",
@@ -367,7 +366,7 @@
                         contentType: "application/json; charset=utf-8",
                         success: function (r) {
                             alert(r + " Translation(s) have been modified.");
-                            $('#tblMain').css('cursor', 'default');
+                            //$('#tblMain').css('cursor', 'default');
 
                         }
                     });
@@ -475,7 +474,7 @@
 
             function refreshMe() {
                 //Refresh the page
-                var url = '@Url.Action("EditTranslations", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
+                var url = '@Url.Action("ManageTranslations", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
                 url += "&sfilter=" + $('#sessFilter option').filter(':selected').val() + getCurrentSort();
                 url += '&genExams=' + genExams;
                 url += '&semesterCode=' + semesterCode;
@@ -523,7 +522,7 @@
                 //$('#txtSessionName').val().length > 0 &&
                 //$('#txtSessionCode').val().length > 0 &&
                 //$('#trxlDDL option:selected').val() != '1'
-                true //no edits are required
+                true //no values are required
             ) {
                 $("#btnSave").prop('disabled', false);
             }
@@ -567,7 +566,6 @@
             $("#statusDDL").html(statusDDLCodeOpt);
             $('#txtNotes').val(editRow.find("TD").eq(7).html().trim());
             $('#tdSelect').val('');
-
 
             //Hide Save ALL button row, show footer
             $("#trSaveAll").attr("hidden", true);
