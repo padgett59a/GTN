@@ -59,8 +59,9 @@
         </tbody>
     </table>
 
-    <div id="divMain" style="height:100vh;overflow-y:auto">
+    <div style='text-align:center;display:none' id='divLoading'><br>Please wait... Processing...&nbsp;<img src="~/img/loading.gif"></div><br>
 
+    <div id="divMain" style="height:100vh;overflow-y:auto">
 
         <table id="tblMain" class="table table-bordered table-hover table-striped" style="overflow-x: auto;" hidden>
             <thead>
@@ -320,57 +321,12 @@
                 if (confirm(confirmText)) {
 
                     $("#buttonApplyCb").prop("disabled", true);
-                    $('#tblMain').css('cursor', 'wait');
-                    waitSeconds(500);
-                    //document.body.classList.add('waiting');
-                    //document.body.style.cursor = 'wait';
+                    document.documentElement.style.cursor = 'wait';
+                    $("#divLoading").show();
 
-                    updateLogs = [];
-
-                    $('.itemCB:visible:checked').each(function () {
-                        var Translation = new Object;
-                        Translation.tlID = parseInt($(this).attr("id"));
-
-                        if ($("#trxlAllcb").prop("checked")) {
-                            Translation.translatorID = parseInt($("#trxDDLCb option:selected").val());
-                        }
-                        else {
-                            Translation.translatorID = -1;
-                        }
-
-                        if ($("#statusAllcb").prop("checked")) {
-                            Translation.statusID = parseInt($("#statusDDLCb option:selected").val());
-                        }
-                        else {
-                            Translation.statusID = -1;
-                        }
-
-                        if ($("#noteAllcb").prop("checked")) {
-                            Translation.Notes = $("#txtNotesCb").val();
-                        }
-                        else {
-                            Translation.Notes = "~~~ Not Set ~~~" ;
-                        }
-                        updateLogs.push(Translation);
-                    });
-
-                    //alert(JSON.stringify(updateLogs));
-                    //return;
-
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("UpdateTranslationLogs", "Workflow")',
-                        data: JSON.stringify(updateLogs),
-                        dataType: 'JSON',
-                        cache: false,
-                        async: false,
-                        contentType: "application/json; charset=utf-8",
-                        success: function (r) {
-                            alert(r + " Translation(s) have been modified.");
-                            $('#tblMain').css('cursor', 'default');
-
-                        }
-                    });
+                    setTimeout(function () {
+                        updateTrxLogs()
+                    }, 0);
 
                     //Give the db a minute to recognize the new records
                     waitSeconds(delayMils);
@@ -378,6 +334,55 @@
                     refreshMe();
                 }
             });
+
+            function updateTrxLogs() {
+
+                updateLogs = [];
+
+                $('.itemCB:visible:checked').each(function () {
+                    var Translation = new Object;
+                    Translation.tlID = parseInt($(this).attr("id"));
+
+                    if ($("#trxlAllcb").prop("checked")) {
+                        Translation.translatorID = parseInt($("#trxDDLCb option:selected").val());
+                    }
+                    else {
+                        Translation.translatorID = -1;
+                    }
+
+                    if ($("#statusAllcb").prop("checked")) {
+                        Translation.statusID = parseInt($("#statusDDLCb option:selected").val());
+                    }
+                    else {
+                        Translation.statusID = -1;
+                    }
+
+                    if ($("#noteAllcb").prop("checked")) {
+                        Translation.Notes = $("#txtNotesCb").val();
+                    }
+                    else {
+                        Translation.Notes = "~~~ Not Set ~~~";
+                    }
+                    updateLogs.push(Translation);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateTranslationLogs", "Workflow")',
+                    data: JSON.stringify(updateLogs),
+                    dataType: 'JSON',
+                    cache: false,
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Translation(s) have been modified.");
+                        $('#tblMain').css('cursor', 'default');
+
+                    }
+                });
+                document.documentElement.style.cursor = 'default';
+            }
+
 
             $('#selectAll').change(function () {
                 var bCheck = $('#selectAll').prop("checked");
@@ -475,7 +480,7 @@
 
             function refreshMe() {
                 //Refresh the page
-                var url = '@Url.Action("EditTranslations", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
+                var url = '@Url.Action("EditNewTranslations", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
                 url += "&sfilter=" + $('#sessFilter option').filter(':selected').val() + getCurrentSort();
                 url += '&genExams=' + genExams;
                 url += '&semesterCode=' + semesterCode;
@@ -484,8 +489,6 @@
                 //alert(url);
                 window.location.href = url;
             }
-
-
 
             $("body").on("click", "#btnCancel", function () {
                 refreshMe();

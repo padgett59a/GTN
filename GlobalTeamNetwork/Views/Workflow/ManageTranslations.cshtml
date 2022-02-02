@@ -53,11 +53,13 @@
                 </td>
                 <td style="text-align:center" nowrap>
                     Checked rows:<br>
-                    <input type="button" value="Save" id=buttonApplyCb>
+                    <input type="button" value="Save" id=buttonApplyCb onclick="saveCBs();">
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <div style='text-align:center;display:none' id='divLoading'><br>Please wait... Processing...&nbsp;<img src="~/img/loading.gif"></div><br>
 
     <div id="divMain" style="height:100vh;overflow-y:auto">
 
@@ -161,8 +163,9 @@
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
-            var editItem;
-            var deleteItem;
+        var editItem;
+        var deleteItem;
+        var saveCBs;
 
         $(document).ready(function () {
 
@@ -280,7 +283,7 @@
                 }
             });
 
-            $("#txtNotesCb").keyup (function () {
+            $("#txtNotesCb").keyup(function () {
                 if ($("#txtNotesCb").val().trim().length == 0) {
                     $("#noteAllcb").prop("checked", false);
                 }
@@ -289,7 +292,7 @@
                 }
             });
 
-            $("#buttonApplyCb").on("click", function () {
+            saveCBs = function saveCBs() {
 
                 if (!$("#trxlAllcb").prop("checked") && !$("#statusAllcb").prop("checked") && !$("#noteAllcb").prop("checked")) {
                     alert('Please enter values before proceeding.');
@@ -301,7 +304,7 @@
                     return;
                 }
 
-                var confirmText = "Apply these values to all checked rows?";
+                var confirmText = "Apply these values to all checked rows?\n";
                 var trxlrTxt = $("#trxDDLCb option:selected").text();
                 if ($("#trxlAllcb").prop("checked")) {
                     confirmText += '\nTransaltor: ' + trxlrTxt
@@ -314,69 +317,70 @@
                 if ($("#noteAllcb").prop("checked")) {
                     confirmText += '\nNotes: ' + notesTxt;
                 }
-                confirmText += '\n\n NOTE: Please allow up to 120 seconds for completion when many rows are selected.'
-                confirmText += '\n(If prompted by your browser, select "WAIT" until completion.)'
+                confirmText += '\n\n NOTE: Please allow up to 120 seconds for completion when many rows are selected. '
+                confirmText += 'If prompted by your browser, select "WAIT" until processing completes.'
 
                 if (confirm(confirmText)) {
-
+                    document.documentElement.style.cursor = 'wait';
                     $("#buttonApplyCb").prop("disabled", true);
-                    //$('#tblMain').css('cursor', 'wait');
-                    //$('*').css('cursor', 'wait');
-                    //waitSeconds(2500);
-                    //document.body.classList.add('waiting');
-                    //$("html").addClass("wait");
-                    //document.documentElement.style.cursor = 'wait';
-
-                    updateLogs = [];
-                    $('.itemCB:visible:checked').each(function () {
-                        var Translation = new Object;
-                        Translation.tlID = parseInt($(this).attr("id"));
-
-                        if ($("#trxlAllcb").prop("checked")) {
-                            Translation.translatorID = parseInt($("#trxDDLCb option:selected").val());
-                        }
-                        else {
-                            Translation.translatorID = -1;
-                        }
-
-                        if ($("#statusAllcb").prop("checked")) {
-                            Translation.statusID = parseInt($("#statusDDLCb option:selected").val());
-                        }
-                        else {
-                            Translation.statusID = -1;
-                        }
-
-                        if ($("#noteAllcb").prop("checked")) {
-                            Translation.Notes = $("#txtNotesCb").val();
-                        }
-                        else {
-                            Translation.Notes = "~~~ Not Set ~~~" ;
-                        }
-                        updateLogs.push(Translation);
-                    });
-
-
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("UpdateTranslationLogs", "Workflow")',
-                        data: JSON.stringify(updateLogs),
-                        dataType: 'JSON',
-                        cache: false,
-                        async: false,
-                        contentType: "application/json; charset=utf-8",
-                        success: function (r) {
-                            alert(r + " Translation(s) have been modified.");
-                            //$('#tblMain').css('cursor', 'default');
-
-                        }
-                    });
-
-                    //Give the db a minute to recognize the new records
-                    waitSeconds(delayMils);
-                    //Refresh the page
-                    refreshMe();
+                    $("#divLoading").show();
+                    setTimeout(function () {
+                        processCBs()
+                    }, 0);
                 }
-            });
+            }
+
+            //$("#buttonApplyCb").on("click", function () {
+            function processCBs() {
+                updateLogs = [];
+                $('.itemCB:visible:checked').each(function () {
+                    var Translation = new Object;
+                    Translation.tlID = parseInt($(this).attr("id"));
+
+                    if ($("#trxlAllcb").prop("checked")) {
+                        Translation.translatorID = parseInt($("#trxDDLCb option:selected").val());
+                    }
+                    else {
+                        Translation.translatorID = -1;
+                    }
+
+                    if ($("#statusAllcb").prop("checked")) {
+                        Translation.statusID = parseInt($("#statusDDLCb option:selected").val());
+                    }
+                    else {
+                        Translation.statusID = -1;
+                    }
+
+                    if ($("#noteAllcb").prop("checked")) {
+                        Translation.Notes = $("#txtNotesCb").val();
+                    }
+                    else {
+                        Translation.Notes = "~~~ Not Set ~~~";
+                    }
+                    updateLogs.push(Translation);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateTranslationLogs", "Workflow")',
+                    data: JSON.stringify(updateLogs),
+                    dataType: 'JSON',
+                    cache: false,
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Translation(s) have been modified.");
+                    }
+                });
+
+                $("#divLoading").hide();
+                document.documentElement.style.cursor = 'default';
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
 
             $('#selectAll').change(function () {
                 var bCheck = $('#selectAll').prop("checked");
@@ -596,7 +600,7 @@
             return updateLogs;
         }
 
-        //Save edits via ajax
+            //Save edits via ajax
         $("body").on("click", "#btnSaveEdit", function () {
 
             //validateInput();
@@ -633,10 +637,14 @@
                 //Refresh the page
                 refreshMe();
             }
+       
 
-        });
+         });
+            
 
         $('html, body').animate({ scrollTop: '0px' }, 300);
+
+
 
     /*end document.ready*/
     });
