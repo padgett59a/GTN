@@ -37,7 +37,8 @@
                         <tr>
                             <th nowrap class="columnSort" width="15%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                             <th nowrap class="columnSort" width="25%">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
-                            <th nowrap class="columnSort" width="40%">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                            <th nowrap class="columnSort" width="30%">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                            <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Percent Complete &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></div></th>
                             <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Select</div></th>
                         </tr>
                     </thead>
@@ -165,7 +166,6 @@
 
                     //change semesters based on new language
                     var langFilter = $("#langDDL option:selected").val();
-                    alert(langFilter);
 
                     var filteredList = trxStatuses.filter(function (ts) {
                         return ts.langID == parseInt(langFilter);
@@ -247,6 +247,8 @@
                     cell.html(filteredList[key].semesterName);
                     cell = $(row.insertCell(-1));
                     cell.html(filteredList[key].courseName);
+                    cell = $(row.insertCell(-1));
+                    cell.html("<div style='text-align: center'>" + filteredList[key].percentComplete + "&nbsp;&#37;</div>");
                     cell = $(row.insertCell(-1));
                     cell.html("<div style='text-align: center'><input class='courseCB' type=checkbox onclick='checkAllChecked();' id=" + filteredList[key].courseCoreID + disAbText + "></div>");
                 }

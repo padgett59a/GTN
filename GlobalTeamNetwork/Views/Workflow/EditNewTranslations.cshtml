@@ -63,7 +63,7 @@
 
     <div id="divMain" style="height:100vh;overflow-y:auto">
 
-        <table id="tblMain" class="table table-bordered table-hover table-striped" style="overflow-x: auto;" hidden>
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="overflow-x: auto;">
             <thead>
                 <!-- Top Labels-->
                 <tr>
@@ -393,8 +393,8 @@
             $('#corsFilter').change(function () {
                 var courseFilter = this.options[this.selectedIndex].text;
                 if (courseFilter != "All") {
-                    $("#tblMain td:nth-child(3):contains('" + courseFilter + "')").parent().show();
-                    $("#tblMain td:nth-child(3):not(:contains('" + courseFilter + "'))").parent().hide();
+                    $("#tblMain tbody td:nth-child(3):contains('" + courseFilter + "')").parent().show();
+                    $("#tblMain tbody td:nth-child(3):not(:contains('" + courseFilter + "'))").parent().hide();
                 }
                 else {
                     //show all rows
@@ -435,45 +435,23 @@
 
             $('#sessFilter').change(function () {
                 var sessionFilter = this.options[this.selectedIndex].text;
+                var courseFilter = $('#corsFilter option:selected').text().trim();
                 if (sessionFilter != "All") {
                     $("#tblMain td:nth-child(4):contains('" + sessionFilter + "')").parent().show();
                     $("#tblMain td:nth-child(4):not(:contains('" + sessionFilter + "'))").parent().hide();
                 }
                 else {
                     //show all rows
-                    $("#tblMain tr").show();
+                    if (courseFilter == 'All') {
+                        $("#tblMain tr").show();
+                    }
+                    else {
+                        //show all rows for given course
+                        $("#tblMain tbody td:nth-child(3):contains('" + courseFilter + "')").parent().show();
+                    }
                 }
                 $("#tblMain TFOOT").attr("hidden", true);
             })
-
-            //page load only
-            changeSessions('All');
-
-            //select the first course value or passed filter value and show the main table.
-            //cFilter gets set from the Course filter passed in via query string
-            if (cFilter != null) {
-                var optStr = '#corsFilter option[value = "' + cFilter + '"]';
-                var boolFilterExists = $(optStr).length != 0;
-                //alert('boolFilterExists: '+ boolFilterExists);
-                if (boolFilterExists) {
-                    $('#corsFilter').val(cFilter).change();
-                }
-            }
-            else {
-                //Set to first option in the list
-                //$('#corsFilter').prop('selectedIndex', 1).change();
-            }
-
-            //sFilter gets set from the Session filter passed in via query string
-            //alert($('#sessFilter').html());
-            if (sFilter != null) {
-                var optStr = '#sessFilter option[value = "' + sFilter + '"]';
-                var boolFilterExists = $(optStr).length != 0;
-                //alert('boolFilterExists: '+ boolFilterExists);
-                if (boolFilterExists) {
-                    $('#sessFilter').val(sFilter).change();
-                }
-            }
 
             $('#tblMain').removeAttr('hidden');
 
@@ -486,7 +464,6 @@
                 url += '&semesterCode=' + semesterCode;
                 url += '&courseCodes=' + courseCodes;
                 url += '&langID=' + langID;
-                //alert(url);
                 window.location.href = url;
             }
 
@@ -583,23 +560,22 @@
         }
 
 
-        function getTLUpdates(logRows) {
+        //function getTLUpdates(logRows) {
 
-            updateLogs = [];
+        //    updateLogs = [];
 
-            for (i = 0; i < logRows.length; i++){
-                var Translation = new Object;
-                rowID = "#tr" + logID;
-                tRow = $(rowID);
-                alert(trow.html());
-                Translation.tlID = parseInt($("#btnSaveEdit").attr('data-id'));
-                Translation.statusID = parseInt(editRow.find("td").eq(6).attr('id'));
-                Translation.notes = editRow.find("input").eq(0).val();
-                Translation.translatorID = parseInt(editRow.find("input").eq(0).val());
-                updateLogs.push(Translation)
-            }
-            return updateLogs;
-        }
+        //    for (i = 0; i < logRows.length; i++){
+        //        var Translation = new Object;
+        //        rowID = "#tr" + logID;
+        //        tRow = $(rowID);
+        //        Translation.tlID = parseInt($("#btnSaveEdit").attr('data-id'));
+        //        Translation.statusID = parseInt(editRow.find("td").eq(6).attr('id'));
+        //        Translation.notes = editRow.find("input").eq(0).val();
+        //        Translation.translatorID = parseInt(editRow.find("input").eq(0).val());
+        //        updateLogs.push(Translation)
+        //    }
+        //    return updateLogs;
+        //}
 
         //Save edits via ajax
         $("body").on("click", "#btnSaveEdit", function () {
@@ -618,7 +594,6 @@
                 Translation.Notes = editRow.find("input").eq(0).val();
                 Translation.translatorID = parseInt($("#trxlDDL option:selected").val());
                 updateLogs.push(Translation);
-                //alert(JSON.stringify(updateLogs));
 
                 $.ajax({
                     type: "POST",
@@ -640,6 +615,31 @@
             }
 
         });
+
+            //on page load only
+            //select the first course value or passed filter value and show the main table.
+            //cFilter gets set from the Course filter passed in via query string
+            if (cFilter != null) {
+                var optStr = '#corsFilter option[value = "' + cFilter + '"]';
+                var boolFilterExists = $(optStr).length != 0;
+                if (boolFilterExists) {
+                    $('#corsFilter').val(cFilter).change();
+                }
+            }
+            else {
+                //Set to first option in the list
+                //$('#corsFilter').prop('selectedIndex', 1).change();
+                changeSessions('All');
+            }
+
+            //sFilter gets set from the Session filter passed in via query string
+            if (sFilter != null) {
+                var optStr = '#sessFilter option[value = "' + sFilter + '"]';
+                var boolFilterExists = $(optStr).length != 0;
+                if (boolFilterExists) {
+                    $('#sessFilter').val(sFilter).change();
+                }
+            }
 
         $('html, body').animate({ scrollTop: '0px' }, 300);
 

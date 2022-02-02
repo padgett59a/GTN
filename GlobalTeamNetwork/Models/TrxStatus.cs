@@ -15,5 +15,6 @@ namespace GlobalTeamNetwork.Models
         public String CourseName { get; set; }
         public Int32 courseCoreID { get; set; }
         public Boolean InTranslation { get; set; }
+        public Decimal? PercentComplete { get; set; }
     }
 }
