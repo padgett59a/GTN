@@ -3,7 +3,7 @@
   "lists": [
     {
       "title": "Admin",
-      "icon": "fal fa-info-circle",
+      "icon": "fal fa-cog",
       "environment": "production",
       "items": [
         {
@@ -32,7 +32,7 @@
         },
         {
           "title": "Payments",
-          "icon": "fal fa-money-bill",
+          "icon": "fal fa-university",
           "href": "admin_payments",
           "environment": "production"
         }
@@ -41,7 +41,7 @@
 
     {
       "title": "Cores",
-      "icon": "fal fa-book",
+      "icon": "fal fa-anchor",
       "environment": "production",
       "items": [
         {
@@ -68,7 +68,7 @@
     },
     {
       "title": "Persons",
-      "icon": "fal fa-user",
+      "icon": "fal fa-address-card",
       "environment": "production",
       "items": [
         {
@@ -111,14 +111,14 @@
     {
       "title": "Organizations",
       "href": "org_organizations",
-      "icon": "fal fa-book",
+      "icon": "fal fa-sitemap",
       "environment": "production"
     },
 
 
     {
       "title": "Manage Work",
-      "icon": "fal fa-user",
+      "icon": "fal fa-pencil",
       "environment": "production",
       "items": [
         {
@@ -153,8 +153,43 @@
         }
       ]
     },
-
-
+    {
+      "title": "Payments",
+      "icon": "fal fa-university",
+      "environment": "production",
+      "items": [
+        {
+          "title": "Manage Translation Payments",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Manage Mastering Payments",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Custom Translation Pay",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Custom Mastering Pay",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Accounting and Invoicing",
+          "showOnSeed": false,
+          "href": "TBD"
+        },
+        {
+          "title": "Accounting Reports",
+          "showOnSeed": false,
+          "href": "TBD"
+        }
+      ]
+    },
     {
       "title": "DEV MENU - Design Options"
     },
