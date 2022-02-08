@@ -11,8 +11,13 @@ namespace GlobalTeamNetwork.Models
     {
         List<TxLog> TranslateLanguage(TxSemester trxSem, ApplicationDbContext dbContext);
         List<TrxStatus> GetTrxStatuses(Int16 @inTrxOnly, ApplicationDbContext dbContext);
+        List<TrxStatus> GetMrxStatuses(ApplicationDbContext dbContext);
+        List<MxLog> GetMasteringLogs(TxSemester trxSem, ApplicationDbContext dbContext);
+
         EntityState UpdateTranslationLog(TranslationLog tLog);
+        EntityState UpdateMasteringLog(MasteringLog tLog);
         TranslationLog GetTranslationLogById(int tLogID);
+        MasteringLog GetMasteringLogById(int mLogID);
 
     }
 }

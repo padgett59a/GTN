@@ -21,16 +21,21 @@ namespace GlobalTeamNetwork.Controllers
         public IActionResult Persons()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            //Do not return system record [Not Started]
-            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 1).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            //Do not return system records [Not Started]
+            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 9).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             return View(personOnames);
         }
 
         public JsonResult GetTranslatorsJson()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            //Do not return system record [Not Started]
             var retVal = persons.Where(p => p.personTypeID == GTN_Globals.TRANSLATORTYPE).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            return Json(retVal);
+        }
+        public JsonResult GetMasterersJson()
+        {
+            List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
+            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.MASTERERTYPE).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             return Json(retVal);
         }
 

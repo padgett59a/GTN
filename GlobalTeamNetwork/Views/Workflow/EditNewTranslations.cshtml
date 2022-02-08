@@ -328,10 +328,6 @@
                         updateTrxLogs()
                     }, 0);
 
-                    //Give the db a minute to recognize the new records
-                    waitSeconds(delayMils);
-                    //Refresh the page
-                    refreshMe();
                 }
             });
 
@@ -375,12 +371,18 @@
                     async: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
+                        $("#divLoading").hide();
+                        document.documentElement.style.cursor = 'default';
                         alert(r + " Translation(s) have been modified.");
-                        $('#tblMain').css('cursor', 'default');
+                        //$('#tblMain').css('cursor', 'default');
 
                     }
                 });
-                document.documentElement.style.cursor = 'default';
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
             }
 
 

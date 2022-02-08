@@ -34,7 +34,7 @@ namespace GlobalTeamNetwork.Controllers
         {
             return View();
         }
-        public IActionResult ManageMastering()
+        public IActionResult GetManagedMasterings()
         {
             return View();
         }
@@ -130,5 +130,61 @@ namespace GlobalTeamNetwork.Controllers
             }
             return Json(updateCount);
         }
+
+        public JsonResult UpdateMasteringLogs([FromBody] List<MasteringLogUpdate> updateItems)
+        {
+            int updateCount = 0;
+            foreach (MasteringLogUpdate updateItem in updateItems)
+            {
+                var mLog= _workflowRepository.GetMasteringLogById(updateItem.mlID);
+                if (updateItem.mastererID != -1)
+                {
+                    mLog.mastererID = updateItem.mastererID;
+                }
+                if (updateItem.statusID != -1)
+                {
+                    mLog.statusID = updateItem.statusID;
+                }
+                if (updateItem.Notes != GTN_Globals.VALUE_NOT_SET)
+                {
+                    mLog.Notes = updateItem.Notes;
+                }
+                EntityState retVal = _workflowRepository.UpdateMasteringLog(mLog);
+                if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
+                {
+                    updateCount += 1;
+                }
+            }
+            return Json(updateCount);
+        }
+
+
+        //Get all Translation Status for Courses already in Translation
+        public JsonResult GetMrxMgmtJson()
+        {
+            List<TrxStatus> retVal = _workflowRepository.GetMrxStatuses(_appDbContext);
+            return Json(retVal);
+        }
+        public IActionResult ManageMastering(string semesterCode, string courseCodes, string langID)
+        {
+
+            var getTrans = new TxSemester();
+            getTrans.GenExams = 0;  //This only applies when translating Semesters
+            if (semesterCode == null)
+            {
+                getTrans.SemesterCode = "";
+            }
+            else
+            {
+                getTrans.SemesterCode = semesterCode;
+            }
+            getTrans.CourseCodes = courseCodes;
+            getTrans.LangID = Int32.Parse(langID);
+
+            //It should not be possible to request semesters/courses not already in translation when calling this page
+            List<MxLog> retVal = _workflowRepository.GetMasteringLogs(getTrans, _appDbContext);
+            return View(retVal);
+        }
+
     }
 }

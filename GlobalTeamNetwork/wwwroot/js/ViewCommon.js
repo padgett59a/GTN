@@ -41,6 +41,27 @@ const sortArrow = {
     Down: '&#8595;'
 }
 
+//START multi select when mouse is down
+var isMouseDown = false;
+document.addEventListener('mousedown', function () {
+    isMouseDown = true;
+});
+document.addEventListener('mouseup', function () {
+    isMouseDown = false;
+});
+//drag through item check boxes to select/unselect
+$(".itemCB").mouseover(function () {
+    if (isMouseDown) {
+        //if ($(this).is(':checked')) {
+        //    $(this).prop('checked', false);
+        //} else {
+            $(this).prop('checked', true);
+        //}
+    }
+});
+//END multi select when mouse is down
+
+
 function checkForNull(testStr) {
     var retVal;
     if (!testStr) {

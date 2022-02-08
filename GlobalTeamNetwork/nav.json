@@ -134,7 +134,7 @@
         {
           "title": "Manage Mastering",
           "showOnSeed": false,
-          "href": "workflow_managemastering"
+          "href": "workflow_getmanagedmasterings"
         },
         {
           "title": "Manage Distribution",

@@ -10,7 +10,15 @@
         <meta name="viewport" content="width=device-width" />
         <title>Translation Workflow</title>
     </head>
+
     <body style="height:100%">
+
+        @*<script type="text/javascript">
+            document.documentElement.style.cursor = 'wait';
+        </script>*@
+
+        <div style='text-align:left;' id='divInitializing'><br>Please wait... Initializing... (this may take up to 120 seconds)&nbsp;&nbsp;&nbsp;<img src="~/img/loading.gif"><br><br></div>
+
         <h1>Create Translations</h1>
         <table>
             <tr>
@@ -52,7 +60,7 @@
                 <input type=checkbox checked id="semExams">&nbsp;Generate Semester Exams<br>
                 <span id="semExamsOnly"><input type=checkbox id="cbSemExamsOnly">&nbsp;Generate Semester Exams ONLY</span>
             </div>
-            <br><input type="button" id="GenTranSteps" value="Generate Translation Steps" />
+            <br><input type="button" id="GenTranSteps" value="Create Translation and Mastering Steps" />
             &nbsp;(This can take up to 120 seconds.)
         </div>
 
@@ -70,6 +78,8 @@
         var trxStatuses = new Object();
 
             $(document).ready(function () {
+
+                //document.documentElement.style.cursor = 'wait';
 
                 checkAll = function (bCheck) {
                     $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
@@ -160,6 +170,10 @@
                 }
 
             });
+
+            //turn off loading status
+            $("#divInitializing").hide();
+            document.documentElement.style.cursor = 'default';
 
 
             //change rows on Semester or Language change
