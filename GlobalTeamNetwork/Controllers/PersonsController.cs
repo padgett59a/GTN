@@ -21,7 +21,7 @@ namespace GlobalTeamNetwork.Controllers
         public IActionResult Persons()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            //Do not return system records [Not Started]
+            //Do not return system records [Not Started] for each personType. These records have personIDs < 10.
             IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 9).OrderBy(p => p.FullName).ThenBy(p => p.Location);
             return View(personOnames);
         }
