@@ -122,7 +122,6 @@ namespace GlobalTeamNetwork.Models
         }
 
         
-
         public EntityState UpdateTranslationLog(TranslationLog tLog)
         {
             EntityEntry<TranslationLog> retVal = _appDbContext.TranslationLog.Update(tLog);

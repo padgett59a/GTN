@@ -7,7 +7,7 @@
 //function getCBhtml(bChecked, bDisabled) {
 //function decodeHtml(html) {
 //function changeSaveButton(changeTo, selCurr ) {
-//function rowSort(tableBody, sortColumn, arrow) {
+//function rowSort(tableBody, sortColumn, arrow) 
 //function HandleError(e, tName) 
 //function getCurrentSort()
 //function setSortArrows(sortCol, pSortDir)
@@ -20,6 +20,10 @@
 //function emailOnly(checkStr) 
 //bool function checkTrxDefaultPay() 
 //bool function checkMrxDefaultPay() 
+//function HandleError(e, keyedTableName, keyedRow) 
+//function setUpSemesterDDL(elSemDD) 
+//function setUpLangDDL(elLangDD) 
+
 
 
 //Button type enum
@@ -204,8 +208,6 @@ function rowSort(tableBody, sortColumn, arrow) {
 
     //see if we are sorting a text box
     var isCheckBox = $tbody.find('tr td:eq(' + sortColumn + ') input:checkbox').length > 0
-    //alert($tbody.find('tr').length);
-    //alert($tbody.html());
 
     $tbody.find('tr').sort(function (a, b) {
 
@@ -215,9 +217,7 @@ function rowSort(tableBody, sortColumn, arrow) {
         }
         else {
             var tda = $(a).find('td:eq(' + sortColumn + ')').text().toLowerCase();
-            //alert(tda);
             var tdb = $(b).find('td:eq(' + sortColumn + ')').text().toLowerCase();
-            //alert(tdb);
         }
 
         //Numeric Sort if both numbers
@@ -448,3 +448,50 @@ function HandleError(e, keyedTableName, keyedRow) {
             break;
     }
 }
+
+function setUpSemesterDDL(elSemDD) {
+
+    //Set up Semester drop down
+    $.ajax({
+        type: "GET",
+        url: '../Cores\/GetSemestersJson',
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            semesters = response;
+        }
+    });
+
+    //set up Semester drop down code
+    for (var key in semesters) {
+        $(elSemDD).append($('<option>', {
+            value: semesters[key].SemesterCode,
+            text: semesters[key].SemesterName
+        }));
+    }
+    return semesters; //often not needed
+}
+
+function setUpLangDDL(elLangDD) {
+
+    //Set up Language drop down
+    $.ajax({
+        type: "GET",
+        url: '../Admin\/GetLanguagesJson',
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            languages = response;
+        }
+    });
+    //set up Language drop down code
+    for (var key in languages) {
+        $(elLangDD).append($('<option>', {
+            value: languages[key].langID,
+            text: languages[key].LangName
+        }));
+    }
+    return languages;
+}
+
+

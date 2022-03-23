@@ -14,14 +14,20 @@ namespace GlobalTeamNetwork.Controllers
         private readonly IPersonsRepository _personsRepository;
         private readonly ITranslationStepRepository _translationStepRepository;
         private readonly IWorkflowRepository _workflowRepository;
+        private readonly ISemesterCourseRepository _semesterCourseRepository;
         private readonly ApplicationDbContext _appDbContext;
 
-        public WorkflowController(IPersonsRepository personsRepository, IWorkflowRepository workflowRepository, 
-            ITranslationStepRepository translationStepRepository, ApplicationDbContext appDbContext)
+        public WorkflowController(
+            IPersonsRepository personsRepository, 
+            IWorkflowRepository workflowRepository, 
+            ITranslationStepRepository translationStepRepository,
+            ISemesterCourseRepository semesterCourseRepository,
+            ApplicationDbContext appDbContext)
         {
             _personsRepository = personsRepository;
             _workflowRepository = workflowRepository;
             _translationStepRepository = translationStepRepository;
+            _semesterCourseRepository = semesterCourseRepository;
             _appDbContext = appDbContext;
         }
 
@@ -35,6 +41,15 @@ namespace GlobalTeamNetwork.Controllers
             return View();
         }
         public IActionResult GetManagedMasterings()
+        {
+            return View();
+        }
+        public IActionResult DistributionManagement()
+        {
+            List<SemesterCourse> retVal = _semesterCourseRepository.AllSemesterCourses.ToList();
+            return View(retVal);
+        }
+        public IActionResult DistributionHistory()
         {
             return View();
         }
@@ -184,6 +199,11 @@ namespace GlobalTeamNetwork.Controllers
             //It should not be possible to request semesters/courses not already in translation when calling this page
             List<MxLog> retVal = _workflowRepository.GetMasteringLogs(getTrans, _appDbContext);
             return View(retVal);
+        }
+        public JsonResult GetDistSemesterCoursesJson()
+        {
+            List<SemesterCourse> retVal = _semesterCourseRepository.AllSemesterCourses.ToList(); 
+            return Json(retVal);
         }
 
     }

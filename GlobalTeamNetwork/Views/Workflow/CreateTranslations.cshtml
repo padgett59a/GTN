@@ -122,6 +122,9 @@
             var pageObjectLabel = 'Translation Workflow';
 
             //Set up Semester drop down
+            setUpSemesterDDL('#semDDL')
+
+            @*//Set up Semester drop down
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSemestersJson", "Cores")',
@@ -139,25 +142,10 @@
                     value: semesters[key].SemesterCode,
                     text: semesters[key].SemesterName
                 }));
-            }
+            }*@
 
             //Set up Language drop down
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetLanguagesJson", "Admin")',
-                dataType: "json",
-                async: false,
-                success: function (response) {
-                    languages = response;
-                }
-            });
-            //set up Language drop down code
-            for (var key in languages) {
-                $('#langDDL').append($('<option>', {
-                    value: languages[key].langID,
-                    text: languages[key].LangName
-                }));
-            }
+            setUpLangDDL('#langDDL'); //from ViewCommon.js
 
             //Set up TrxStatuses Array
             $.ajax({

@@ -34,6 +34,6 @@ namespace GlobalTeamNetwork.Data
         public DbSet<Status> Statuses { get; set; }
         public DbSet<TranslationLog> TranslationLog { get; set; }
         public DbSet<MasteringLog> MasteringLog { get; set; }
-
+        public DbSet<SemesterCourse> SemesterCourse { get; set; }
     }
 }

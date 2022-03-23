@@ -1,0 +1,158 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCourse>
+
+@{
+    ViewData["Title"] = "Manage Distributions";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Manage Distributions</title>
+</head>
+<body style="height:100%">
+    <h1>Manage Distributions</h1>
+    <table>
+        <tr>
+            <td width="30%">
+                <div style="border: 2px solid blue;background-color:lightgrey">
+                    <br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Distribute Semester</label></br>&nbsp; &nbsp;<br>
+                    &nbsp; &nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
+                </div>
+            </td>
+            <td width="5%">
+            </td>
+            <td>
+                Select a Language <select id="langDDL" name="langDDL"></select><br>
+                <br>
+                Select a Semester for Distribution&nbsp;<select id="semDDL" name="semDDL"></select><br>
+            </td>
+        </tr>
+    </table>
+    <br><br>
+
+    <div id="divMain" style="height: 100vh; overflow-y:auto; display:none" >
+        <table id="tblMain" class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th nowrap class="columnSort" width="15%">Language</th>
+                    <th nowrap class="columnSort" width="25%">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" width="10%"><div style='text-align: center'>Select</div></th>
+                </tr>
+            </thead>
+
+
+            <tbody class="dataRows">
+                @foreach (var item in Model)
+                {
+                    <tr id="@("tr" + @item.courseCoreID)">
+
+                        <!-- Language-->
+                        <td>
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(model => item.SemesterName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.CourseName)
+                        </td>
+                        <td>
+                            @Html.Raw("<div style = 'text-align: center'><input class='itemCB' type='checkbox' id = '" + @item.courseCoreID + "'></div>")
+                        </td>
+                    </tr>
+                }
+
+
+
+        </table>
+
+        <br><input type="button" id="GetMrxStatus" value="Manage Distributions" />
+        &nbsp;
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+        var editItem;
+        var deleteItem;
+        var radioClick;
+        var checkAll;
+        var semCourses = new Object();
+
+            $(document).ready(function () {
+
+                checkAll = function (bCheck) {
+                    $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
+                }
+
+                radioClick = function (label) {
+                    if (label.id.toLowerCase().indexOf('full') > -1) {
+                        checkAll(true);
+                        $('input[name=fullSem]:eq(0)').click();
+                    }
+                    else {
+                        //partial
+                        checkAll(false);
+                        $('input[name=fullSem]:eq(1)').click();
+                    }
+                }
+
+
+                //pFilter is passed to the page via query string for page refresh, etc.
+                var pFilter = (new URL(location.href)).searchParams.get('filter');
+
+                //Set up the drop down value arrays
+                var inputValid = false;
+                var delayMils = 900;
+                var pageObjectLabel = 'Manage Distributions';
+
+
+                //Populate Language DDL
+                const languages = setUpLangDDL('#langDDL'); //from ViewCommon.js
+
+                //Set up Semester drop down
+                setUpSemesterDDL('#semDDL')
+
+                //Populate initial language
+                var langFilter = $("#langDDL option:selected").text();
+                $('.dataRows > tr > td:nth-child(1)').html(langFilter);
+
+                //***************************************
+
+                //change rows on Semester or Language change
+                $("#langDDL").change(function () {
+                    langFilter = $("#langDDL option:selected").text();
+                    $('.dataRows > tr > td:nth-child(1)').html(langFilter);
+                });
+
+                $("#semDDL").change(function () {
+                    let semFilter = this.options[this.selectedIndex].text;
+                    if (semFilter != "All") {
+                        $(".dataRows tr td:nth-child(2):contains('" + semFilter + "')").parent().show();
+                        $(".dataRows tr td:nth-child(2):not(:contains('" + semFilter + "'))").parent().hide();
+                    }
+                    else {
+                        //show all rows
+                        $(".dataRows tr").show();
+                    }
+                });
+
+                //set initial Semester filter
+                $("#semDDL").change();
+
+                //show data div
+                $("#divMain").show();
+
+        });
+
+
+
+    </script>
+
+</body>
+</html>

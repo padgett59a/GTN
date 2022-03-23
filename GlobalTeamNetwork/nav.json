@@ -131,9 +131,14 @@
           "href": "workflow_getmanagedmasterings"
         },
         {
-          "title": "Manage Distribution",
+          "title": "Manage Distributions",
           "showOnSeed": false,
-          "href": "TBD"
+          "href": "workflow_distributionmanagement"
+        },
+        {
+          "title": "Distribution History",
+          "showOnSeed": false,
+          "href": "workflow_distributionhistory"
         }
       ]
     },
