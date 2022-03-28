@@ -18,6 +18,7 @@ namespace GlobalTeamNetwork.Models
         EntityState UpdateMasteringLog(MasteringLog tLog);
         TranslationLog GetTranslationLogById(int tLogID);
         MasteringLog GetMasteringLogById(int mLogID);
+        List<DistrSession> GetDistributionSessions(int langId, string sessionCoreIDs, ApplicationDbContext dbContext);
 
     }
 }

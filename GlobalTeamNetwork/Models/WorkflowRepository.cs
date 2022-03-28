@@ -84,6 +84,28 @@ namespace GlobalTeamNetwork.Models
             return retVal.ToList();
         }
 
+        public List<DistrSession> GetDistributionSessions(int langId, string sessionCoreIDs, ApplicationDbContext dbContext)
+        {
+            var param = new SqlParameter[] {
+                        new SqlParameter() {
+                            ParameterName = "@langID",
+                            SqlDbType =  System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = langId
+                        },
+                        new SqlParameter() {
+                            ParameterName = "@corsCodes",
+                            SqlDbType =  System.Data.SqlDbType.VarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = sessionCoreIDs
+                        }
+                };
+
+            //this one can take some time if the db is 'cold'
+            dbContext.Database.SetCommandTimeout(120);
+            var retVal = dbContext.Set<DistrSession>().FromSqlRaw("[dbo].[SP_Get_Course_Sessions] @langID, @corsCodes", param);
+            return retVal.ToList();
+        }
 
         //takes a TxSemester obj, returns translation-ready TrxLog (with Courses), ExamsTrxLog (might be empty), MasteringLog (with Courses)
         public List<TxLog> TranslateLanguage(TxSemester trxSem, ApplicationDbContext dbContext)

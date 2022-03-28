@@ -122,27 +122,7 @@
             var pageObjectLabel = 'Translation Workflow';
 
             //Set up Semester drop down
-            setUpSemesterDDL('#semDDL')
-
-            @*//Set up Semester drop down
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetSemestersJson", "Cores")',
-                dataType: "json",
-                async: false,
-                success: function (response) {
-                    semesters = response;
-                }
-            });
-            //set up Semester drop down code
-            //***TBD: Don't show Semesters already in translation***
-            for (var key in semesters) {
-                //semDDLCode += "<option value='" + semesters[key].SemesterCode + "'>" + semesters[key].SemesterName + "</option>";
-                $('#semDDL').append($('<option>', {
-                    value: semesters[key].SemesterCode,
-                    text: semesters[key].SemesterName
-                }));
-            }*@
+                setUpSemesterDDL('#semDDL', false); //false: no 'All'
 
             //Set up Language drop down
             setUpLangDDL('#langDDL'); //from ViewCommon.js

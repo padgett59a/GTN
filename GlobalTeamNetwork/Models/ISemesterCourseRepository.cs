@@ -11,8 +11,8 @@ namespace GlobalTeamNetwork.Models
     public interface ISemesterCourseRepository 
     {
 
-        public IEnumerable<SemesterCourse> AllSemesterCourses { get; }
-        public IEnumerable<SemesterCourse> AllSemesterCoursesShortNotes { get; }
+        public IEnumerable<DistrSemesterCourse> AllDistrSemesterCourses { get; }
+        public IEnumerable<DistrSemesterCourse> AllDistrSemesterCoursesShortNotes { get; }
 
     }
 }

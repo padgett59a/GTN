@@ -100,19 +100,19 @@
                         <td>
                             @Html.DisplayFor(model => item.InstructorName)
                         </td>
-                        <td>
+                        <td align="center">
                             @Html.CheckBoxFor(model => item.HasWorkbook, new { disabled = "disabled" })
                         </td>
-                        <td>
+                        <td align="center">
                             @Html.CheckBoxFor(model => item.HasVideoText, new { disabled = "disabled" })
                         </td>
-                        <td>
+                        <td align="center">
                             @Html.CheckBoxFor(model => item.VideosInHand, new { disabled = "disabled" })
                         </td>
-                        <td>
+                        <td align="center">
                             @Html.CheckBoxFor(model => item.MasteringFilesInHand, new { disabled = "disabled" })
                         </td>
-                        <td>
+                        <td align="center">
                             @Html.CheckBoxFor(model => item.TextFilesInHand, new { disabled = "disabled" })
                         </td>
                         <td>
@@ -168,7 +168,6 @@
                     <th>Actions</th>
                 </tr>
 
-                @*input controls for adding a new item*@
                 <tr>
                     @*<td><input type="text" id="txtCourseCoreID" class="courseInputClass" size="5" /></td>*@
                     <td><input type="text" id="txtCourseName" class="courseInputClass" /></td>
@@ -222,26 +221,13 @@
             var delayMils = 900;
             var pageObjectLabel = 'CourseCore';
 
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetSemestersJson","Cores")',
-                dataType: "json",
-                async: false,
-                success: function (response) {
-                    semesters = response;
-                }
-            });
-
+            var semesters = setUpSemesterDDL('#semFilter', false); //false: no 'All'
 
             //set up semester drop downs semDDL code and semFilter options
             var semesterDdlCode = '<select id = "semesterDDL" name = "semesterDDL"> '
             semesterDdlCode += "<option value='??'>None Selected</option>";
             for (var key in semesters) {
                 semesterDdlCode += "<option value='" + semesters[key].SemesterCode + "'>" + semesters[key].SemesterName + "</option>";
-                $('#semFilter').append($('<option>', {
-                    value: semesters[key].SemesterCode,
-                    text: semesters[key].SemesterName
-                }));
             }
             semesterDdlCode += '</select >';
 

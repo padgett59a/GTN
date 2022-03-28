@@ -18,8 +18,8 @@
 //function trimDecimal(inStr) 
 //function amountsOnly(checkStr) 
 //function emailOnly(checkStr) 
-//bool function checkTrxDefaultPay() 
-//bool function checkMrxDefaultPay() 
+//function emptyTrxDefaultPay() 
+//function emptyMrxDefaultPay()
 //function HandleError(e, keyedTableName, keyedRow) 
 //function setUpSemesterDDL(elSemDD) 
 //function setUpLangDDL(elLangDD) 
@@ -449,7 +449,7 @@ function HandleError(e, keyedTableName, keyedRow) {
     }
 }
 
-function setUpSemesterDDL(elSemDD) {
+function setUpSemesterDDL(elSemDD, pBoolAll = true) {
 
     //Set up Semester drop down
     $.ajax({
@@ -463,6 +463,13 @@ function setUpSemesterDDL(elSemDD) {
     });
 
     //set up Semester drop down code
+    if (pBoolAll) {
+        $(elSemDD).append($('<option>', {
+            value: '??',
+            text: 'All'
+        }));
+    }
+
     for (var key in semesters) {
         $(elSemDD).append($('<option>', {
             value: semesters[key].SemesterCode,

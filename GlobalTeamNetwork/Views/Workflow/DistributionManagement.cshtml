@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GlobalTeamNetwork.Models.SemesterCourse>
+﻿@model IEnumerable<GlobalTeamNetwork.Models.DistrSemesterCourse>
 
 @{
     ViewData["Title"] = "Manage Distributions";
@@ -14,18 +14,29 @@
     <h1>Manage Distributions</h1>
     <table>
         <tr>
-            <td width="30%">
+            <td nowrap>
+                filtered&nbsp;for&nbsp;Language&nbsp;<select id="langFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllLangs" href="javascript:void(0)">Show All</a>
+            </td>
+            <td width="5%"></td>
+            <td nowrap>
+                filtered&nbsp;for&nbsp;Semester&nbsp;<select id="semFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllSems" href="javascript:void(0)">Show All</a>
+            </td>
+        </tr>
+        <tr><td><br></td></tr>
+        <tr>
+            <td width="10%">
                 <div style="border: 2px solid blue;background-color:lightgrey">
-                    <br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Distribute Semester</label></br>&nbsp; &nbsp;<br>
-                    &nbsp; &nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>
+                    @*<br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Distribute Semester</label>&nbsp; &nbsp;<br>
+                    &nbsp;&nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>*@
+                    <div onclick="radioClick('full');"><br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull"><b>Distribute Semester</label>&nbsp; &nbsp;<br></div>
+                    <div onclick="radioClick('partial');">&nbsp;&nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br></div>
                 </div>
             </td>
-            <td width="5%">
-            </td>
             <td>
-                Select a Language <select id="langDDL" name="langDDL"></select><br>
-                <br>
-                Select a Semester for Distribution&nbsp;<select id="semDDL" name="semDDL"></select><br>
             </td>
         </tr>
     </table>
@@ -46,10 +57,11 @@
             <tbody class="dataRows">
                 @foreach (var item in Model)
                 {
-                    <tr id="@("tr" + @item.courseCoreID)">
+                    <tr id="@("tr" + @item.courseID)">
 
                         <!-- Language-->
-                        <td>
+                        <td data-id="@(@item.langID)">
+                            @Html.DisplayFor(model => item.LangName)
                         </td>
 
                         <td>
@@ -59,7 +71,7 @@
                             @Html.DisplayFor(model => item.CourseName)
                         </td>
                         <td>
-                            @Html.Raw("<div style = 'text-align: center'><input class='itemCB' type='checkbox' id = '" + @item.courseCoreID + "'></div>")
+                            @Html.Raw("<div style = 'text-align: center'><input class='itemCB' type='checkbox' id = '" + @item.courseID + "'></div>")
                         </td>
                     </tr>
                 }
@@ -68,7 +80,7 @@
 
         </table>
 
-        <br><input type="button" id="GetMrxStatus" value="Manage Distributions" />
+        <br><input type="button" id="btnManageDist" value="Manage Distributions" />
         &nbsp;
     </div>
 
@@ -91,59 +103,112 @@
                 }
 
                 radioClick = function (label) {
-                    if (label.id.toLowerCase().indexOf('full') > -1) {
+                    if (label ==='full') {
                         checkAll(true);
-                        $('input[name=fullSem]:eq(0)').click();
+                        //$('input[name=fullSem]:eq(0)').click();
+                        $('input[name=fullSem]:eq(0)').prop("checked", true);
                     }
                     else {
                         //partial
                         checkAll(false);
-                        $('input[name=fullSem]:eq(1)').click();
+                        //$('input[name=fullSem]:eq(1)').click();
+                        $('input[name=fullSem]:eq(1)').prop("checked", true);
                     }
                 }
+
+                $("#showAllLangs").click(function () {
+                    $("#langFilter option:eq(0)").attr('selected', true);
+                    $("#langFilter").change();
+                });
+
+                $("#showAllSems").click(function () {
+                    $("#semFilter option:eq(0)").attr('selected', true);
+                    $("#semFilter").change();
+                });
+
+
+                $("#btnManageDist").click(function () {
+                    //Get list of courses for distribution and call the distribution page
+                    let courseList = '';
+                    $("#tblMain tbody input:checkbox:checked").each(function (index, value) {
+                        courseList += `${value.id},`;
+                    });
+                    if (courseList.length == 0) {
+                        alert('Please select one or more Courses before proceeding.');
+                    }
+                    else {
+                        courseList = courseList.substring(0, courseList.length - 1);
+                        alert(courseList);
+                        //document.location = '@Url.Action("DistributeSessions","Workflow")';
+                    }
+                });
+
+
+                //langFilter change
+                $("#langFilter, #semFilter" ).change(function () {
+                    let langFilter = $('#langFilter option:selected').text();
+                    let semFilter = $('#semFilter option:selected').text();
+
+                    //show all rows
+                    $(".dataRows tr").show();
+
+                    //hide rows not matching langFilter
+                    if (langFilter != "All") {
+                        $(".dataRows tr td:nth-child(1):not(:contains('" + langFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
+                        $(".dataRows tr td:nth-child(1):not(:contains('" + langFilter + "'))").parent().hide();
+                    }
+
+                    //hide rows not matching semFilter
+                    if (semFilter != "All") {
+                        $(".dataRows tr td:nth-child(2):not(:contains('" + semFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
+                        $(".dataRows tr td:nth-child(2):not(:contains('" + semFilter + "'))").parent().hide();
+                    }
+
+                });
 
 
                 //pFilter is passed to the page via query string for page refresh, etc.
                 var pFilter = (new URL(location.href)).searchParams.get('filter');
 
                 //Set up the drop down value arrays
-                var inputValid = false;
                 var delayMils = 900;
                 var pageObjectLabel = 'Manage Distributions';
 
-
                 //Populate Language DDL
-                const languages = setUpLangDDL('#langDDL'); //from ViewCommon.js
+                let langArray = []
+                $('.dataRows > tr > td:nth-child(1)').each(function () {
+                    let newLang = {};
+                    newLang.langId = $(this).attr('data-id');
+                    newLang.langName = $(this).text().replace("\n", "").trim();
+                    if (!langArray.find(l => l.langId === newLang.langId)) {
+                        langArray.push(newLang);
+                    }
+                });
+
+                langArray.forEach(l =>
+                    $("#langFilter").append($('<option>', {
+                        value: l.langId,
+                        text: l.langName
+                    }
+                )));
 
                 //Set up Semester drop down
-                setUpSemesterDDL('#semDDL')
-
-                //Populate initial language
-                var langFilter = $("#langDDL option:selected").text();
-                $('.dataRows > tr > td:nth-child(1)').html(langFilter);
-
-                //***************************************
-
-                //change rows on Semester or Language change
-                $("#langDDL").change(function () {
-                    langFilter = $("#langDDL option:selected").text();
-                    $('.dataRows > tr > td:nth-child(1)').html(langFilter);
-                });
-
-                $("#semDDL").change(function () {
-                    let semFilter = this.options[this.selectedIndex].text;
-                    if (semFilter != "All") {
-                        $(".dataRows tr td:nth-child(2):contains('" + semFilter + "')").parent().show();
-                        $(".dataRows tr td:nth-child(2):not(:contains('" + semFilter + "'))").parent().hide();
-                    }
-                    else {
-                        //show all rows
-                        $(".dataRows tr").show();
+                let semArray = [], newSem
+                $('.dataRows > tr > td:nth-child(2)').each(function () {
+                    newSem = $(this).text().replace("\n", "").trim();
+                    if (!semArray.includes(newSem)) {
+                        semArray.push(newSem);
                     }
                 });
 
-                //set initial Semester filter
-                $("#semDDL").change();
+                for (i = 0; i < semArray.length; i++) {
+                    $("#semFilter").append($('<option>', {
+                        value: i,
+                        text: semArray[i]
+                    }));
+                }
+
+                //TBD when changing languages update elgible semesters
 
                 //show data div
                 $("#divMain").show();

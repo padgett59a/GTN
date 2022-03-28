@@ -46,7 +46,7 @@ namespace GlobalTeamNetwork.Controllers
         }
         public IActionResult DistributionManagement()
         {
-            List<SemesterCourse> retVal = _semesterCourseRepository.AllSemesterCourses.ToList();
+            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList();
             return View(retVal);
         }
         public IActionResult DistributionHistory()
@@ -202,8 +202,14 @@ namespace GlobalTeamNetwork.Controllers
         }
         public JsonResult GetDistSemesterCoursesJson()
         {
-            List<SemesterCourse> retVal = _semesterCourseRepository.AllSemesterCourses.ToList(); 
+            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList(); 
             return Json(retVal);
+        }
+        public IActionResult GetDistibutionSessions(int langId, string courseCodes)
+        {
+            //It should not be possible to request semesters/courses not already in translation when calling this page
+            List<DistrSession> retVal = _workflowRepository.GetDistributionSessions(langId, courseCodes, _appDbContext);
+            return View(retVal);
         }
 
     }

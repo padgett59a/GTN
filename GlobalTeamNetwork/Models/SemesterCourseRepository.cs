@@ -17,15 +17,15 @@ namespace GlobalTeamNetwork.Models
             _appDbContext = appDbContext;
         }
 
-        public IEnumerable<SemesterCourse> AllSemesterCourses
+        public IEnumerable<DistrSemesterCourse> AllDistrSemesterCourses
         {
-            get { return _appDbContext.SemesterCourse; }
+            get { return _appDbContext.DistrSemesterCourse; }
         }
-        public IEnumerable<SemesterCourse> AllSemesterCoursesShortNotes
+        public IEnumerable<DistrSemesterCourse> AllDistrSemesterCoursesShortNotes
         {
             get
             {
-                return GTNCommonRepository.TableShortNotes<SemesterCourse>("SemesterCourses", _appDbContext);
+                return GTNCommonRepository.TableShortNotes<DistrSemesterCourse>("DistrSemesterCourse", _appDbContext);
             }
         }
     }

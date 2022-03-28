@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace GlobalTeamNetwork.Models
 {
-    public class SemesterCourse
+    public class DistrSemesterCourse
     {
-        public string CourseName { get; set; }
+        public String LangName { get; set; }
+        public Int32 langID { get; set; }
         public string SemesterName { get; set; }
+        public string CourseName { get; set; }
 
         [Key]
-        public Int32 courseCoreID { get; set; }
+        public Int32 courseID { get; set; }
     }
 }
