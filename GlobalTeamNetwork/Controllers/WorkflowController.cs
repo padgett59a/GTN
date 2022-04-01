@@ -205,10 +205,10 @@ namespace GlobalTeamNetwork.Controllers
             List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList(); 
             return Json(retVal);
         }
-        public IActionResult GetDistibutionSessions(int langId, string courseCodes)
+        public IActionResult DistibuteSessions(string courseCodes)
         {
-            //It should not be possible to request semesters/courses not already in translation when calling this page
-            List<DistrSession> retVal = _workflowRepository.GetDistributionSessions(langId, courseCodes, _appDbContext);
+            //It should not be possible to request semesters/courses not already mastered when calling this page
+            List<DistrSession> retVal = _workflowRepository.GetDistributionSessions(courseCodes, _appDbContext);
             return View(retVal);
         }
 

@@ -84,26 +84,35 @@ namespace GlobalTeamNetwork.Models
             return retVal.ToList();
         }
 
-        public List<DistrSession> GetDistributionSessions(int langId, string sessionCoreIDs, ApplicationDbContext dbContext)
+        //public List<DistrSession> GetDistributionSessions(int langId, string sessionCoreIDs, ApplicationDbContext dbContext)
+        public List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext)
         {
-            var param = new SqlParameter[] {
-                        new SqlParameter() {
-                            ParameterName = "@langID",
-                            SqlDbType =  System.Data.SqlDbType.Int,
-                            Direction = System.Data.ParameterDirection.Input,
-                            Value = langId
-                        },
-                        new SqlParameter() {
-                            ParameterName = "@corsCodes",
-                            SqlDbType =  System.Data.SqlDbType.VarChar,
-                            Direction = System.Data.ParameterDirection.Input,
-                            Value = sessionCoreIDs
-                        }
-                };
+            //var param = new SqlParameter[] {
+            //            new SqlParameter() {
+            //                ParameterName = "@langID",
+            //                SqlDbType =  System.Data.SqlDbType.Int,
+            //                Direction = System.Data.ParameterDirection.Input,
+            //                Value = langId
+            //            },
+            //            new SqlParameter() {
+            //                ParameterName = "@corsCodes",
+            //                SqlDbType =  System.Data.SqlDbType.VarChar,
+            //                Direction = System.Data.ParameterDirection.Input,
+            //                Value = sessionCoreIDs
+            //            }
+            //    };
+
+            var param = new SqlParameter()
+            {
+                ParameterName = "@corsCodes",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Input,
+                Value = sessionCoreIDs
+            };
 
             //this one can take some time if the db is 'cold'
             dbContext.Database.SetCommandTimeout(120);
-            var retVal = dbContext.Set<DistrSession>().FromSqlRaw("[dbo].[SP_Get_Course_Sessions] @langID, @corsCodes", param);
+            var retVal = dbContext.Set<DistrSession>().FromSqlRaw("[dbo].[SP_Get_Course_Sessions] @corsCodes, @langID ", param);
             return retVal.ToList();
         }
 
@@ -143,7 +152,6 @@ namespace GlobalTeamNetwork.Models
             return retVal.ToList();
         }
 
-        
         public EntityState UpdateTranslationLog(TranslationLog tLog)
         {
             EntityEntry<TranslationLog> retVal = _appDbContext.TranslationLog.Update(tLog);

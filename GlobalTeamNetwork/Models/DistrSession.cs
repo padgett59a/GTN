@@ -11,8 +11,8 @@ namespace GlobalTeamNetwork.Models
         public String LangName { get; set; }
         public Int32 langID { get; set; }
         public String CourseName { get; set; }
-        public Int32 courseCoreID { get; set; }
+        public Int32 courseID { get; set; }
         public String SessionName { get; set; }
-        public String sessionCoreID { get; set; }
+        public Int32 sessionID { get; set; }
     }
 }

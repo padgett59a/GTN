@@ -1,1 +1,578 @@
-﻿
+﻿@model IEnumerable<GlobalTeamNetwork.Models.DistrSession>
+
+@{
+    ViewData["Title"] = "Session Distribution";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Distribute Session Status</title>
+</head>
+<body id="bodyMain">
+    <h1>Distribute Session Status</h1>
+    <table>
+        <tr>
+            <td nowrap>
+                filter&nbsp;for&nbsp;Course&nbsp;<select id="corsFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllCourses" href="javascript:void(0)">Show All</a>
+                &nbsp;&nbsp;
+                filter&nbsp;for&nbsp;Session&nbsp;<select id="sessFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;<a id="showAllSessions" href="javascript:void(0)">Show All</a>
+            </td>
+            <td align="right">
+                Search <input type="text" id=txtSearch size="15">
+            </td>
+
+        </tr>
+    </table>
+
+    <!-- Input controls for updating all checked rows -->
+    <table id="tblSpacing" class="table table-bordered table-hover table-striped" style="overflow-x: auto; margin-top: 5px;">
+        <tbody>
+            <!-- For spacing only-->
+            <tr>
+                <td style="vertical-align:middle" width="90%">
+                    Note: Check All applies to visible rows only
+                </td>
+                <td style="text-align:center" nowrap>
+                    Assign Translator&nbsp;<input type='checkbox' id='trxlAllcb'><br>
+                    <div style="align-content:center"><select id="trxDDLCb"></select></div>
+                </td>
+                <td style="text-align:center" nowrap>
+                    Assign Status&nbsp;<input type='checkbox' id='statusAllcb'><br>
+                    <div style="align-content:center"><select id="statusDDLCb" name="trxlDDL"></select></div>
+                </td>
+                <td style="text-align:center" nowrap>
+                    Attach Note&nbsp;<input type='checkbox' id='noteAllcb'><br>
+                    <input type="text" id=txtNotesCb size="25">
+                </td>
+                <td style="text-align:center" nowrap>
+                    Checked rows:<br>
+                    <input type="button" value="Save" id=buttonApplyCb onclick="saveCBs();">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style='text-align:center;display:none' id='divLoading'><br>Please wait... Processing...&nbsp;<img src="~/img/loading.gif"></div><br>
+
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+
+
+        <table id="tblMain" class="table table-bordered table-hover table-striped" style="overflow-x: auto;" hidden>
+            <thead>
+                <!-- Top Labels-->
+                <tr>
+                    <th nowrap class="columnSort" style="width:9%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th>Notes</th>
+                    <th style="width:6%" align="center"><input type='checkbox' id='selectAll'>&nbsp;&nbsp;All</th>
+                    <th style="width:6%">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="dataRows">
+                @foreach (var item in Model)
+                {
+                    <tr id="@("tr" + @item.dsID)">
+                        <td data-id="@Html.Raw(item.langID)">
+                            @Html.DisplayFor(model => item.LangName)
+                        </td>
+                        <td data-id="@Html.Raw(item.courseCoreID)">
+                            @Html.DisplayFor(model => item.CourseName)
+                        </td>
+                        <td data-id="@Html.Raw(item.sessionCoreID)">
+                            @Html.DisplayFor(model => item.SessionName)
+                        </td>
+                        <td data-id="@Html.Raw(item.translatorID)">
+                            @Html.DisplayFor(model => item.FullName)
+                        </td>
+                        <td data-id="@Html.Raw(item.tsID)">
+                            @Html.DisplayFor(model => item.Step)
+                        </td>
+                        <td data-id="@Html.Raw(item.statusID)">
+                            @Html.DisplayFor(model => item.status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Notes)
+                        </td>
+                        <td>
+                            @Html.Raw("<div style = 'text-align: center'><input class='itemCB' type='checkbox' id = '" + @item.tlID + "'></div>")
+                        </td>
+                        <td align="center">
+                            <a onclick="editItem('@item.tlID', this)" href="javascript:void(0)" id="@item.tlID">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot hidden>
+                <!-- Bottom Labels-->
+                <tr id="bottomLabels" class="bottomLabels">
+                    <th>Language</th>
+                    <th>Semester</th>
+                    <th>Course</th>
+                    <th>Session</th>
+                    <th>Translator</th>
+                    <th>Step</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    @*<th></th>*@
+                    <th colspan='2' align="center" style="text-align:center;width:10%">Actions</th>
+                </tr>
+
+                @*input controls for adding a new item*@
+                <tr>
+                    <td id="tdLangName" class="SessionInputClass"></td>
+                    <td id="tdSemesterName" class="SessionInputClass"></td>
+                    <td id="tdCourseName" class="SessionInputClass"></td>
+                    <td id="tdSessionName" class="SessionInputClass"></td>
+                    <td id="trxlDDL"><input type="text" class="SessionInputClass" /></td>
+                    <td id="tdStep" class="SessionInputClass"></td>
+                    <td id="statusDDL"><input type="text" class="SessionInputClass" /></td>
+                    <td><input type="text" id="txtNotes" class="SessionInputClass" /></td>
+                    @*<td id="tdSelect" class="SessionInputClass"></td>*@
+                    <td colspan='2' nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                </tr>
+                <tr id="trSaveAll">
+                    <td style="white-space:nowrap">
+                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btnCancel" value="Cancel" />
+                    </td>
+                    <td colspan="100%"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+        var editItem;
+        var deleteItem;
+        var saveCBs;
+
+        $(document).ready(function () {
+
+            //save query string for refresh
+            //var searchString = location.search.substring(1);
+
+            //pFilter is passed to the page via query string for page refresh, etc.
+            var cFilter = (new URL(location.href)).searchParams.get('cfilter');
+            var sFilter = (new URL(location.href)).searchParams.get('sfilter');
+            var genExams = (new URL(location.href)).searchParams.get('genExams');
+            var semesterCode = (new URL(location.href)).searchParams.get('semesterCode');
+            var courseCodes = (new URL(location.href)).searchParams.get('courseCodes');
+            var langID = (new URL(location.href)).searchParams.get('langID');
+
+            //Set up the drop down value arrays
+            var inputValid = false;
+            var courses;
+            var translators;
+            var statuses;
+            var delayMils = 900;
+            var pageObjectLabel = 'Session Distribution';
+
+            //set up course drop down code
+            var courses = [];
+            var i = 0;
+            var tdVal = "";
+            //var course = new Object;
+            $("#tblMain TBODY td:nth-child(3)").each(function (key) {
+                tdVal = decodeHtml($(this).html().replace('\n', '').trim());
+                i++;
+                if (!courses.includes(tdVal)) {
+                    courses.push(tdVal);
+                }
+            });
+            var courseDDLCode = '<select id = "courseDDL" name = "courseDDL"> '
+            courseDDLCode += "<option value='??'>All Courses</option>";
+            //courses.forEach(function (key, value) {
+            for (i = 0; i < courses.length; i++) {
+                courseDDLCode += "<option value='" + i + "'>" + courses[i] + "</option>";
+                $('#corsFilter').append($('<option>', {
+                    value: (i + 1),
+                    text: courses[i]
+                }));
+            }
+            courseDDLCode += '</select >';
+
+            $("#trxDDLCb").change(function () {
+                if ($("#trxDDLCb option:selected").val() == '??') {
+                    $("#trxlAllcb").prop("checked", false);
+                }
+                else {
+                    $("#trxlAllcb").prop("checked", true);
+                }
+            });
+
+
+
+            $("#txtNotesCb").keyup(function () {
+                if ($("#txtNotesCb").val().trim().length == 0) {
+                    $("#noteAllcb").prop("checked", false);
+                }
+                else {
+                    $("#noteAllcb").prop("checked", true);
+                }
+            });
+
+            saveCBs = function saveCBs() {
+
+                if (!$("#trxlAllcb").prop("checked") && !$("#statusAllcb").prop("checked") && !$("#noteAllcb").prop("checked")) {
+                    alert('Please enter values before proceeding.');
+                    return;
+                }
+
+                if ($('.itemCB:visible:checked').length == 0) {
+                    alert('Please select rows before proceeding.');
+                    return;
+                }
+
+                var confirmText = "Apply these values to all checked rows?\n";
+                var trxlrTxt = $("#trxDDLCb option:selected").text();
+                if ($("#trxlAllcb").prop("checked")) {
+                    confirmText += '\nTransaltor: ' + trxlrTxt
+                }
+                var statusTxt = $("#statusDDLCb option:selected").text();
+                if ($("#statusAllcb").prop("checked")) {
+                    confirmText += '\nStatus: ' + statusTxt;
+                }
+                var notesTxt = $("#txtNotesCb").val();
+                if ($("#noteAllcb").prop("checked")) {
+                    confirmText += '\nNotes: ' + notesTxt;
+                }
+                confirmText += '\n\n NOTE: Please allow up to 120 seconds for completion when many rows are selected. '
+                confirmText += 'If prompted by your browser, select "WAIT" until processing completes.'
+
+                if (confirm(confirmText)) {
+                    document.documentElement.style.cursor = 'wait';
+                    $("#buttonApplyCb").prop("disabled", true);
+                    $("#divLoading").show();
+                    setTimeout(function () {
+                        processCBs()
+                    }, 0);
+                }
+            }
+
+            //$("#buttonApplyCb").on("click", function () {
+            function processCBs() {
+                updateLogs = [];
+                $('.itemCB:visible:checked').each(function () {
+                    var Distribution = new Object;
+                    Distribution.tlID = parseInt($(this).attr("id"));
+
+                    if ($("#trxlAllcb").prop("checked")) {
+                        Distribution.translatorID = parseInt($("#trxDDLCb option:selected").val());
+                    }
+                    else {
+                        Distribution.translatorID = -1;
+                    }
+
+                    if ($("#statusAllcb").prop("checked")) {
+                        Distribution.statusID = parseInt($("#statusDDLCb option:selected").val());
+                    }
+                    else {
+                        Distribution.statusID = -1;
+                    }
+
+                    if ($("#noteAllcb").prop("checked")) {
+                        Distribution.Notes = $("#txtNotesCb").val();
+                    }
+                    else {
+                        Distribution.Notes = "~~~ Not Set ~~~";
+                    }
+                    updateLogs.push(Distribution);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateDistributionLogs", "Workflow")',
+                    data: JSON.stringify(updateLogs),
+                    dataType: 'JSON',
+                    cache: false,
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Distribution(s) have been modified.");
+                    }
+                });
+
+                $("#divLoading").hide();
+                document.documentElement.style.cursor = 'default';
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+
+            $('#selectAll').change(function () {
+                var bCheck = $('#selectAll').prop("checked");
+                $('.itemCB:visible').prop('checked', bCheck);
+                //$('.itemCB').change();
+            });
+
+            $('#corsFilter').change(function () {
+                var courseFilter = this.options[this.selectedIndex].text;
+                if (courseFilter != "All") {
+                    $("#tblMain td:nth-child(3):contains('" + courseFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(3):not(:contains('" + courseFilter + "'))").parent().hide();
+                }
+                else {
+                    //show all rows
+                    $("#tblMain tr").show();
+                }
+                $("#tblMain TFOOT").attr("hidden", true);
+                changeSessions(courseFilter);
+            })
+
+            //set up session drop down code and refresh when course selection changes
+            function changeSessions(selCourse) {
+                sessions = [];
+                i = 0;
+                tdVal = "";
+                $("#tblMain TBODY TR").each(function () {
+                    if ($(this).children('td').eq(2).html().replace('\n', '').trim() == selCourse || selCourse == 'All') {
+                        tdVal = decodeHtml( $(this).children('td').eq(3).html().replace('\n', '').trim() );
+                        i++;
+                        if (!sessions.includes(tdVal)) {
+                            sessions.push(tdVal);
+                        }
+                    }
+                });
+                $('#sessFilter').empty();
+                var sessionDDLCode = '<select id = "sessionDDL" name = "sessionDDL"> '
+                sessionDDLCode += "<option value='??'>All Courses</option>";
+                //sessions.forEach(function (key, value) {
+                $('#sessFilter').append($('<option>', { value: '??', text: 'All' }));
+                for (i = 0; i < sessions.length; i++) {
+                    sessionDDLCode += "<option value='" + i + "'>" + sessions[i] + "</option>";
+                    $('#sessFilter').append($('<option>', {
+                        value: (i + 1),
+                        text: sessions[i]
+                    }));
+                }
+                sessionDDLCode += '</select >';
+            }
+
+            $('#sessFilter').change(function () {
+                var sessionFilter = this.options[this.selectedIndex].text;
+                if (sessionFilter != "All") {
+                    $("#tblMain td:nth-child(4):contains('" + sessionFilter + "')").parent().show();
+                    $("#tblMain td:nth-child(4):not(:contains('" + sessionFilter + "'))").parent().hide();
+                }
+                else {
+                    //show all rows
+                    $("#tblMain tr").show();
+                }
+                $("#tblMain TFOOT").attr("hidden", true);
+            })
+
+            //page load only
+            changeSessions('All');
+
+            //select the first course value or passed filter value and show the main table.
+            //cFilter gets set from the Course filter passed in via query string
+            if (cFilter != null) {
+                var optStr = '#corsFilter option[value = "' + cFilter + '"]';
+                var boolFilterExists = $(optStr).length != 0;
+                //alert('boolFilterExists: '+ boolFilterExists);
+                if (boolFilterExists) {
+                    $('#corsFilter').val(cFilter).change();
+                }
+            }
+            else {
+                //Set to first option in the list
+                //$('#corsFilter').prop('selectedIndex', 1).change();
+            }
+
+            //sFilter gets set from the Session filter passed in via query string
+            //alert($('#sessFilter').html());
+            if (sFilter != null) {
+                var optStr = '#sessFilter option[value = "' + sFilter + '"]';
+                var boolFilterExists = $(optStr).length != 0;
+                //alert('boolFilterExists: '+ boolFilterExists);
+                if (boolFilterExists) {
+                    $('#sessFilter').val(sFilter).change();
+                }
+            }
+
+            $('#tblMain').removeAttr('hidden');
+
+
+            function refreshMe() {
+                //Refresh the page
+                var url = '@Url.Action("DistributeSessions", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
+                url += "&sfilter=" + $('#sessFilter option').filter(':selected').val() + getCurrentSort();
+                url += '&genExams=' + genExams;
+                url += '&semesterCode=' + semesterCode;
+                url += '&courseCodes=' + courseCodes;
+                url += '&langID=' + langID;
+                //alert(url);
+                window.location.href = url;
+            }
+
+
+
+            $("body").on("click", "#btnCancel", function () {
+                refreshMe();
+            });
+
+            $("#showAllCourses").click(function () {
+                //Set filter to 'All'
+                $('#corsFilter').prop('selectedIndex', 0).change();
+            });
+
+            $("#showAllSessions").click(function () {
+                //Set filter to 'All'
+                $('#sessFilter').prop('selectedIndex', 0).change();
+            });
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("input", ".SessionInputClass", function () {
+                $("#btnSave").prop('disabled', false);
+        });
+
+        //Enable or Disable the save button when required fields are completed and valid
+        $("body").on("change", "#courseDDL, #instructorDDL", function () {
+            if (
+                //$('#txttlID').val().length > 0 &&
+                //$('#txtSessionName').val().length > 0 &&
+                //$('#txtSessionCode').val().length > 0 &&
+                //$('#trxlDDL option:selected').val() != '1'
+                true //no values are required
+            ) {
+                $("#btnSave").prop('disabled', false);
+            }
+            else {
+                $("#btnSave").prop('disabled', true);
+            }
+        });
+
+        //Edit an item
+        editItem = function editItem(itemId, button) {
+
+            var editRow = $(button).closest("TR");
+            //var selectedVal;
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+
+            //set up the Translator ddl html
+            //$("#trxlDDL").html(trxlDDLCodeOpt);
+
+            var trxlrReplVal = "<option value='" + translators.find(trxl => trxl.fullName === decodeHtml(editRow.find("TD").eq(4).html().trim())).personID + "'>";
+            var trxlrReplValOpt = trxlrReplVal.replace('option value=', 'option selected value=');
+            var trxlDDLCodeOpt = trxlDDLCode.replace(trxlrReplVal, trxlrReplValOpt);
+
+            //set up the Status ddl html
+            $("#statusDDL").html(statusDDLCodeOpt);
+            var statusReplVal = "<option value='" + statuses.find(status => status.status === decodeHtml(editRow.find("TD").eq(6).html().trim())).statusID + "'>";
+            var statusReplValOpt = statusReplVal.replace('option value=', 'option selected value=');
+            var statusDDLCodeOpt = statusDDLCode.replace(statusReplVal, statusReplValOpt);
+
+            //Copy unmodified values to the edit controls
+            $('#tdLangName').html(editRow.find("TD").eq(0).html().trim());
+            $('#tdSemesterName').html(editRow.find("TD").eq(1).html().trim());
+            $('#tdCourseName').html(editRow.find("TD").eq(2).html().trim());
+            $('#tdSessionName').html(editRow.find("TD").eq(3).html().trim());
+            $("#trxlDDL").html(trxlDDLCodeOpt);
+            $('#tdStep').html(editRow.find("TD").eq(5).html().trim());
+            $("#statusDDL").html(statusDDLCodeOpt);
+            $('#txtNotes').val(editRow.find("TD").eq(7).html().trim());
+            $('#tdSelect').val('');
+
+            //Hide Save ALL button row, show footer
+            $("#trSaveAll").attr("hidden", true);
+            $("#tblMain tfoot>tr").show();
+            $("#tblMain TFOOT").attr("hidden", false);
+
+            //scroll to bottom
+            $("#divMain").animate({ scrollTop: $('#divMain').prop("scrollHeight") }, 1000);
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+
+        function getTLUpdates(logRows) {
+
+            updateLogs = [];
+
+            for (i = 0; i < logRows.length; i++){
+                var Distribution = new Object;
+                rowID = "#tr" + logID;
+                tRow = $(rowID);
+                alert(trow.html());
+                Distribution.tlID = parseInt($("#btnSaveEdit").attr('data-id'));
+                Distribution.statusID = parseInt(editRow.find("td").eq(6).attr('id'));
+                Distribution.notes = editRow.find("input").eq(0).val();
+                Distribution.translatorID = parseInt(editRow.find("input").eq(0).val());
+                updateLogs.push(Distribution)
+            }
+            return updateLogs;
+        }
+
+            //Save edits via ajax
+        $("body").on("click", "#btnSaveEdit", function () {
+
+            //validateInput();
+            //if (inputValid) {
+            if (true) {
+
+                editRow = $("#btnSaveEdit").closest("TR");
+                //var trxLogUpdates = getTLUpdates(editRows);
+
+                updateLogs = [];
+                var Distribution = new Object;
+                Distribution.tlID = parseInt($("#btnSaveEdit").attr('data-id'));
+                Distribution.statusID = parseInt($("#statusDDL option:selected").val());
+                Distribution.Notes = editRow.find("input").eq(0).val();
+                Distribution.translatorID = parseInt($("#trxlDDL option:selected").val());
+                updateLogs.push(Distribution);
+                //alert(JSON.stringify(updateLogs));
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateDistributionLogs", "Workflow")',
+                    data: JSON.stringify(updateLogs),
+                    dataType: 'JSON',
+                    cache: false,
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (r) {
+                        alert(r + " Distribution(s) have been modified.");
+                    }
+                });
+
+                //Give the db a minute to recognize the new records
+                waitSeconds(delayMils);
+                //Refresh the page
+                refreshMe();
+            }
+
+
+         });
+
+
+        $('html, body').animate({ scrollTop: '0px' }, 300);
+
+
+
+    /*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>
