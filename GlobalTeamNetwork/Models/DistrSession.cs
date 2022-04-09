@@ -7,7 +7,7 @@ namespace GlobalTeamNetwork.Models
     {
         //This is the type returned from the SP_Trx_Sem stored procedure
         [Key]
-        public Int32 dsID { get; set; }
+        public Int64 dsID { get; set; }
         public String LangName { get; set; }
         public Int32 langID { get; set; }
         public String CourseName { get; set; }

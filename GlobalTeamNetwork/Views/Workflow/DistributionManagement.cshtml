@@ -138,8 +138,10 @@
                     }
                     else {
                         courseList = courseList.substring(0, courseList.length - 1);
-                        alert(courseList);
-                        //document.location = '@Url.Action("DistributeSessions","Workflow")';
+                        let targetUrl = "";
+                        targetUrl = '@Url.Action("DistributeSessions","Workflow")?' + 'courseCodes=' + courseList;
+                        //alert(targetUrl);
+                        document.location = targetUrl;
                     }
                 });
 

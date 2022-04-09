@@ -44,15 +44,6 @@ namespace GlobalTeamNetwork.Controllers
         {
             return View();
         }
-        public IActionResult DistributionManagement()
-        {
-            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList();
-            return View(retVal);
-        }
-        public IActionResult DistributionHistory()
-        {
-            return View();
-        }
 
         //Get all Translation Status for all Courses
         public JsonResult GetTrxStatusJson()
@@ -200,16 +191,25 @@ namespace GlobalTeamNetwork.Controllers
             List<MxLog> retVal = _workflowRepository.GetMasteringLogs(getTrans, _appDbContext);
             return View(retVal);
         }
-        public JsonResult GetDistSemesterCoursesJson()
+        public IActionResult DistributionManagement()
         {
-            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList(); 
-            return Json(retVal);
+            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList();
+            return View(retVal);
         }
-        public IActionResult DistibuteSessions(string courseCodes)
+        public IActionResult DistributionHistory()
+        {
+            return View();
+        }
+        public IActionResult DistributeSessions(string courseCodes)
         {
             //It should not be possible to request semesters/courses not already mastered when calling this page
             List<DistrSession> retVal = _workflowRepository.GetDistributionSessions(courseCodes, _appDbContext);
             return View(retVal);
+        }
+        public JsonResult GetDistSemesterCoursesJson()
+        {
+            List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList();
+            return Json(retVal);
         }
 
     }

@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+ GlobalTeamNetwork\appsettings-BAK.json 
+ GlobalTeamNetwork\appsettings.json 
+ GlobalTeamNetwork\appsettings - BAK.json 

@@ -265,6 +265,13 @@ namespace GlobalTeamNetwork.Controllers
             var mediaTypes = _mediaTypeRepository.AllMediaTypesShortNotes;
             return View(mediaTypes);
         }
+
+        public JsonResult GetMediaTypesJson()
+        {
+            List<MediaType> retVal = _mediaTypeRepository.AllMediaTypes.ToList();
+            return Json(retVal);
+        }
+
         [HttpPost]
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
         public JsonResult InsertMediaTypes([FromBody] List<MediaType> newMediaType)
