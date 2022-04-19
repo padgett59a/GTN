@@ -26,133 +26,156 @@
         </tr>
     </table><br>
 
-    <p>
-        <a id="createNew" href="javascript:void(0)">Add New Person</a>
-        <!--     <button id="createNew">Add Person</button> -->
-    </p>
+    <form autocomplete="off">
 
-    <div id="divMain" style="height:100vh;overflow-y:auto">
+        <div id="divMain" style="height:100vh;overflow-y:auto">
+            <p>
+                <a id="createNew" href="javascript:void(0)">Add New Person</a>
+                <!--     <button id="createNew">Add Person</button> -->
+            </p>
 
-        <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
-            <thead>
-                <!-- Top Labels-->
-                <tr>
-                    <th class="columnSort" style="width:15%">
-                        Full Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:15%">
-                        @Html.DisplayNameFor(model => model.Phone) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:15%">
-                        @Html.DisplayNameFor(model => model.Email) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:10%">
-                        @Html.DisplayNameFor(model => model.Location) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:15%">
-                        Organization &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th class="columnSort" style="width:10%">
-                        Role &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Notes)
-                    </th>
-                    <th style="width:10%">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="dataRows">
-                @foreach (var item in Model)
-                {
-                <tr id="@(" tr" + @item.personID)">
-                    <td>
-                        @Html.DisplayFor(model => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Phone)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Location)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Organization)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Role)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.Notes)
-                    </td>
-                    <td>
-                        <a onclick="editItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Edit</a> |
-                        <a asp-controller="Cores" asp-action="PersonDetail" asp-route-id="@item.personID">Details</a> |
-                        <a onclick="deleteItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Delete</a>
-                    </td>
-                </tr>
-                }
-            </tbody>
-            <tfoot hidden>
+            <table id="tblMain" class="table table-bordered table-hover table-striped" style="display: block; overflow-x: auto;" hidden>
+                <thead>
+                    <!-- Top Labels-->
+                    <tr>
+                        <th class="columnSort" style="width:15%">
+                            Full Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th class="columnSort" style="width:15%">
+                            @Html.DisplayNameFor(model => model.Phone) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th class="columnSort" style="width:15%">
+                            @Html.DisplayNameFor(model => model.Email) &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th style="width:10%">
+                            Location 
+                        </th>
+                        <th class="columnSort" style="width:15%">
+                            Organization &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th class="columnSort" style="width:10%">
+                            Role &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </th>
+                        <th style="width:10%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="dataRows">
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@(" tr" + @item.personID)">
+                            <td>
+                                @Html.DisplayFor(model => item.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Phone)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Email)
+                            </td>
+                            <td id="@(" tr" + @item.locID)">
+                                @Html.DisplayFor(model => item.City)&nbsp;&nbsp;
+                                @Html.DisplayFor(model => item.State)&nbsp;&nbsp;
+                                @Html.DisplayFor(model => item.Country)
+                            </td>
+                            <td id="@(" tr" + @item.orgID)">
+                                @Html.DisplayFor(model => item.Organization)
+                            </td>
+                            <td id="@(" tr" + @item.personTypeID)">
+                                @Html.DisplayFor(model => item.Role)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.Notes)
+                            </td>
+                            <td>
+                                <a onclick="editItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Edit</a> |
+                                <a asp-controller="Cores" asp-action="PersonDetail" asp-route-id="@item.personID">Details</a> |
+                                <a onclick="deleteItem('@item.personID', this)" href="javascript:void(0)" id="@item.personID">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot hidden>
 
-                <!-- Bottom Labels-->
-                <tr id="bottomLabels" class="bottomLabels">
-                    <th>
-                        Full Name
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Phone)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Email)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Location)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Organization)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Role)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Notes)
-                    </th>
-                    <th>Actions</th>
-                </tr>
+                    <!-- Bottom Labels-->
+                    <tr id="bottomLabels" class="bottomLabels">
+                        <th>
+                            Full Name
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Phone)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th>
+                            Location
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Organization)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Role)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Notes)
+                        </th>
+                        <th>Actions</th>
+                    </tr>
 
-                @*input controls for adding a new item*@
-            <tr>
-                <td><input type="text" id="txtFullName" class="itemInputClass" /></td>
-                <td><input type="text" id="txtPhone" class="itemInputClass" size="15" /></td>
-                <td><input type="text" id="txtEmail" class="itemInputClass" size="15" /></td>
-                <td><input type="text" id="txtLocation" class="itemInputClass" size="15" /></td>
-                <td id="orgDDL"><input type="text" class="itemInputClass" /></td>
-                <td id="roleDDL"><input type="text" class="itemInputClass" /></td>
-                <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
-                <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
-            </tr>
-                <tr id="trSaveAll">
-                    <td style="white-space:nowrap">
-                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
-                        <input type="button" id="btnCancel" value="Cancel" />
-                    </td>
-                    <td colspan="100%"></td>
-                </tr>
-            </tfoot>
-        </table>
+                    @*input controls for adding a new item*@
+                    <tr id="inpFields">
+                        <td><input type="text" id="txtFullName" class="itemInputClass" /></td>
+                        <td><input type="text" id="txtPhone" class="itemInputClass" size="15" /></td>
+                        <td><input type="text" id="txtEmail" class="itemInputClass" size="15" /></td>
 
-    </div>
+                        <td id="locEdit">
+                            <table>
+                                <tr>
+                                    <td align="right">City</td>
+                                    <td><div class="ui-widget"><input type="text" id="ddlCities" class="itemInputClass" size="20"></div></td>
+                                </tr>
+                                <tr>
+                                    <td align="right">State</td>
+                                    <td><input type="text" id="ddlStates" class="itemInputClass" size="20" /></td>
+                                </tr>
+                                <tr>
+                                    <td align="right">Country</td>
+                                    <td><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></td>
+                                </tr>
+                            </table>
+                        </td>
 
+                        <td id="orgDDL"><input type="text" class="itemInputClass" /></td>
+                        <td id="roleDDL"><input type="text" class="itemInputClass" /></td>
+                        <td><input type="text" id="txtNotes" class="itemInputClass" /></td>
+                        <td nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                    </tr>
+                    <tr id="trSaveAll">
+                        <td style="white-space:nowrap">
+                            <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                            <input type="button" id="btnCancel" value="Cancel" />
+                        </td>
+                        <td colspan="100%"></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-    <p>
-        <a id="createNew2" href="javascript:void(0)">Add New Person</a>
-        <!--     <button id="createNew">Add Person</button> -->
-    </p>
+            <p>
+                <a id="createNew2" href="javascript:void(0)">Add New Person</a>
+                <!--     <button id="createNew">Add Person</button> -->
+            </p>
+
+        </div>
+    </form>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <link rel="stylesheet" href="~/js/jqueryui/jquery-ui.css">
+
     <script type="text/javascript">
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
@@ -162,8 +185,6 @@
 
         $(document).ready(function () {
 
-            //alert(phoneOnly('iiei ee'));
-            //alert(phoneOnly('999.999-333'));
 
             //pFilter is passed to the page via query string for page refresh, etc.
             var pFilter = (new URL(location.href)).searchParams.get('filter');
@@ -183,17 +204,12 @@
                     organizations = response;
                 }
             });
-            //alert(JSON.stringify(organizations));
 
             //set up Org drop down code
             var orgDDLCode = '<select id="orgDDL" name="orgDDL"> '
             orgDDLCode += "<option value='??'>None Selected</option>";
             for (var key in organizations) {
                 orgDDLCode += "<option value='" + organizations[key].orgID + "'>" + organizations[key].OrgName + "</option>";
-            //    $('#orgDDL').append($('<option>', {
-            //        value: organizations[key].orgID,
-            //        text: organizations[key].OrgName
-            //    }));
             }
             orgDDLCode += '</select >';
 
@@ -221,6 +237,45 @@
                 }));
             }
             roleDDLCode += '</select >';
+
+            // Get locations lists
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetLocationsJson", "Persons")',
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    locations = response;
+                }
+            });
+
+            let cities = new Array();
+            let states = new Array();
+            let countries = new Array();
+
+            locations.forEach(loc => {
+                if (!cities.includes(loc.city)) {
+                    cities.push(loc.city);
+                }
+                if (!states.includes(loc.state)) {
+                    states.push(loc.state);
+                }
+                if (!countries.includes(loc.country)) {
+                    countries.push(loc.country);
+                }
+            });
+
+            function initLocationAutocompletes() {
+                $("#ddlCities").autocomplete({
+                    source: cities
+                });
+                $("#ddlStates").autocomplete({
+                    source: states
+                });
+                $("#ddlCountries").autocomplete({
+                    source: countries
+                });
+            }
 
             //Show and Hide rows based on filter change
             $('#roleFilter').change(function () {
@@ -279,7 +334,7 @@
                 $("#tblMain tfoot>tr").show();
                 $("#tblMain TFOOT").attr("hidden", false);
                 //scroll to bottom
-                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+                scrollToBottom(); //viewcommon.js
             });
 
             $("#showAllRows").click(function () {
@@ -287,15 +342,18 @@
                 $('#roleFilter').prop('selectedIndex', 0).change();
             });
 
+
         //See if all input values are blank
         function allBlank() {
             var allAreBlank = (
                 $("#txtFullName").val().length == 0 &&
                 $("#txtPhone").val().length == 0 &&
                 $("#txtEmail").val().length == 0 &&
-                $("#txtLocation").val().length == 0 &&
+                //$("#txtLocation").val().length == 0 &&
+                $("#ddlCities").val().length == 0 &&
+                $("#ddlStates").val().length == 0 &&
+                $("#ddlCountries").val().length == 0 &&
                 $('#orgDDL option:selected').val() == '??' &&
-                //$('#roleDDL option:selected').val() == '??' &&
                 $("#txtNotes").val().length == 0
             );
             return allAreBlank;
@@ -333,6 +391,15 @@
                         alert("Please input a phone number with at least 10 digits before proceeding.");
                     }
                 }
+                //If any location values entered, City and Country are required (State is optional)
+                if ($("#ddlCities").val().trim().length > 0 || $("#ddlStates").val().trim().length > 0 ||
+                    $("#ddlCountries").val().trim().length > 0) {
+                    if (!($("#ddlCities").val().trim().length > 0 &&
+                        $("#ddlCountries").val().trim().length > 0)) {
+                        inputValid = false;
+                        alert("City and Country fields must both be entered, or City, State and Country must be blank (State is optional).");
+                    }
+                }
             }
         }
 
@@ -364,7 +431,7 @@
             }
         });
 
-        // Add another item - validate input
+        //Handles Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
             if (!allBlank()) {
@@ -375,7 +442,7 @@
                     //Get the reference of the Table's TFOOT element.
                     var tFoot = $("#tblMain > TFOOT")[0];
 
-                    //Add a new row above the input row and move the added values to it
+                    //Add a new row above the input row and move the added values to the new row
                     var row = tFoot.insertRow(0);
 
                     cell = $(row.insertCell(-1));
@@ -388,7 +455,10 @@
                     cell.html($("#txtEmail").val());
 
                     cell = $(row.insertCell(-1));
-                    cell.html($("#txtLocation").val());
+
+                    //location
+                    cell.html(`${$("#ddlCities").val()}&nbsp;&nbsp;${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
+                    initLocationAutocompletes();
 
                     cell = $(row.insertCell(-1));
                     if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
@@ -413,8 +483,9 @@
                     $("#txtFullName").val("");
                     $("#txtPhone").val("");
                     $("#txtEmail").val("");
-                    $("#txtLocation").val("");
-                    //$("#orgDDL select").val(NOSELECTION);
+                    $("#ddlCities").val("");
+                    $("#ddlStates").val("");
+                    $("#ddlCountries").val("");
                     $("#txtNotes").val("");
 
                     //now there is something to save
@@ -427,7 +498,7 @@
         $("body").on("click", "#btnSave", function () {
 
             //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
-            validateInput();
+            validateInput(inputValid);
 
             if (inputValid) {
                 //Loop through the Table rows and build a JSON array.
@@ -441,35 +512,49 @@
                     if (!row.hasClass("bottomLabels")) {
 
                         //push new rows to the add list
-                        if (row.find('td:last-child').html().includes('value="Add Another"')) {
+                        if (row.attr("id") === "inpFields") {
 
+                            //alert('next Person 1b');
                             if (!allBlank()) {
                                 Person.FullName = row.find("input").eq(0).val();
                                 Person.Phone = row.find("input").eq(1).val();
                                 Person.Email = row.find("input").eq(2).val();
-                                Person.Location = row.find("input").eq(3).val();
+                                Person.City = row.find("input").eq(3).val();
+                                Person.State = row.find("input").eq(4).val();
+                                Person.Country = row.find("input").eq(5).val();
+
                                 if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
                                     Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
                                 }
+
                                 Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
                                 //NOTE: All inputs, and checkboxes match find("input")
-                                Person.Notes = row.find("input").eq(4).val();
+
+                                Person.Notes = row.find("input").eq(6).val();
+                                //alert(JSON.stringify(Person));
                                 persons.push(Person);
                             }
                         }
 
+                        //handles multiple Adds
                         if (row.find('td:last-child').html().includes('value="Remove"')) {
                             //Person.personID = null; //IDENTITY value
                             Person.FullName = row.find("TD").eq(0).html();
                             Person.Phone = row.find("TD").eq(1).html();
                             Person.Email = row.find("TD").eq(2).html();
-                            Person.Location = row.find("TD").eq(3).html();
+
+                            let loc = row.find("TD").eq(3).html();
+                            let locItemArray = loc.trim().split('&nbsp;&nbsp;');
+                            Person.city = locItemArray[0];
+                            Person.state = locItemArray[1];
+                            Person.country = locItemArray[2];
+
                             if (row.find("TD").eq(4).html().trim().length > 0) {
                                 Person.orgID = parseInt(organizations.find(organization => organization.OrgName === decodeHtml(row.find("TD").eq(4).html())).orgID);
                             }
-                            //alert(JSON.stringify(roles));
                             Person.personTypeID = parseInt(roles.find(person => person.PersonTypeName === decodeHtml(row.find("TD").eq(5).html())).personTypeID);
                             Person.Notes = row.find("TD").eq(6).html();
+                            //alert(JSON.stringify(Person));
                             persons.push(Person);
                         }
                     }
@@ -543,6 +628,9 @@
             //Hide edit row
             editRow.hide();
 
+            //set up location autocompletes
+            initLocationAutocompletes();
+
             //set up the Org ddl html, set to current value if exists
             //alert(JSON.stringify(organizations));
             if (editRow.find("TD").eq(4).html().trim().length > 0) {
@@ -567,7 +655,14 @@
             $('#txtFullName').val(editRow.find("TD").eq(0).html().trim());
             $('#txtPhone').val(editRow.find("TD").eq(1).html().trim());
             $('#txtEmail').val(editRow.find("TD").eq(2).html().trim());
-            $('#txtLocation').val(editRow.find("TD").eq(3).html().trim());
+
+            if (editRow.find("TD").eq(3).html().trim().length > 0) {
+                let locItemArray = (editRow.find("TD").eq(3).html().trim()).split('&nbsp;&nbsp;');
+                $('#ddlCities').val(locItemArray[0].replace('\n', '').trim());
+                $('#ddlStates').val(locItemArray[1].replace('\n', '').trim());
+                $('#ddlCountries').val(locItemArray[2].replace('\n', '').trim());
+            }
+
             $('#txtNotes').val(editRow.find("TD").eq(6).html().trim());
 
             //Hide Save ALL button row, show footer
@@ -576,7 +671,7 @@
             $("#tblMain TFOOT").attr("hidden", false);
 
             //scroll to bottom
-            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+            scrollToBottom();
         }
 
 
@@ -593,11 +688,16 @@
                 Person.FullName = editRow.find("input").eq(0).val();
                 Person.Phone = editRow.find("input").eq(1).val();
                 Person.Email = editRow.find("input").eq(2).val();
-                Person.Location = editRow.find("input").eq(3).val();
+
+                //Person.Location = editRow.find("input").eq(3).val();
+                Person.city = editRow.find("input").eq(3).val();
+                Person.state = editRow.find("input").eq(4).val();
+                Person.country = editRow.find("input").eq(5).val();
+
                 Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
                 Person.personTypeID = parseInt($('#roleDDL option').filter(':selected').val());
                 //NOTE: All inputs, and checkboxes match find("input")
-                Person.Notes = editRow.find("input").eq(4).val();
+                Person.Notes = editRow.find("input").eq(6).val();
                 //alert(JSON.stringify(Person));
 
                 $.ajax({
@@ -621,8 +721,10 @@
 
         $('html, body').animate({ scrollTop: '0px' }, 300);
 
+
     /*end document.ready*/
     });
+
 
     </script>
 

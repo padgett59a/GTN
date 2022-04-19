@@ -13,7 +13,7 @@ namespace GlobalTeamNetwork.Models
         public string? FullName { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
-        public string? Location { get; set; }
+        public int? locID { get; set; }
         public string? Notes { get; set; }
         public int? orgID { get; set; }
         public int personTypeID { get; set; }
@@ -26,9 +26,15 @@ namespace GlobalTeamNetwork.Models
         public string FullName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public string Location { get; set; }
+        //public string Location { get; set; }
+        public int? locID { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
         public string Notes { get; set; }
+        public int? orgID { get; set; }
         public string Organization { get; set; }
+        public int personTypeID { get; set; }
         public string Role { get; set; }
     }
 }

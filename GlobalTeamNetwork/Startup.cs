@@ -68,6 +68,7 @@ namespace GlobalTeamNetwork
             services.AddScoped<IWorkflowRepository, WorkflowRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ISemesterCourseRepository, SemesterCourseRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

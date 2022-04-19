@@ -10,32 +10,34 @@ namespace GlobalTeamNetwork.Controllers
     public class PersonsController : Controller
     {
         private readonly IPersonsRepository _personsRepository;
+        private readonly ILocationRepository _locationRepository;
         private readonly IPersonTypeRepository _personTypeRepository;
 
-        public PersonsController(IPersonsRepository personsRepository, IPersonTypeRepository personTypeRepository)
+        public PersonsController(IPersonsRepository personsRepository, IPersonTypeRepository personTypeRepository, ILocationRepository locationRepository)
         {
             _personsRepository = personsRepository;
             _personTypeRepository = personTypeRepository;
+            _locationRepository = locationRepository;
         }
 
         public IActionResult Persons()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
             //Do not return system records [Not Started] for each personType. These records have personIDs < 10.
-            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 9).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            IEnumerable<PersonOname> personOnames = _personsRepository.ConvertPersonsToOnames(persons).Where(p => p.personID > 9).OrderBy(p => p.FullName).ThenBy(p => p.City);
             return View(personOnames);
         }
 
         public JsonResult GetTranslatorsJson()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.TRANSLATORTYPE).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.TRANSLATORTYPE).OrderBy(p => p.FullName).ThenBy(p => p.locID);
             return Json(retVal);
         }
         public JsonResult GetMasterersJson()
         {
             List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
-            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.MASTERERTYPE).OrderBy(p => p.FullName).ThenBy(p => p.Location);
+            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.MASTERERTYPE).OrderBy(p => p.FullName).ThenBy(p => p.locID);
             return Json(retVal);
         }
 
@@ -49,11 +51,11 @@ namespace GlobalTeamNetwork.Controllers
 
         [HttpPost]
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-        public JsonResult InsertPersons([FromBody] List<Person> newPersons)
+        public JsonResult InsertPersons([FromBody] List<PersonOname> newPersons)
         {
             if (newPersons == null)
             {
-                newPersons = new List<Person>();
+                newPersons = new List<PersonOname>();
             }
 
             int insertCount = _personsRepository.InsertPersons(newPersons);
@@ -73,15 +75,15 @@ namespace GlobalTeamNetwork.Controllers
             return Json(deleteCount);
         }
 
-        public JsonResult UpdatePerson([FromBody] Person updateItem)
+        public JsonResult UpdatePerson([FromBody] PersonOname updateItem)
         {
             int updateCount = 0;
             if (updateItem == null)
             {
-                updateItem = new Person();
+                updateItem = new PersonOname();
             }
-
-            EntityState retVal = _personsRepository.UpdatePerson(updateItem);
+            Person updatePerson = _personsRepository.ConvertOnameToPerson(updateItem);
+            EntityState retVal = _personsRepository.UpdatePerson(updatePerson);
             if (retVal == Microsoft.EntityFrameworkCore.EntityState.Modified)
             {
                 updateCount = 1;
@@ -94,6 +96,12 @@ namespace GlobalTeamNetwork.Controllers
             List<Person> persons = _personsRepository.AllPersons.OrderBy(p => p.FullName).ToList();
             string retVal = JsonConvert.SerializeObject(persons);
             return retVal;
+        }
+        public JsonResult GetLocationsJson()
+        {
+            List<Location> locations = _locationRepository.AllLocations.ToList();
+            var retVal = locations;
+            return Json(retVal);
         }
 
     }

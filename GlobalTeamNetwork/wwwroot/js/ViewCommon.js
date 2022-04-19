@@ -23,7 +23,8 @@
 //function HandleError(e, keyedTableName, keyedRow) 
 //function setUpSemesterDDL(elSemDD) 
 //function setUpLangDDL(elLangDD) 
-
+//function scrollToBottom()
+//function setUpDdl(pArray, pDdl) 
 
 
 //Button type enum
@@ -501,4 +502,20 @@ function setUpLangDDL(elLangDD) {
     return languages;
 }
 
+function scrollToBottom() {
+    $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+    if ($("#divMain").length > 0) {
+        $("#divMain").animate({ scrollTop: $('#divMain')[0].scrollHeight }, 1000);
+    }
+}
+
+function setUpDdl(pArray, pDdl) {
+    //pDdl passed as a string
+    for (i = 0; i < pArray.length; i++) {
+        $(pDdl).append($('<option>', {
+            value: i,
+            text: pArray[i]
+        }));
+    }
+}
 

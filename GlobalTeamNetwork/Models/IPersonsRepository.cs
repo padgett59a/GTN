@@ -12,7 +12,8 @@ namespace GlobalTeamNetwork.Models
         IEnumerable<Person> AllPersonsShortNotes { get; }
         Person GetPersonById(Int32 personID);
         List<PersonOname> ConvertPersonsToOnames(List<Person> Persons);
-        int InsertPersons(List<Person> PersonList);
+        Person ConvertOnameToPerson(PersonOname pOname);
+        int InsertPersons(List<PersonOname> PersonList);
         int DeletePersons(List<int> delItemList);
         EntityState UpdatePerson(Person Person);
 
