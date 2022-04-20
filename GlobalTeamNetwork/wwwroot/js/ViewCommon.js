@@ -25,6 +25,9 @@
 //function setUpLangDDL(elLangDD) 
 //function scrollToBottom()
 //function setUpDdl(pArray, pDdl) 
+//function initLocationAutocompletes() {
+//function initLocationLists() {
+
 
 
 //Button type enum
@@ -431,7 +434,7 @@ function HandleError(e, keyedTableName, keyedRow) {
                 }
             });
 
-            //could more than one
+            //could be more than one
             var fkTableStr = "";
             for (var key in fkTables) {
                 fkTableStr += fkTables[key].keyedTable + " and ";
@@ -519,3 +522,44 @@ function setUpDdl(pArray, pDdl) {
     }
 }
 
+let cities = new Array();
+let states = new Array();
+let countries = new Array();
+
+function initLocationLists () {
+
+    // Get locations lists
+    $.ajax({
+        type: "GET",
+        url: '../Persons\/GetLocationsJson',
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            locations = response;
+        }
+    });
+
+    locations.forEach(loc => {
+        if (!cities.includes(loc.city)) {
+            cities.push(loc.city);
+        }
+        if (!states.includes(loc.state)) {
+            states.push(loc.state);
+        }
+        if (!countries.includes(loc.country)) {
+            countries.push(loc.country);
+        }
+    });
+}
+
+function initLocationAutocompletes() {
+    $("#ddlCities").autocomplete({
+        source: cities
+    });
+    $("#ddlStates").autocomplete({
+        source: states
+    });
+    $("#ddlCountries").autocomplete({
+        source: countries
+    });
+}

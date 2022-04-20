@@ -41,6 +41,12 @@ namespace GlobalTeamNetwork.Controllers
             return Json(retVal);
         }
 
+        public JsonResult GetCustomersJson()
+        {
+            List<Person> persons = _personsRepository.AllPersonsShortNotes.ToList();
+            var retVal = persons.Where(p => p.personTypeID == GTN_Globals.CUSTOMERTYPE).OrderBy(p => p.FullName).ThenBy(p => p.locID);
+            return Json(retVal);
+        }
         public string GetPersonTypesJson()
         {
             var personTypes = _personTypeRepository.AllPersonTypes;

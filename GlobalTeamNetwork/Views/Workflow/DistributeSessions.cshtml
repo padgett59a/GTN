@@ -30,39 +30,46 @@
     <!-- Input controls for updating all checked rows -->
     <table id="tblSpacing" class="table table-bordered table-hover table-striped" style="overflow-x: auto; margin-top: 5px;">
         <tbody>
-            <!-- For spacing only-->
             <tr>
-                <td style="vertical-align:middle" width="90%">
-                    Note: Check All applies to visible rows only
+                <td style="text-align:center;vertical-align:middle" width="90%" nowrap>
+                    Distribution Date &nbsp;
+                    <div style="align-content:center">
+                        <input type="checkbox" id="cbDateToday" checked>&nbsp;&nbsp;Current Month/Year<br>
+                        <div id="distrMonthYear" style="display:none;text-align:left">
+                            Month: <input id="distrMonth" type="text" size="2"><br>
+                            Year: <input id="distrYear" type="text" size="4">
+                        </div>
+                    </div>
                 </td>
-                <td style="text-align:center" nowrap>
+                <td style="text-align:center;vertical-align:middle" nowrap>
                     Archive Format&nbsp;<br>
                     <div style="align-content:center">
                         <input type="radio" id="B" name="ArchiveType" value="B" checked>
-                        <label for="B">B</label>
+                        <label for="B">B</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="radio" id="E" name="ArchiveType" value="E">
                         <label for="E">E</label>
                     </div>
                 </td>
-                <td style="text-align:center" nowrap>
-                    Media Type&nbsp;<br>
-                    <div style="align-content:center"><select id="mediaDDL"></select></div>
+                <td style="text-align:center;vertical-align:middle" nowrap>
+                    <div style="height:25px">Media Type(s)<br></div>
+                    <div style="text-align:left" id="mediaTypes"><select id="mediaDDL"></select></div>
                 </td>
-                <td style="text-align:center" nowrap>
-                    Location&nbsp;<br>
-                    <div style="align-content:center"><select id="trxDDLCb"></select></div>
+                <td style="text-align:right;vertical-align:middle" nowrap>
+                    <div class="locationDiv">City: <input type="text" id="ddlCities" class="itemInputClass" size="20"></div>
+                    <div class="locationDiv">State: <input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
+                    <div class="locationDiv">Country: <input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
                 </td>
-                <td style="text-align:center" nowrap>
-                    Contact&nbsp;<br>
-                    <div style="align-content:center"><select id="statusDDLCb" name="trxlDDL"></select></div>
+                <td style="text-align:center;vertical-align:middle" nowrap>
+                    Customer Contact&nbsp;<br>
+                    <div style="align-content:center"><select id="custDDL" name="custDDL"></select></div>
                 </td>
-                <td style="text-align:center" nowrap>
+                <td style="text-align:center;vertical-align:middle" nowrap>
                     Attach Note&nbsp;<br>
                     <input type="text" id=txtNotesCb size="25">
                 </td>
-                <td style="text-align:center" nowrap>
+                <td style="text-align:center;vertical-align:middle" nowrap>
                     Checked rows:<br>
-                    <input type="button" value="Save" id=buttonApplyCb onclick="saveCBs();">
+                    <input type="button" value="Save" id=buttonApplyCb onclick="saveCBs();"><br>[visible rows only]
                 </td>
             </tr>
         </tbody>
@@ -78,6 +85,7 @@
                 <!-- Top Labels-->
                 <tr>
                     <th nowrap class="columnSort" style="width:9%">Language &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort">Semester &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     @*<th>Notes</th>*@
@@ -91,6 +99,9 @@
                         <td data-id="@Html.Raw(item.langID)">
                             @Html.DisplayFor(model => item.LangName)
                         </td>
+                        <td>
+                            @Html.DisplayFor(model => item.SemesterName)
+                        </td>
                         <td data-id="@Html.Raw(item.courseID)">
                             @Html.DisplayFor(model => item.CourseName)
                         </td>
@@ -100,9 +111,6 @@
                         <td>
                             @Html.Raw("<div style = 'text-align: center'><input class='itemCB' type='checkbox' id = '" + @item.sessionID + "'></div>")
                         </td>
-                        @*<td align="center">
-                            <a onclick="editItem('@item.sessionID', this)" href="javascript:void(0)" id="@item.tlID">Edit</a>
-                        </td>*@
                     </tr>
                 }
             </tbody>
@@ -112,6 +120,7 @@
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
     <script type="text/javascript">
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
@@ -141,7 +150,6 @@
                     langArray.push(newLang);
                 }
             });
-
             langArray.forEach(l =>
                 $("#langFilter").append($('<option>', {
                     value: l.langId,
@@ -151,13 +159,12 @@
 
             //Set up Course drop down
             let corsArray = [], newCourse
-            $('.dataRows > tr > td:nth-child(2)').each(function () {
+            $('.dataRows > tr > td:nth-child(3)').each(function () {
                 newCourse = $(this).text().replace("\n", "").trim();
                 if (!corsArray.includes(newCourse)) {
                     corsArray.push(newCourse);
                 }
             });
-
             for (var key in corsArray) {
                 $("#corsFilter").append($('<option>', {
                     value: 0,
@@ -182,8 +189,8 @@
 
                 //hide rows not matching corsFilter
                 if (corsFilter != "All") {
-                    $(".dataRows tr td:nth-child(2):not(:contains('" + corsFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
-                    $(".dataRows tr td:nth-child(2):not(:contains('" + corsFilter + "'))").parent().hide();
+                    $(".dataRows tr td:nth-child(3):not(:contains('" + corsFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
+                    $(".dataRows tr td:nth-child(3):not(:contains('" + corsFilter + "'))").parent().hide();
                 }
 
             });
@@ -200,13 +207,39 @@
                     mediaTypes = mt;
                 }
             });
+
+            //Add checkbox for each type to #mediaTypes
+            let hMediaStr = "";
             for (var key in mediaTypes) {
-                $("#mediaDDL").append($('<option>', {
-                    value: mediaTypes[key].mediaTypeID,
-                    text: mediaTypes[key].mediaTypeName
+                hMediaStr += `<div style="vertical-align:middle"><input style='position:relative;top:2px' class='mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeID}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
+            }
+            $("#mediaTypes").html(hMediaStr);
+
+            //set up Location lists via shared code
+            initLocationLists(); //set up location lists in ViewCommon.js
+            initLocationAutocompletes();
+
+            //set up Customers DDL
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("GetCustomersJson", "Persons")',
+                dataType: 'JSON',
+                cache: false,
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (cust) {
+                    customers = cust;
+                }
+            });
+            $("#custDDL").append($('<option></option>').val("0").html("None Selected"));
+            for (var key in customers) {
+                $("#custDDL").append($('<option>', {
+                    value: customers[key].personID,
+                    text: customers[key].fullName
                 }));
             }
 
+            //set up check/uncheck all
             $("#txtNotesCb").keyup(function () {
                 if ($("#txtNotesCb").val().trim().length == 0) {
                     $("#noteAllcb").prop("checked", false);

@@ -10,6 +10,7 @@ namespace GlobalTeamNetwork.Models
         public Int64 dsID { get; set; }
         public String LangName { get; set; }
         public Int32 langID { get; set; }
+        public String SemesterName { get; set; }
         public String CourseName { get; set; }
         public Int32 courseID { get; set; }
         public String SessionName { get; set; }
