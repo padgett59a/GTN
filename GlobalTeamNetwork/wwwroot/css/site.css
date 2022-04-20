@@ -49,3 +49,6 @@ section>ol>li {
 }
 
 /* Enter custom CSS rules for your application here */
+.locationDiv {
+    height: 35px;
+}
