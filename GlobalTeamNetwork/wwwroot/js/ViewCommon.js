@@ -27,7 +27,7 @@
 //function setUpDdl(pArray, pDdl) 
 //function initLocationAutocompletes() {
 //function initLocationLists() {
-
+//function zeroPad(pVal, pLen)
 
 
 //Button type enum
@@ -562,4 +562,11 @@ function initLocationAutocompletes() {
     $("#ddlCountries").autocomplete({
         source: countries
     });
+}
+
+function zeroPad(pVal, pLen) {
+    while (pVal.length < pLen) {
+        pVal = '0' + pVal;
+    }
+    return pVal;
 }

@@ -31,7 +31,6 @@ namespace GlobalTeamNetwork.Models
             int addCount = 0;
             foreach (Location newItem in locationList)
             {
-                if (newItem.ArchiveLocation == null) { newItem.ArchiveLocation = false; }
                 var retVal = _appDbContext.Locations.Add(newItem);
                 if (retVal.State == EntityState.Added) { addCount++; }
             }

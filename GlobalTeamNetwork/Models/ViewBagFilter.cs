@@ -34,8 +34,8 @@ namespace GlobalTeamNetwork.Models
                 controller.ViewBag.Bs4v = "4.3";
                 controller.ViewBag.Logo = "";
                 controller.ViewBag.LogoM = "logo.png";
-                controller.ViewBag.Copyright = "2020 © GlobalTeamNetwork by&nbsp;<a href='http://www.ckwyand.com' class='text-primary fw-500' title='ckwyand.com' target='_blank'>ckwyand.com</a>";
-                controller.ViewBag.CopyrightInverse = "2020 © GlobalTeamNetwork by&nbsp;<a href='http://www.ckwyand.com' class='text-white opacity-40 fw-500' title='ckwyand.com' target='_blank'>ckwyand.com</a>";
+                controller.ViewBag.Copyright = "2020 © GlobalTeamNetwork by Anthony Padgett and Carl Wyand&nbsp;<a href='http://www.ckwyand.com' class='text-primary fw-500' title='ckwyand.com' target='_blank'>ckwyand.com</a>";
+                controller.ViewBag.CopyrightInverse = "2020 © GlobalTeamNetwork by Anthony Padgett and &nbsp;<a href='http://www.ckwyand.com' class='text-white opacity-40 fw-500' title='ckwyand.com' target='_blank'>ckwyand.com</a>";
             }
         }
 

@@ -32,11 +32,11 @@
         <tbody>
             <tr>
                 <td style="text-align:center;vertical-align:middle" width="90%" nowrap>
-                    Distribution Date &nbsp;
+                    Distribution Date<br>
                     <div style="align-content:center">
-                        <input type="checkbox" id="cbDateToday" checked>&nbsp;&nbsp;Current Month/Year<br>
-                        <div id="distrMonthYear" style="display:none;text-align:left">
-                            Month: <input id="distrMonth" type="text" size="2"><br>
+                        <input class='controlAlign' type="checkbox" id="cbDateToday" checked>&nbsp;Current Month/Year<br><br>
+                        <div id="distrMonthYear" style="text-align:center">
+                            Month: <input id="distrMonth" type="text" size="2">&nbsp;&nbsp;&nbsp;
                             Year: <input id="distrYear" type="text" size="4">
                         </div>
                     </div>
@@ -44,9 +44,9 @@
                 <td style="text-align:center;vertical-align:middle" nowrap>
                     Archive Format&nbsp;<br>
                     <div style="align-content:center">
-                        <input type="radio" id="B" name="ArchiveType" value="B" checked>
+                        <input class='controlAlign' type="radio" id="B" name="ArchiveType" value="B" checked>
                         <label for="B">B</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <input type="radio" id="E" name="ArchiveType" value="E">
+                        <input class='controlAlign' type="radio" id="E" name="ArchiveType" value="E">
                         <label for="E">E</label>
                     </div>
                 </td>
@@ -75,7 +75,8 @@
         </tbody>
     </table>
 
-    <div style='text-align:center;display:none' id='divLoading'><br>Please wait... Processing...&nbsp;<img src="~/img/loading.gif"></div><br>
+    @*use for long page load
+    <div style='text-align:center;display:none' id='divLoading'><br>Please wait... Processing...&nbsp;<img src="~/img/loading.gif"></div><br>*@
 
     <div id="divMain" style="height:100vh;overflow-y:auto">
 
@@ -89,7 +90,7 @@
                     <th nowrap class="columnSort">Course &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     <th nowrap class="columnSort">Session &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     @*<th>Notes</th>*@
-                    <th style="width:6%" align="center"><input type='checkbox' id='selectAll'>&nbsp;&nbsp;All</th>
+                    <th style="width:6%" align="center"><input class="controlAlign" type='checkbox' id='selectAll'>&nbsp;&nbsp;All</th>
                 </tr>
             </thead>
             <tbody class="dataRows">
@@ -115,7 +116,6 @@
                 }
             </tbody>
         </table>
-
     </div>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -138,7 +138,7 @@
             //Set up the drop down value arrays
             var inputValid = false;
             var delayMils = 900;
-            var pageObjectLabel = 'Session Distribution';
+            var pageObjectLabel = 'Manage Session Distribution';
 
             //Populate Language DDL
             let langArray = []
@@ -208,10 +208,10 @@
                 }
             });
 
-            //Add checkbox for each type to #mediaTypes
+            //Add checkbox for each type to #mediaTypes td
             let hMediaStr = "";
             for (var key in mediaTypes) {
-                hMediaStr += `<div style="vertical-align:middle"><input style='position:relative;top:2px' class='mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeID}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
+                hMediaStr += `<div style="vertical-align:middle"><input class='controlAlign mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeID}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
             }
             $("#mediaTypes").html(hMediaStr);
 
@@ -249,8 +249,29 @@
                 }
             });
 
+            //Set up distribution date
+            let dateNow = new Date();
+            let dateStrArray = (dateNow.toLocaleDateString()).split("/");
+            $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
+            $("#distrYear").val(dateStrArray[2]);
+
+            $("#cbDateToday").click(function () {
+                if (this.checked) {
+                    $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
+                    $("#distrYear").val(dateStrArray[2]);
+                }
+                else {
+                    $("#distrMonth").val('');
+                    $("#distrYear").val('');
+                }
+            });
+
+
             //Save the distributions according to selected values - Validation
             saveCBs = function saveCBs() {
+
+                //TBD 
+                //Date length = 2, Year length = 4
 
                 if (!$("#trxlAllcb").prop("checked") && !$("#statusAllcb").prop("checked") && !$("#noteAllcb").prop("checked")) {
                     alert('Please enter values before proceeding.');
