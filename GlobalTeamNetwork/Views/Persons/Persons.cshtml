@@ -131,10 +131,12 @@
                         <td><input type="text" id="txtPhone" class="itemInputClass" size="15" /></td>
                         <td><input type="text" id="txtEmail" class="itemInputClass" size="15" /></td>
 
-                        <td id="locEdit" nowrap align="right" style="background-color: #f2f1ed">
-                            <div class="locationDiv">City: <input type="text" id="ddlCities" class="itemInputClass" size="20"></div>
-                            <div class="locationDiv">State: <input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
-                            <div class="locationDiv">Country: <input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                        <td id="locEdit" nowrap align="right" style="background-color: #fafafa">
+                            <form autocomplete="off">
+                                <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" name="ddlCities" class="itemInputClass" size="20" /></div>
+                                <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
+                                <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                            </form>
                         </td>
 
                         <td id="orgDDL"><input type="text" class="itemInputClass" /></td>

@@ -42,22 +42,28 @@
                     </div>
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
-                    Archive Format&nbsp;<br>
+                    <br>Archive Format&nbsp;<br>
                     <div style="align-content:center">
                         <input class='controlAlign' type="radio" id="B" name="ArchiveType" value="B" checked>
                         <label for="B">B</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input class='controlAlign' type="radio" id="E" name="ArchiveType" value="E">
                         <label for="E">E</label>
-                    </div>
+                    </div><br>
+                    <div style="align-content:center">
+                    Masters?&nbsp;<br>
+                        <input class='controlAlign' type="checkbox" id="MasterCopies" name="MasterCopies">
+                    </div><br>
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
                     <div style="height:25px">Media Type(s)<br></div>
                     <div style="text-align:left" id="mediaTypes"><select id="mediaDDL"></select></div>
                 </td>
                 <td style="text-align:right;vertical-align:middle" nowrap>
-                    <div class="locationDiv">City: <input type="text" id="ddlCities" class="itemInputClass" size="20"></div>
-                    <div class="locationDiv">State: <input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
-                    <div class="locationDiv">Country: <input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                    <form autocomplete="off">
+                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" name="ddlCities" class="itemInputClass" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                    </form>
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
                     Customer Contact&nbsp;<br>
@@ -69,7 +75,7 @@
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
                     Checked rows:<br>
-                    <input type="button" value="Save" id=buttonApplyCb onclick="saveCBs();"><br>[visible rows only]
+                    <input type="button" value="Save" id=buttonApplyCb onclick="saveDSs();"><br>[visible rows only]
                 </td>
             </tr>
         </tbody>
@@ -125,7 +131,7 @@
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
-        let saveCBs;
+        let saveDSs;
 
         $(document).ready(function () {
 
@@ -268,11 +274,31 @@
 
 
             //Save the distributions according to selected values - Validation
-            saveCBs = function saveCBs() {
+            saveDSs = function saveDSs() {
 
                 //TBD 
                 //Date length = 2, Year length = 4
+                if ($("#distrMonth").val().length != 2 || $("#distrYear").val().length != 4) {
+                    alert('Please enter a two digit month and a four digit year before proceeding. (e.g. 04 - 2022)');
+                    return;
+                }
 
+                //select one or more media type
+                if ($('.mediaCbs:checked').length === 0) {
+                    alert('Please select at least one media type before proceeding.');
+                    return;
+                }
+
+                //location must be valid
+                alert ( $("#ddlCities option:selected").text()  );
+                
+                if ($("#ddlCities option:selected").text().length == 0) {
+                    alert('Please enter a complete location before proceeding.');
+                    return;
+                }
+
+
+                //select one or more session for distribution
                 if (!$("#trxlAllcb").prop("checked") && !$("#statusAllcb").prop("checked") && !$("#noteAllcb").prop("checked")) {
                     alert('Please enter values before proceeding.');
                     return;
@@ -296,7 +322,7 @@
                 if ($("#noteAllcb").prop("checked")) {
                     confirmText += '\nNotes: ' + notesTxt;
                 }
-                confirmText += '\n\n NOTE: Please allow up to 120 seconds for completion when many rows are selected. '
+                confirmText += '\n\n NOTE: Please allow up to 30 seconds for completion when many rows are selected. '
                 confirmText += 'If prompted by your browser, select "WAIT" until processing completes.'
 
                 if (confirm(confirmText)) {
@@ -304,13 +330,13 @@
                     $("#buttonApplyCb").prop("disabled", true);
                     $("#divLoading").show();
                     setTimeout(function () {
-                        processCBs()
+                        processDSs()
                     }, 0);
                 }
             }
 
             //Save the distributions according to selected values - Processing
-            function processCBs() {
+            function processDSs() {
                 updateLogs = [];
                 $('.itemCB:visible:checked').each(function () {
                     var Distribution = new Object;
