@@ -44,9 +44,9 @@
                 <td style="text-align:center;vertical-align:middle" nowrap>
                     <br>Archive Format&nbsp;<br>
                     <div style="align-content:center">
-                        <input class='controlAlign' type="radio" id="B" name="ArchiveType" value="B" checked>
+                        <input class='controlAlign' type="radio" id="archFmtB" name="ArchiveType" value="B" checked>
                         <label for="B">B</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <input class='controlAlign' type="radio" id="E" name="ArchiveType" value="E">
+                        <input class='controlAlign' type="radio" id="archFmtE" name="ArchiveType" value="E">
                         <label for="E">E</label>
                     </div><br>
                     <div style="align-content:center">
@@ -60,7 +60,7 @@
                 </td>
                 <td style="text-align:right;vertical-align:middle" nowrap>
                     <form autocomplete="off">
-                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" name="ddlCities" class="itemInputClass" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass" size="20" /></div>
                         <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
                         <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
                     </form>
@@ -147,7 +147,7 @@
             var pageObjectLabel = 'Manage Session Distribution';
 
             //Populate Language DDL
-            let langArray = []
+            let langArray = [];
             $('.dataRows > tr > td:nth-child(1)').each(function () {
                 let newLang = {};
                 newLang.langId = $(this).attr('data-id');
@@ -211,6 +211,7 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (mt) {
                     mediaTypes = mt;
+                    //alert(JSON.stringify(mt));
                 }
             });
 
@@ -218,6 +219,7 @@
             let hMediaStr = "";
             for (var key in mediaTypes) {
                 hMediaStr += `<div style="vertical-align:middle"><input class='controlAlign mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeID}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
+                //hMediaStr += `<div style="vertical-align:middle"><input class='controlAlign mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeName}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
             }
             $("#mediaTypes").html(hMediaStr);
 
@@ -245,16 +247,6 @@
                 }));
             }
 
-            //set up check/uncheck all
-            $("#txtNotesCb").keyup(function () {
-                if ($("#txtNotesCb").val().trim().length == 0) {
-                    $("#noteAllcb").prop("checked", false);
-                }
-                else {
-                    $("#noteAllcb").prop("checked", true);
-                }
-            });
-
             //Set up distribution date
             let dateNow = new Date();
             let dateStrArray = (dateNow.toLocaleDateString()).split("/");
@@ -272,14 +264,32 @@
                 }
             });
 
+            let mediaText = '';
+            let mediaTypeList = '';
+            let archText = '';
+            let notesText = '';
 
             //Save the distributions according to selected values - Validation
             saveDSs = function saveDSs() {
 
-                //TBD 
-                //Date length = 2, Year length = 4
+                mediaText = '';
+                mediaTypeList = '';
+                archText = '';
+                notesText = '';
+
+                //Distribution Date: Month length = 2, Year length = 4, numeric
                 if ($("#distrMonth").val().length != 2 || $("#distrYear").val().length != 4) {
                     alert('Please enter a two digit month and a four digit year before proceeding. (e.g. 04 - 2022)');
+                    return;
+                }
+
+                let hundYr = parseInt( $("#distrYear").val().substr(0,2) );
+                if (isNaN(hundYr)) {hundYr = 0;}
+                let dMo = parseInt( $("#distrMonth").val() );
+                if (isNaN(dMo)) {dMo = 0;}
+
+                if ( (dMo > 12 || dMo < 1) || ( hundYr < 19 || hundYr > 20 )) {
+                    alert('Please enter a valid numeric month and year before proceeding. (e.g. 04 - 2022)');
                     return;
                 }
 
@@ -290,37 +300,58 @@
                 }
 
                 //location must be valid
-                alert ( $("#ddlCities option:selected").text()  );
-                
-                if ($("#ddlCities option:selected").text().length == 0) {
-                    alert('Please enter a complete location before proceeding.');
+                if(!validateLocationInput()){
                     return;
                 }
-
 
                 //select one or more session for distribution
-                if (!$("#trxlAllcb").prop("checked") && !$("#statusAllcb").prop("checked") && !$("#noteAllcb").prop("checked")) {
-                    alert('Please enter values before proceeding.');
-                    return;
-                }
-
                 if ($('.itemCB:visible:checked').length == 0) {
                     alert('Please select rows before proceeding.');
                     return;
                 }
 
-                var confirmText = "Apply these values to all checked rows?\n";
-                var trxlrTxt = $("#trxDDLCb option:selected").text();
-                if ($("#trxlAllcb").prop("checked")) {
-                    confirmText += '\nTransaltor: ' + trxlrTxt
+                let confirmText = "Apply these values to all checked rows?\n";
+                let dateText = `Month: ${$("#distrMonth").val()} Year: ${$("#distrYear").val()}`;
+                confirmText += '\nDate: ' + dateText;
+
+                archText = $("#archFmtB").is(':checked') ? 'B' : 'E';
+                confirmText += '\nArchive Format: ' + archText;
+                
+                if ( $("#MasterCopies").is(':checked') ) {
+                    confirmText += '\n*** Distributing Masters ***';
                 }
-                var statusTxt = $("#statusDDLCb option:selected").text();
-                if ($("#statusAllcb").prop("checked")) {
-                    confirmText += '\nStatus: ' + statusTxt;
+
+                //media types
+                $.each ($(".mediaCbs"), function() {
+                    if ($(this).is(':checked')) {
+                        mlid = $(this).attr('id'); 
+                        let mt = mediaTypes.find(m => m.mediaTypeID == mlid);  
+                        mediaTypeList += mt.mediaTypeID + ',';
+                        mediaText += mt.mediaTypeName + ', ';
+                    };
+                });
+                mediaTypeList = mediaTypeList.substr(0,mediaTypeList.length - 1);
+                mediaText = mediaText.substr(0,mediaText.length - 2);
+                confirmText += '\nMedia Types: ' + mediaText;
+
+
+                //locations
+                if (getLocationVal(addressPart.City).length > 0) {
+                    confirmText += `\nLocation: ${getLocationVal(addressPart.City)}, ${getLocationVal(addressPart.State)} ${getLocationVal(addressPart.Country)}`; 
                 }
-                var notesTxt = $("#txtNotesCb").val();
-                if ($("#noteAllcb").prop("checked")) {
-                    confirmText += '\nNotes: ' + notesTxt;
+
+                //customer
+                if ( $("#custDDL option:selected" ).val() > 0 )
+                {
+                    let custText = $("#custDDL option:selected" ).text();
+                    confirmText += `\nCustomer: ${custText}`; 
+                }
+
+                //notes
+                notesText = $("#txtNotesCb").val().trim();
+                if (notesText.length > 0) {
+                    confirmText += '\nNotes: ' + notesText.substr(0,20);
+                    if (notesText.length > 20) {confirmText += '...';} 
                 }
                 confirmText += '\n\n NOTE: Please allow up to 30 seconds for completion when many rows are selected. '
                 confirmText += 'If prompted by your browser, select "WAIT" until processing completes.'
@@ -337,44 +368,38 @@
 
             //Save the distributions according to selected values - Processing
             function processDSs() {
-                updateLogs = [];
+
+                //send list of sessions plus items from the header
+                let sessionDistribution = new Object;
+                let dSessions = [];
+                
                 $('.itemCB:visible:checked').each(function () {
-                    var Distribution = new Object;
-                    Distribution.tlID = parseInt($(this).attr("id"));
-
-                    if ($("#trxlAllcb").prop("checked")) {
-                        Distribution.translatorID = parseInt($("#trxDDLCb option:selected").val());
-                    }
-                    else {
-                        Distribution.translatorID = -1;
-                    }
-
-                    if ($("#statusAllcb").prop("checked")) {
-                        Distribution.statusID = parseInt($("#statusDDLCb option:selected").val());
-                    }
-                    else {
-                        Distribution.statusID = -1;
-                    }
-
-                    if ($("#noteAllcb").prop("checked")) {
-                        Distribution.Notes = $("#txtNotesCb").val();
-                    }
-                    else {
-                        Distribution.Notes = "~~~ Not Set ~~~";
-                    }
-                    updateLogs.push(Distribution);
+                    dSessions.push(parseInt($(this).attr("id")));
                 });
+                sessionDistribution.Sessions = dSessions;
+                sessionDistribution.MediaTypes = mediaTypeList;
+                sessionDistribution.City = getLocationVal(addressPart.City);
+                sessionDistribution.State = getLocationVal(addressPart.State);
+                sessionDistribution.Country = getLocationVal(addressPart.Country);
+                sessionDistribution.ArchiveType = archText;
+                sessionDistribution.personID = $("#custDDL option:selected" ).val()
+                sessionDistribution.DistrDate = $("#distrMonth").val() + $("#distrYear").val();
+                sessionDistribution.Masters = $("#MasterCopies").is(':checked');
+                sessionDistribution.Notes = notesText;
+               
+                alert(JSON.stringify(sessionDistribution));
 
-                $.ajax({
+                /*
+                    $.ajax({
                     type: "POST",
                     url: '@Url.Action("UpdateDistributionLogs", "Workflow")',
-                    data: JSON.stringify(updateLogs),
+                    data: JSON.stringify(sessionDistribution),
                     dataType: 'JSON',
                     cache: false,
                     async: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " Distribution(s) have been modified.");
+                        alert(r + " Session(s) have been distributed.");
                     }
                 });
 
@@ -385,6 +410,7 @@
                 waitSeconds(delayMils);
                 //Refresh the page
                 refreshMe();
+                */
             }
 
             $('#selectAll').change(function () {

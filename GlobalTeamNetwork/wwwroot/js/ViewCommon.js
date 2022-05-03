@@ -25,10 +25,21 @@
 //function setUpLangDDL(elLangDD) 
 //function scrollToBottom()
 //function setUpDdl(pArray, pDdl) 
+// *** Location ***
 //function initLocationAutocompletes() {
 //function initLocationLists() {
+//function validateLocationInput()
+//function getLocationVal(idx)
+// *** End Location ***
 //function zeroPad(pVal, pLen)
 
+
+//Address enum
+const addressPart = {
+    City: 0,
+    State: 1,
+    Country: 2
+}
 
 //Button type enum
 const buttonType = {
@@ -522,9 +533,13 @@ function setUpDdl(pArray, pDdl) {
     }
 }
 
+// *** Location ***
 let cities = new Array();
 let states = new Array();
 let countries = new Array();
+let cityVal = "";
+let stateVal = "";
+let countryVal = "";
 
 function initLocationLists () {
 
@@ -564,6 +579,55 @@ function initLocationAutocompletes() {
     });
 }
 
+//on change set up the location values
+$('#ddlCities').on('autocompleteselect', function (e, ui) {
+    cityVal =  ui.item.value;
+});
+$('#ddlStates').on('autocompleteselect', function (e, ui) {
+    stateVal = ui.item.value;
+});
+$('#ddlCountries').on('autocompleteselect', function (e, ui) {
+    countryVal = ui.item.value;
+});
+
+function validateLocationInput() {
+
+    //if any entered, all must be entered
+    //because of autocomplete, could be a selection or a typed in value
+    let cityValue = getLocationVal(addressPart.City);;
+    let stateValue = getLocationVal(addressPart.State);
+    let countryValue = getLocationVal(addressPart.Country);
+
+    if ((cityValue.length > 0 || stateValue.length > 0 || countryValue.length > 0)
+        && (cityValue.length === 0 || stateValue.length === 0 || countryVal.length === 0)) {
+        alert("Please fill all location values before proceeding");
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+//because of autocomplete, could be a selection or a typed in value
+function getLocationVal(idx) {
+    let retVal = '';
+    switch (idx) {
+        case addressPart.City:
+            retVal = cityVal.trim().length === 0 ? $('#ddlCities').val().trim() : cityVal.trim();
+            break;
+        case addressPart.State:
+            retVal = stateVal.trim().length === 0 ? $('#ddlStates').val().trim() : stateVal.trim();
+            break;
+        case addressPart.Country:
+            retVal = countryVal.trim().length === 0 ? $('#ddlCountries').val().trim() : countryVal.trim();
+            break;
+    }
+    return retVal;
+}
+// *** End Location ***
+
+
+// pLen is the total length of zero padded return value
 function zeroPad(pVal, pLen) {
     while (pVal.length < pLen) {
         pVal = '0' + pVal;
