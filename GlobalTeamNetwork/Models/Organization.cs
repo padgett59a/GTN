@@ -11,6 +11,19 @@ namespace GlobalTeamNetwork.Models
         [Key]
         public int orgID{ get; set; }
         public string OrgName { get; set; }
-        public string OrgLocation { get; set; }
+        public int locID { get; set; }
+        public string Notes { get; set; }
+    }
+    public class OrgLoc
+    {
+        [Key]
+        public int orgID { get; set; }
+        public string OrgName { get; set; }
+        public int locID { get; set; }
+        public string Notes { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
+
     }
 }

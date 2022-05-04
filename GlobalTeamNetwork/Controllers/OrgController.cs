@@ -21,7 +21,7 @@ namespace GlobalTeamNetwork.Controllers
         //Organization
         public IActionResult Organizations()
         {
-            var organizations = _organizationRepository.AllOrganizationsShortNotes;
+            var organizations = _organizationRepository.AllOrgLocsShortNotes;
             return View(organizations);
         }
 
@@ -34,11 +34,11 @@ namespace GlobalTeamNetwork.Controllers
 
         [HttpPost] 
         //NOTE: FromBody is a REQUIRED attribute for this to retrieve the data from the POST payload
-        public JsonResult InsertOrgs([FromBody]List<Organization> newOrgs)
+        public JsonResult InsertOrgs([FromBody]List<OrgLoc> newOrgs)
         {
             if (newOrgs == null)
             {
-                newOrgs = new List<Organization>();
+                newOrgs = new List<OrgLoc>();
             }
 
             int insertCount = _organizationRepository.AddOrgs(newOrgs);
@@ -46,12 +46,12 @@ namespace GlobalTeamNetwork.Controllers
         }
 
         [HttpPost]
-        public JsonResult UpdateOrg([FromBody] Organization editOrg)
+        public JsonResult UpdateOrg([FromBody] OrgLoc editOrg)
         {
             int updateCount = 0;
             if (editOrg == null)
             {
-                editOrg = new Organization();
+                editOrg = new OrgLoc();
             }
 
             EntityState retVal = _organizationRepository.UpdateOrg(editOrg);

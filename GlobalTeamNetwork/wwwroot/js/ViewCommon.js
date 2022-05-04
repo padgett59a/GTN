@@ -25,13 +25,16 @@
 //function setUpLangDDL(elLangDD) 
 //function scrollToBottom()
 //function setUpDdl(pArray, pDdl) 
+
 // *** Location ***
 //function initLocationAutocompletes() {
 //function initLocationLists() {
 //function validateLocationInput()
 //function getLocationVal(idx)
 // *** End Location ***
+
 //function zeroPad(pVal, pLen)
+//function removeTail(pStr)
 
 
 //Address enum
@@ -594,12 +597,12 @@ function validateLocationInput() {
 
     //if any entered, all must be entered
     //because of autocomplete, could be a selection or a typed in value
-    let cityValue = getLocationVal(addressPart.City);;
+    let cityValue = getLocationVal(addressPart.City);
     let stateValue = getLocationVal(addressPart.State);
     let countryValue = getLocationVal(addressPart.Country);
 
     if ((cityValue.length > 0 || stateValue.length > 0 || countryValue.length > 0)
-        && (cityValue.length === 0 || stateValue.length === 0 || countryVal.length === 0)) {
+        && (cityValue.length === 0 || stateValue.length === 0 || countryValue.length === 0)) {
         alert("Please fill all location values before proceeding");
         return false;
     }
@@ -613,17 +616,23 @@ function getLocationVal(idx) {
     let retVal = '';
     switch (idx) {
         case addressPart.City:
-            retVal = cityVal.trim().length === 0 ? $('#ddlCities').val().trim() : cityVal.trim();
+            //note: prefer the ddl value over the autocomplete control
+            retVal = $('#ddlCities').val().trim().length === 0 ? cityVal.trim() : $('#ddlCities').val().trim();
             break;
         case addressPart.State:
-            retVal = stateVal.trim().length === 0 ? $('#ddlStates').val().trim() : stateVal.trim();
+            retVal = $('#ddlStates').val().trim().length === 0 ? stateVal.trim() : $('#ddlStates').val().trim();
             break;
         case addressPart.Country:
-            retVal = countryVal.trim().length === 0 ? $('#ddlCountries').val().trim() : countryVal.trim();
+            retVal = $('#ddlCountries').val().trim().length === 0 ? countryVal.trim() : $('#ddlCountries').val().trim();
             break;
     }
     return retVal;
 }
+
+function clearLocationAutocompletes() {
+    $('.locationSet').autocomplete('close').val('');
+}
+
 // *** End Location ***
 
 
@@ -633,4 +642,8 @@ function zeroPad(pVal, pLen) {
         pVal = '0' + pVal;
     }
     return pVal;
+}
+
+function removeTail(pStr) {
+    return pStr.substring(0, pStr.length - 1);
 }

@@ -37,6 +37,7 @@ namespace GlobalTeamNetwork.Data
         public DbSet<DistrSemesterCourse> DistrSemesterCourse { get; set; }
         public DbSet<DistrSession> DstSession { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<OrgLoc> OrgLocs { get; set; }
 
     }
 }

@@ -82,25 +82,12 @@ namespace GlobalTeamNetwork.Models
             retVal.Phone = pOname.Phone;
             retVal.Email = pOname.Email;
             LocationRepository locRepo = new LocationRepository(_appDbContext);
-
-            //Save any new location, and lookup the locID
-            List<Location> locations = locRepo.AllLocations.ToList();
-            Location locExists = locations.Find(l => l.City == pOname.City && l.State == pOname.State && l.Country == pOname.Country);
-
-            if (locExists == null)
-            {
-                Location newLoc = new Location();
-                newLoc.City = pOname.City;
-                newLoc.State = pOname.State;
-                newLoc.Country = pOname.Country;
-                List<Location> insLocs = new List<Location>();
-                insLocs.Add(newLoc);
-                locRepo.InsertLocations(insLocs);
-                locations = locRepo.AllLocations.ToList();
-                locExists = locations.Find(l => l.City == pOname.City && l.State == pOname.State && l.Country == pOname.Country);
-                if (locExists == null) { throw new System.Collections.Generic.KeyNotFoundException($"ConvertOnameToPerson: No location record found for city: {pOname.City}, state: {pOname.State} and country: {pOname.Country}"); }
-            }
-            retVal.locID = locExists.locID;
+            Location cLoc = new Location {
+                City = pOname.City,
+                State = pOname.State,
+                Country = pOname.Country
+            };
+            retVal.locID = GTNCommonRepository.LocationCoalesce(cLoc, locRepo);
             retVal.orgID = pOname.orgID;
             retVal.personTypeID = pOname.personTypeID;
             retVal.Notes = pOname.Notes;

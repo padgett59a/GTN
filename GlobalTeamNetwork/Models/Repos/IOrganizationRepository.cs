@@ -12,10 +12,11 @@ namespace GlobalTeamNetwork.Models
     {
         IEnumerable<Organization> AllOrganizations { get; }
         IEnumerable<Organization> AllOrganizationsShortNotes { get; }
+        IEnumerable<OrgLoc> AllOrgLocsShortNotes { get; }
         Organization GetOrganizationById(int orgID);
         EntityEntry<Organization> AddOrg(Organization organization);
-        EntityState UpdateOrg(Organization organization);
-        int AddOrgs(List<Organization> newOrgs);
+        EntityState UpdateOrg(OrgLoc orgLoc);
+        int AddOrgs(List<OrgLoc> newOrgs);
         int DeleteOrgs(List<int> delOrgs);
     }
 }

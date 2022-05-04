@@ -75,10 +75,9 @@
                             <td>
                                 @Html.DisplayFor(model => item.Email)
                             </td>
-                            <td id="@(" tr" + @item.locID)">
-                                @Html.DisplayFor(model => item.City)&nbsp;&nbsp;
-                                @Html.DisplayFor(model => item.State)&nbsp;&nbsp;
-                                @Html.DisplayFor(model => item.Country)
+                            <td id="@(" tr" + @item.locID)" >
+                                @*note: the "&nbsp;&nbsp;" sequence is used to parse the values later in this page*@
+                                @item.City,&nbsp;&nbsp;<br>@item.State&nbsp;&nbsp;@item.Country
                             </td>
                             <td id="@(" tr" + @item.orgID)">
                                 @Html.DisplayFor(model => item.Organization)
@@ -125,7 +124,7 @@
                         <th>Actions</th>
                     </tr>
 
-                    @*input controls for adding a new item*@
+                    @*input controls for editing an item or adding a new item*@
                     <tr id="inpFields">
                         <td><input type="text" id="txtFullName" class="itemInputClass" /></td>
                         <td><input type="text" id="txtPhone" class="itemInputClass" size="15" /></td>
@@ -133,9 +132,9 @@
 
                         <td id="locEdit" nowrap align="right" style="background-color: #fafafa">
                             <form autocomplete="off">
-                                <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass" size="20" /></div>
-                                <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
-                                <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                                <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass" size="20" autocomplete="off"/></div>
+                                <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" autocomplete="off"/></div>
+                                <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" autocomplete="off"/></div>
                             </form>
                         </td>
 
@@ -230,6 +229,8 @@
             roleDDLCode += '</select >';
 
             initLocationLists(); //set up location lists in ViewCommon.js
+            initLocationAutocompletes();
+
 
             //Show and Hide rows based on filter change
             $('#roleFilter').change(function () {
@@ -289,7 +290,7 @@
                 $("#tblMain tfoot>tr").show();
                 $("#tblMain TFOOT").attr("hidden", false);
                 //scroll to bottom
-                initLocationAutocompletes();
+                //initLocationAutocompletes();
                 scrollToBottom(); //viewcommon.js
             });
 
@@ -319,7 +320,7 @@
         function validateInput() {
 
             //default to true
-            inputValid = true;
+            inputValid = true; //this gets checked by the caller
 
             if (!allBlank()) {
                 //alert('not all blank');
@@ -348,13 +349,9 @@
                     }
                 }
                 //If any location values entered, City and Country are required (State is optional)
-                if ($("#ddlCities").val().trim().length > 0 || $("#ddlStates").val().trim().length > 0 ||
-                    $("#ddlCountries").val().trim().length > 0) {
-                    if (!($("#ddlCities").val().trim().length > 0 &&
-                        $("#ddlCountries").val().trim().length > 0)) {
-                        inputValid = false;
-                        alert("City and Country fields must both be entered, or City, State and Country must be blank (State is optional).");
-                    }
+                if(!validateLocationInput()){
+                    inputValid = false;
+                    return;
                 }
             }
         }
@@ -387,7 +384,7 @@
             }
         });
 
-        //Handles Add another item - validate input
+        //Add another item - validate input
         $("body").on("click", "#btnAdd", function () {
 
             if (!allBlank()) {
@@ -412,9 +409,9 @@
 
                     cell = $(row.insertCell(-1));
 
-                    //location
-                    cell.html(`${$("#ddlCities").val()}&nbsp;&nbsp;${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
-                    initLocationAutocompletes();
+                    //location note: this format is important for parsing later
+                    cell.html(`${$("#ddlCities").val()},&nbsp;&nbsp;<br>${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
+                    //initLocationAutocompletes();
 
                     cell = $(row.insertCell(-1));
                     if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
@@ -443,6 +440,7 @@
                     $("#ddlStates").val("");
                     $("#ddlCountries").val("");
                     $("#txtNotes").val("");
+                    $("#orgDDL select").val(NOSELECTION).change();
 
                     //now there is something to save
                     $("#btnSave").prop('disabled', false);
@@ -501,8 +499,8 @@
 
                             let loc = row.find("TD").eq(3).html();
                             let locItemArray = loc.trim().split('&nbsp;&nbsp;');
-                            Person.city = locItemArray[0];
-                            Person.state = locItemArray[1];
+                            Person.city = removeTail(locItemArray[0]);
+                            Person.state = locItemArray[1].replace('<br>', '');
                             Person.country = locItemArray[2];
 
                             if (row.find("TD").eq(4).html().trim().length > 0) {
@@ -557,7 +555,7 @@
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
                         if (r > 0) {
-                            alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                            //alert(r + " " + pageObjectLabel + "(s) have been deleted.");
                         }
                         else {
                             HandleError(r, pageObjectLabel, name);
@@ -581,11 +579,11 @@
             //Set up Save Changes button
             changeSaveButton(buttonType.SAVECHANGES, itemId);
 
-            //Hide edit row
+            //Hide row getting edited
             editRow.hide();
 
             //set up location autocompletes
-            initLocationAutocompletes();
+            //initLocationAutocompletes();
 
             //set up the Org ddl html, set to current value if exists
             //alert(JSON.stringify(organizations));
@@ -612,10 +610,14 @@
             $('#txtPhone').val(editRow.find("TD").eq(1).html().trim());
             $('#txtEmail').val(editRow.find("TD").eq(2).html().trim());
 
+            //location
             if (editRow.find("TD").eq(3).html().trim().length > 0) {
                 let locItemArray = (editRow.find("TD").eq(3).html().trim()).split('&nbsp;&nbsp;');
-                $('#ddlCities').val(locItemArray[0].replace('\n', '').trim());
-                $('#ddlStates').val(locItemArray[1].replace('\n', '').trim());
+                //remove trailing comma from city
+                let tCityVal = locItemArray[0].replace('\n', '').trim();
+                tCityVal = tCityVal.substr(0,tCityVal.length - 1);
+                $('#ddlCities').val(tCityVal);
+                $('#ddlStates').val(locItemArray[1].replace('\n', '').replace('<br>','').trim());
                 $('#ddlCountries').val(locItemArray[2].replace('\n', '').trim());
             }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GlobalTeamNetwork.Models.Organization>
+﻿@model IEnumerable<GlobalTeamNetwork.Models.OrgLoc>
 
 @{
     ViewData["Title"] = "Organizations";
@@ -39,7 +39,8 @@
                         @Html.DisplayFor(modelItem => item.OrgName)
                     </td>
                     <td id="@("orgLoc" + @item.orgID)">
-                        @Html.DisplayFor(modelItem => item.OrgLocation)
+                        @*note: the "&nbsp;&nbsp;" sequence is used to parse the values later in this page*@
+                        @item.City,&nbsp;&nbsp;<br>@item.State&nbsp;&nbsp;@item.Country
                     </td>
                     <td>
                         <a onclick="editItem(@item.orgID)" href="javascript:void(0)" id="@item.orgID">Edit</a> |
@@ -50,18 +51,31 @@
             }
         </tbody>
         <tfoot hidden>
-            <tr>
+            @*input controls for editing an item or adding a new item*@
+            <tr style="background-color: #fafafa">
                 <td><input type="text" id="txtOrgName" /></td>
-                <td><input type="text" id="txtOrgLocation" /></td>
+                <td id="locEdit" nowrap align="left">
+                    <form autocomplete="off">
+                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass locationSet" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass locationSet" size="20"/></div>
+                        <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass locationSet" size="20" /></div>
+                    </form>
+                </td>
                 <td id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
             </tr>
             <tr id="trSaveAll">
-                <td><input type="button" id="btnSave" value="Save All" /></td>
+                <td><input type="button" id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                    <input type="button" id="btnCancel" value="Cancel" />
+                </td>
                 <td></td>
                 <td></td>
             </tr>
         </tfoot>
     </table>
+    <p>
+        <a id="createNew2" href="javascript:void(0)">Add New Organization</a>
+    </p>
+
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
@@ -85,7 +99,8 @@
             '@Url.Action()'
             var pageObjectLabel = 'Organizations';
 
-            $("#createNew").click(function () {
+            //add new org
+            $("[id^=createNew]").click(function () {
                 //Set up add button
                 changeSaveButton(buttonType.ADD, 0);
                 //show footer
@@ -96,11 +111,17 @@
 
             var delayMils = 900;
 
+            initLocationLists();
+            initLocationAutocompletes();
+
             //See if all input values are blank
             function allBlank() {
+
                 var allAreBlank = (
-                    $("#txtOrgName").val().length == 0 &&
-                    $("#txtOrgLocation").val().length == 0 
+                    $("#txtOrgName").val().length == 0 && 
+                    $('#ddlCities').val().trim().length ==0 &&
+                    $('#ddlStates').val().trim().length ==0 &&
+                    $('#ddlCountries').val().trim().length==0
                 );
                 return allAreBlank;
             }
@@ -108,20 +129,27 @@
 
             //validate input and set inputValid global boolean
             function validateInput() {
+
                 //default to true
-                inputValid = true;
+                inputValid = true;  //this gets checked by the caller
                 if (!allBlank()) {
+
                     //Validate input
-                    if (//inp01.val().length == 0 ||
-                        $("#txtOrgName").val().length == 0 ||
-                        $("#txtOrgLocation").val().length == 0 
-                    ) {
+                    if ( $("#txtOrgName").val().length == 0 ) {
                         inputValid = false;
                         alert("Please enter all " + pageObjectLabel + " data before proceeding.");
+                        inputValid = false;
+                        return;
                     }
+                    if ( !validateLocationInput() ) {
+                        inputValid = false;
+                        return;
+                    }
+
                 }
             }
 
+            //add another
             $("body").on("click", "#btnAdd", function () {
 
                 if (!allBlank()) {
@@ -132,10 +160,10 @@
 
                         //Reference the Name and Country TextBoxes.
                         var txtOrgName = $("#txtOrgName");
-                        var txtOrgLocation = $("#txtOrgLocation");
+                        //var txtOrgLocation = $("#txtOrgLocation");
 
-                        if (txtOrgName.val().length == 0 || txtOrgLocation.val().length == 0) {
-                            alert("Please enter the new Organization's Name and Location before proceeding.");
+                        if (txtOrgName.val().length == 0) {
+                            alert("Please enter the new Organization's Name before proceeding.");
                         }
                         else {
                             //Get the reference of the Table's TFOOT element.
@@ -148,9 +176,11 @@
                             var cell = $(row.insertCell(-1));
                             cell.html(txtOrgName.val());
 
-                            //Add OrgLocation cell.
+                            //location note: this format is important for parsing later
                             cell = $(row.insertCell(-1));
-                            cell.html(txtOrgLocation.val());
+                            //cell.html(txtOrgLocation.val());
+                            cell.html(`${$("#ddlCities").val()},&nbsp;&nbsp;<br>${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
+                            initLocationAutocompletes();
 
                             //Add Remove button cell.
                             cell = $(row.insertCell(-1));
@@ -162,13 +192,15 @@
 
                             //Clear the TextBoxes.
                             txtOrgName.val("");
-                            txtOrgLocation.val("");
+                            clearLocationAutocompletes();
+                            alert('2 ' + getLocationVal(addressPart.City).length);
+
                         }
                     }
                 }
             });
 
-            //Save all added rows
+            //Save all added rows (one or more)
             $("body").on("click", "#btnSave", function () {
 
                 //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
@@ -183,46 +215,58 @@
                         var row = $(this);
                         var org = {};
 
+                        //added rows 2 and up
                         if (row.find('td:last-child').html().includes('value="Remove"')) {
                             //alert('Remove row found');
                             org.OrgName = row.find("TD").eq(0).html();
-                            org.OrgLocation = row.find("TD").eq(1).html();
+                            //org.OrgLocation = row.find("TD").eq(1).html();
+
+                            let loc = row.find("TD").eq(1).html();
+                            let locItemArray = loc.trim().split('&nbsp;&nbsp;');
+                            org.City = removeTail(locItemArray[0]);
+                            org.State = locItemArray[1].replace('<br>', '');
+                            org.Country = locItemArray[2];
                             org.orgID = 0;
                             orgs.push(org);
                         }
 
+                        //now adding row
                         if (!allBlank()) {
                             if (row.find('td:last-child').html().includes('value="Add Another"')) {
                                 org.OrgName = row.find("input").eq(0).val();
-                                org.OrgLocation = row.find("input").eq(1).val()
+                                org.City = row.find("input").eq(1).val();
+                                org.State = row.find("input").eq(2).val();
+                                org.Country = row.find("input").eq(3).val();
                                 org.orgID = 0;
-                                if (org.OrgName.length > 0 && org.OrgLocation.length > 0) {
-                                    orgs.push(org);
-                                }
+                                orgs.push(org);
                             }
                         }
                     });
 
-                    //Send the JSON array to Controller using AJAX.
-                    $.ajax({
-                        type: "POST",
-                        url: '@Url.Action("InsertOrgs","Org")',
-                        data: JSON.stringify(orgs),
-                        dataType: 'JSON',
-                        cache: false,
-                        contentType: "application/json; charset=utf-8",
-                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                        success: function (r) {
-                            //alert(r + " record(s) inserted.");
-                        }
-                    });
+                    //alert(JSON.stringify(orgs));
 
-                    //Give the db a minute to recognize the new records
-                    waitSeconds(delayMils);
+                    if (orgs.length > 0)
+                    {
+                        //Send the JSON array to Controller using AJAX.
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("InsertOrgs","Org")',
+                            data: JSON.stringify(orgs),
+                            dataType: 'JSON',
+                            cache: false,
+                            contentType: "application/json; charset=utf-8",
+                            success: function (r) {
+                                alert(`${r} ${pageObjectLabel}(s) inserted.`);
+                            }
+                        });
 
-                    //Refresh the page
-                    var url = '@Url.Action("Organizations", "Org")';
-                    window.location.href = url;
+                        //Give the db a minute to recognize the new records
+                        waitSeconds(delayMils);
+
+                        //Refresh the page
+                        var url = '@Url.Action("Organizations", "Org")';
+                        window.location.href = url;
+                    }
                 }
             });
 
@@ -250,7 +294,7 @@
                         //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
                         success: function (r) {
                             if (r > 0) {
-                                alert(r + " " + pageObjectLabel + "(s) have been deleted.");
+                                //alert(r + " " + pageObjectLabel + "(s) have been deleted.");
                             }
                             else {
                                 HandleError(r, pageObjectLabel, name);
@@ -274,14 +318,21 @@
                 //Hide edit row
                 $('#tr' + orgId).hide();
 
-                //Copy in existing values
-                var orgCellStr = '#orgName' + orgId + ''
-                var orgCell = $(orgCellStr);
-                $('#txtOrgName').val(orgCell.html().trim());
+                var editRow = $('#tr' + orgId);
 
-                var orgCellStr = '#orgLoc' + orgId + ''
-                var orgCell = $(orgCellStr);
-                $('#txtOrgLocation').val(orgCell.html().trim());
+                //Copy existing values into the edit row
+                $('#txtOrgName').val(editRow.find("TD").eq(0).html().trim());
+
+                if (editRow.find("TD").eq(1).html().trim().length > 0) {
+                    let locItemArray = (editRow.find("TD").eq(1).html().trim()).split('&nbsp;&nbsp;');
+
+                    //remove trailing comma from city
+                    let tCityVal = locItemArray[0].replace('\n', '').trim();
+                    tCityVal = tCityVal.substr(0,tCityVal.length - 1);
+                    $('#ddlCities').val(tCityVal);
+                    $('#ddlStates').val(locItemArray[1].replace('\n', '').replace('<br>','').trim());
+                    $('#ddlCountries').val(locItemArray[2].replace('\n', '').trim());
+                }
 
                 //Show footer
                 $("#trSaveAll").attr("hidden", true);
@@ -294,7 +345,6 @@
 
             //Save edits to an Org via ajax
             $("body").on("click", "#btnSaveEdit", function () {
-                //alert($("#btnSaveEdit").attr("data-id"));
 
                 validateInput();
 
@@ -303,9 +353,13 @@
                     var row = $("#tblMain TFOOT TR:first");
                     var org = {};
                     org.OrgName = row.find("INPUT").eq(0).val();
-                    org.OrgLocation = row.find("INPUT").eq(1).val();
-                    //org.orgID = 0;
+                    org.City = row.find("INPUT").eq(1).val();
+                    org.State = row.find("INPUT").eq(2).val();
+                    org.Country = row.find("INPUT").eq(3).val();
                     org.orgID = parseInt($("#btnSaveEdit").attr("data-id"));
+
+                    //alert(JSON.stringify(org));
+
                     $.ajax({
                         type: "POST",
                         url: '@Url.Action("UpdateOrg","Org")',
@@ -313,7 +367,6 @@
                         dataType: 'JSON',
                         cache: false,
                         contentType: "application/json; charset=utf-8",
-                        //headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
                         success: function (r) {
                             if (r > 0) {
                                 alert(r + " record(s) have been modified.");
@@ -325,11 +378,11 @@
                     });
 
                     //Give the db a minute to recognize the new records
-                    //waitSeconds(delayMils);
+                    waitSeconds(delayMils);
 
                     //Refresh the page
-                    //var url = '@Url.Action("Organizations", "Org")';
-                    //window.location.href = url;
+                    var url = '@Url.Action("Organizations", "Org")';
+                    window.location.href = url;
                 }
             });
 

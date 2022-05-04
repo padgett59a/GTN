@@ -382,24 +382,23 @@
                 sessionDistribution.State = getLocationVal(addressPart.State);
                 sessionDistribution.Country = getLocationVal(addressPart.Country);
                 sessionDistribution.ArchiveType = archText;
-                sessionDistribution.personID = $("#custDDL option:selected" ).val()
+                sessionDistribution.personID = parseInt( $("#custDDL option:selected" ).val() );
                 sessionDistribution.DistrDate = $("#distrMonth").val() + $("#distrYear").val();
                 sessionDistribution.Masters = $("#MasterCopies").is(':checked');
                 sessionDistribution.Notes = notesText;
                
                 alert(JSON.stringify(sessionDistribution));
 
-                /*
                     $.ajax({
                     type: "POST",
-                    url: '@Url.Action("UpdateDistributionLogs", "Workflow")',
+                    url: '@Url.Action("SaveDistribution", "Workflow")',
                     data: JSON.stringify(sessionDistribution),
                     dataType: 'JSON',
                     cache: false,
                     async: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(r + " Session(s) have been distributed.");
+                        alert(`Session Distribution ${r} has been saved.`);
                     }
                 });
 
@@ -410,7 +409,6 @@
                 waitSeconds(delayMils);
                 //Refresh the page
                 refreshMe();
-                */
             }
 
             $('#selectAll').change(function () {

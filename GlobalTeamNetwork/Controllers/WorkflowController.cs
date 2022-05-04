@@ -18,8 +18,8 @@ namespace GlobalTeamNetwork.Controllers
         private readonly ApplicationDbContext _appDbContext;
 
         public WorkflowController(
-            IPersonsRepository personsRepository, 
-            IWorkflowRepository workflowRepository, 
+            IPersonsRepository personsRepository,
+            IWorkflowRepository workflowRepository,
             ITranslationStepRepository translationStepRepository,
             ISemesterCourseRepository semesterCourseRepository,
             ApplicationDbContext appDbContext)
@@ -76,12 +76,14 @@ namespace GlobalTeamNetwork.Controllers
 
             var getTrans = new TxSemester();
             getTrans.GenExams = Int32.Parse(genExams);
-            if (semesterCode == null) {
+            if (semesterCode == null)
+            {
                 getTrans.SemesterCode = "";
             }
-            else {
+            else
+            {
                 getTrans.SemesterCode = semesterCode;
-            } 
+            }
             getTrans.CourseCodes = courseCodes;
             getTrans.LangID = Int32.Parse(langID);
 
@@ -117,7 +119,8 @@ namespace GlobalTeamNetwork.Controllers
             foreach (TranslationLogUpdate updateItem in updateItems)
             {
                 var tLog = _workflowRepository.GetTranslationLogById(updateItem.tlID);
-                if (updateItem.translatorID != -1) {
+                if (updateItem.translatorID != -1)
+                {
                     tLog.translatorID = updateItem.translatorID;
                 }
                 if (updateItem.statusID != -1)
@@ -142,7 +145,7 @@ namespace GlobalTeamNetwork.Controllers
             int updateCount = 0;
             foreach (MasteringLogUpdate updateItem in updateItems)
             {
-                var mLog= _workflowRepository.GetMasteringLogById(updateItem.mlID);
+                var mLog = _workflowRepository.GetMasteringLogById(updateItem.mlID);
                 if (updateItem.mastererID != -1)
                 {
                     mLog.mastererID = updateItem.mastererID;
@@ -212,5 +215,10 @@ namespace GlobalTeamNetwork.Controllers
             return Json(retVal);
         }
 
+        public JsonResult SaveDistribution([FromBody] SessionDistribution pSessDist)
+        {
+            string retVal = "";
+            return Json(retVal);
+        }
     }
 }
