@@ -215,9 +215,10 @@ namespace GlobalTeamNetwork.Controllers
             return Json(retVal);
         }
 
-        public JsonResult SaveDistribution([FromBody] SessionDistribution pSessDist)
+        public JsonResult SaveDistribution([FromBody] SessionDistrLoc pSessDist)
         {
             string retVal = "";
+
             return Json(retVal);
         }
     }

@@ -616,7 +616,7 @@ function getLocationVal(idx) {
     let retVal = '';
     switch (idx) {
         case addressPart.City:
-            //note: prefer the ddl value over the autocomplete control
+            //note: prefer the ddl values over the autocomplete control values
             retVal = $('#ddlCities').val().trim().length === 0 ? cityVal.trim() : $('#ddlCities').val().trim();
             break;
         case addressPart.State:

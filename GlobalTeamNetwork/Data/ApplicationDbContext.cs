@@ -38,6 +38,8 @@ namespace GlobalTeamNetwork.Data
         public DbSet<DistrSession> DstSession { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<OrgLoc> OrgLocs { get; set; }
+        public DbSet<SessionDistribution> SessionDist { get; set; }
+        public DbSet<SessionDistSet> SessionDistSets { get; set; }
 
     }
 }

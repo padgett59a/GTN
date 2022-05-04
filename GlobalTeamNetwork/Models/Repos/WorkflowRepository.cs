@@ -37,22 +37,11 @@ namespace GlobalTeamNetwork.Models
 
         public List<TrxStatus> GetMrxStatuses(ApplicationDbContext dbContext)
         {
-            //var param = new SqlParameter[] {
-            //            new SqlParameter() {
-            //                ParameterName = "@inTrxOnly",
-            //                SqlDbType =  System.Data.SqlDbType.Bit,
-            //                Direction = System.Data.ParameterDirection.Input,
-            //                Value = inTrxOnly
-            //            }
-            //    };
-
             dbContext.Database.SetCommandTimeout(180);
-            //var retVal = dbContext.Set<MrxStatus>().FromSqlRaw("[dbo].[SP_GetMrxCourses] @inTrxOnly", param);
             //NOTE Type MrxStatus == Type TrxStatus so just re-using TrxStatus here
             var retVal = dbContext.Set<TrxStatus>().FromSqlRaw("[dbo].[SP_GetMrxCourses]");
             return retVal.ToList();
         }
-
 
         //takes a TxSemester obj, returns translation-ready TrxLog (with Courses), ExamsTrxLog (might be empty), MasteringLog (with Courses)
         public List<MxLog> GetMasteringLogs(TxSemester trxSem, ApplicationDbContext dbContext)
@@ -132,7 +121,7 @@ namespace GlobalTeamNetwork.Models
                 };
             
             //this one can take some time if the db is 'cold'
-            dbContext.Database.SetCommandTimeout(120);
+            dbContext.Database.SetCommandTimeout(60);
             var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams", param);
             return retVal.ToList();
         }
@@ -160,5 +149,63 @@ namespace GlobalTeamNetwork.Models
         {
             return _appDbContext.MasteringLog.Find(mLogID);
         }
+        public int SaveSessionDistribution(SessionDistLoc pSessDistr)
+        {
+            int addCount = 0;
+            //Resolve location
+            LocationRepository locRepo = new LocationRepository(_appDbContext);
+            Location loc = new Location();
+            loc.City = pSessDistr.City;
+            loc.State = pSessDistr.State;
+            loc.Country = pSessDistr.Country;
+            int nLocID = GTNCommonRepository.LocationCoalesce(loc, locRepo);
+
+            //Resolve SessionDistID
+            //If not exists, add index else increment the index
+            string sdIndex = String.Empty;
+            SessionDistSetRepository sdsetRepo = new SessionDistSetRepository(_appDbContext);
+            SessionDistributionRepository sdRepo = new SessionDistributionRepository(_appDbContext);
+            IEnumerable<SessionDistSet> sdsList = sdsetRepo.AllSessionDistSets;
+            IEnumerable<SessionDistSet> existingDsdList = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate);
+            if (existingDsdList.Count() > 0) {
+                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.First().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')};
+            }
+            else
+            {
+                sdIndex = $"{pSessDistr.DistrDate}-001";
+            }
+            //insert new SessDistSet 
+            SessionDistSet newSessDistSet = new SessionDistSet()
+            {
+                sessionDistID = 0,
+                DistMonthYear = sdIndex
+            };
+
+            if (sdsetRepo.InsertSessionDistSet(newSessDistSet) != EntityState.Added)
+            {
+                throw new Exception($"The SessionDistubutionSet {sdIndex} could not be added.");
+            }
+            IEnumerable<SessionDistSet> newSdsList = sdsetRepo.AllSessionDistSets;
+            SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate).First();
+
+            foreach (int nSessionID in pSessDistr.Sessions) {
+                SessionDistribution newDist = new SessionDistribution()
+                {
+                    sessionDistID = newDss.sessionDistID,
+                    sessionID = nSessionID,
+                    mediaTypeIDs = pSessDistr.mediaTypeIDs,
+                    locID = nLocID,
+                    ArchiveFormat = pSessDistr.ArchiveType,
+                    personID = pSessDistr.personID,
+                    Masters = pSessDistr.Masters,
+                    Notes = pSessDistr.Notes
+                };
+                EntityState addState = sdRepo.InsertSessionDistribution(newDist);
+                if (addState != EntityState.Added) { addCount++; }
+
+            }
+            return addCount;
+        }
+
     }
 }
