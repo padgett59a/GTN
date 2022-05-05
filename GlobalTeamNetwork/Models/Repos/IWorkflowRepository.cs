@@ -19,6 +19,7 @@ namespace GlobalTeamNetwork.Models
         TranslationLog GetTranslationLogById(int tLogID);
         MasteringLog GetMasteringLogById(int mLogID);
         List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext);
+        int SaveSessionDistribution(SessionDistLoc pSessDistr);
 
     }
 }

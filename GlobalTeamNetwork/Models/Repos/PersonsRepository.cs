@@ -81,13 +81,17 @@ namespace GlobalTeamNetwork.Models
             retVal.FullName = pOname.FullName;
             retVal.Phone = pOname.Phone;
             retVal.Email = pOname.Email;
-            LocationRepository locRepo = new LocationRepository(_appDbContext);
-            Location cLoc = new Location {
-                City = pOname.City,
-                State = pOname.State,
-                Country = pOname.Country
-            };
-            retVal.locID = GTNCommonRepository.LocationCoalesce(cLoc, locRepo);
+            if ((pOname.City ?? "").Length > 0)
+            {
+                LocationRepository locRepo = new LocationRepository(_appDbContext);
+                Location cLoc = new Location
+                {
+                    City = pOname.City,
+                    State = pOname.State,
+                    Country = pOname.Country
+                };
+                retVal.locID = GTNCommonRepository.LocationCoalesce(cLoc, locRepo);
+            }
             retVal.orgID = pOname.orgID;
             retVal.personTypeID = pOname.personTypeID;
             retVal.Notes = pOname.Notes;

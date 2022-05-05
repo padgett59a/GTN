@@ -16,6 +16,7 @@ namespace GlobalTeamNetwork.Models
         public SessionDistributionRepository(ApplicationDbContext appDbContext)
         {
             _appDbContext = appDbContext;
+            //_appDbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public IEnumerable<SessionDistribution> AllSessionDistributions

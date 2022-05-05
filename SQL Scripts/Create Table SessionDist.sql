@@ -1,7 +1,7 @@
-USE [gtn-dev]
+USE [gtn]
 GO
 
-/****** Object:  Table [dbo].[SessionDist]    Script Date: 3/7/2022 7:37:33 PM ******/
+/****** Object:  Table [dbo].[SessionDist]    Script Date: 5/5/2022 12:52:35 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -11,48 +11,41 @@ GO
 SET ANSI_PADDING ON
 GO
 
+drop table [dbo].[SessionDist]
 CREATE TABLE [dbo].[SessionDist](
-	[semesterID] [int] NOT NULL,
-	[langID] [int] NOT NULL,
+	[sessionDistID] [int] NOT NULL,
+	[sessionID] [int] NOT NULL,
+	[mediaTypeIDs] [varchar](24) NOT NULL,
 	[locID] [int] NOT NULL,
-	[medTypeID] [int] NOT NULL,
 	[ArchiveFormat] [char](1) NOT NULL,
 	[personID] [int] NULL,
-	[DistDate] [datetime] NULL,
 	[Masters] [bit] NULL,
+	[Notes] [varchar](max) NULL,
  CONSTRAINT [PK_SemesterDist] PRIMARY KEY CLUSTERED 
 (
-	[semesterID] ASC,
-	[langID] ASC,
-	[locID] ASC,
-	[medTypeID] ASC,
-	[ArchiveFormat] ASC
+	[sessionDistID], [sessionID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
 
 SET ANSI_PADDING OFF
 GO
 
-ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([langID])
-REFERENCES [dbo].[Languages] ([langID])
-GO
-
 ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([locID])
 REFERENCES [dbo].[Locations] ([locID])
-GO
-
-ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([medTypeID])
-REFERENCES [dbo].[MediaTypes] ([mediaTypeID])
 GO
 
 ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([personID])
 REFERENCES [dbo].[Persons] ([personID])
 GO
 
-ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([semesterID])
-REFERENCES [dbo].[Semesters] ([semesterID])
+ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([sessionID])
+REFERENCES [dbo].[Sessions] ([sessionID])
+GO
+
+ALTER TABLE [dbo].[SessionDist]  WITH CHECK ADD FOREIGN KEY([sessionDistID])
+REFERENCES [dbo].[SessionDistSets] ([sessionDistID])
 GO
 
 

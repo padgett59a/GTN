@@ -41,5 +41,14 @@ namespace GlobalTeamNetwork.Data
         public DbSet<SessionDistribution> SessionDist { get; set; }
         public DbSet<SessionDistSet> SessionDistSets { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder); 
+
+            //set up composite keys here using fluent API as Data Annotations does not work for this (yet)
+            modelBuilder.Entity<SessionDistribution>()
+                .HasKey(sd => new { sd.sessionDistID, sd.sessionID });
+        }
+
     }
 }

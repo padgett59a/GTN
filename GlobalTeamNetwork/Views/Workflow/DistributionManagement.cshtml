@@ -25,22 +25,43 @@
                     <option value='??'>All</option>
                 </select>&nbsp;&nbsp;&nbsp;<a id="showAllSems" href="javascript:void(0)">Show All</a>
             </td>
+            <td width="25%"></td>
         </tr>
         <tr><td><br></td></tr>
-        <tr>
-            <td width="10%">
-                <div style="border: 2px solid blue;background-color:lightgrey">
-                    @*<br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Distribute Semester</label>&nbsp; &nbsp;<br>
-                    &nbsp;&nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>*@
-                    <div onclick="radioClick('full');"><br>&nbsp;&nbsp;<input type="radio" class="clsFull controlAlign" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull"><b>Distribute Semester</label>&nbsp; &nbsp;<br></div>
-                    <div onclick="radioClick('partial');">&nbsp;&nbsp;<input type="radio" class="clsPartial controlAlign" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br></div>
-                </div>
+        <tr >
+            <td>
+                <table><tr>
+                    <td>
+                        <div style="border: 2px solid blue;background-color:lightgrey;width:250px;text-align:center">
+                            <br>Distribution Date<br>
+                                <input class='controlAlign' type="checkbox" id="cbDateToday" checked>&nbsp;Current Month/Year<br><br>
+                                <div id="distrMonthYear" style="text-align:center">
+                                    Month: <input id="distrMonth" type="text" size="2">&nbsp;&nbsp;&nbsp;
+                                    Year: <input id="distrYear" type="text" size="4">
+                                </div><br>
+                        </div>
+                    </td>
+                    <td width="10%"></td>
+                    <td>
+                        <div style="border: 2px solid blue;background-color:lightgrey;width:225px">
+                            @*<br>&nbsp;&nbsp;<input type="radio" class="clsFull" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull" onclick="radioClick(this);"><b>Distribute Semester</label>&nbsp; &nbsp;<br>
+                            &nbsp;&nbsp;<input type="radio" class="clsPartial" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial" onclick="radioClick(this);"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br>*@
+                            <div onclick="radioClick('full');"><br>&nbsp;&nbsp;<input type="radio" class="clsFull controlAlign" id="full" name="fullSem" value="full">&nbsp;<label id="lblFull"><b>Distribute Semester</label>&nbsp; &nbsp;<br></div>
+                            <div onclick="radioClick('partial');">&nbsp;&nbsp;<input type="radio" class="clsPartial controlAlign" id="partial" name="fullSem" value="partial" checked>&nbsp;<label id="lblPartial"><b>Distribute Selected Courses</label></b>&nbsp; &nbsp; &nbsp; &nbsp;<br><br></div>
+                        </div>
+                    </td>
+                </tr></table>
+                
             </td>
+            <td></td>
             <td>
             </td>
+            <td width="25%" align="right" valign="bottom"><input type="button" id="btnManageDist" value="Manage Distributions" style="width:150px"/></td>
         </tr>
     </table>
-    <br><br>
+    <br>
+    
+
 
     <div id="divMain" style="height: 100vh; overflow-y:auto; display:none" >
         <table id="tblMain" class="table table-bordered table-hover table-striped">
@@ -80,8 +101,7 @@
 
         </table>
 
-        <br><input type="button" id="btnManageDist" value="Manage Distributions" />
-        &nbsp;
+
     </div>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -97,6 +117,24 @@
         var semCourses = new Object();
 
             $(document).ready(function () {
+
+                //Set up distribution date
+                let dateNow = new Date();
+                let dateStrArray = (dateNow.toLocaleDateString()).split("/");
+                $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
+                $("#distrYear").val(dateStrArray[2]);
+
+                $("#cbDateToday").click(function () {
+                    if (this.checked) {
+                        $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
+                        $("#distrYear").val(dateStrArray[2]);
+                    }
+                    else {
+                        $("#distrMonth").val('');
+                        $("#distrYear").val('');
+                    }
+                });
+
 
                 checkAll = function (bCheck) {
                     $("#tblMain tbody input:checkbox:enabled").prop("checked", bCheck);
@@ -128,6 +166,24 @@
 
 
                 $("#btnManageDist").click(function () {
+                    
+                    //Validate Distribution Date: Month length = 2, Year length = 4, numeric
+                    if ($("#distrMonth").val().length != 2 || $("#distrYear").val().length != 4) {
+                        alert('Please enter a two digit month and a four digit year before proceeding. \n(e.g. 04 - 2022)');
+                        return;
+                    }
+
+                    let hundYr = parseInt( $("#distrYear").val().substr(0,2) );
+                    if (isNaN(hundYr)) {hundYr = 0;}
+                    let dMo = parseInt( $("#distrMonth").val() );
+                    if (isNaN(dMo)) {dMo = 0;}
+
+                    if ( (dMo > 12 || dMo < 1) || ( hundYr < 19 || hundYr > 20 )) {
+                        alert('Please enter a valid numeric month and year before proceeding. \n(e.g. 04 - 2022)');
+                        return;
+                    }
+                    //End Validate Distribution Date
+
                     //Get list of courses for distribution and call the distribution page
                     let courseList = '';
                     $("#tblMain tbody input:checkbox:checked").each(function (index, value) {
@@ -140,6 +196,7 @@
                         courseList = courseList.substring(0, courseList.length - 1);
                         let targetUrl = "";
                         targetUrl = '@Url.Action("DistributeSessions","Workflow")?' + 'courseCodes=' + courseList;
+                        targetUrl += `&distDate=${$("#distrMonth").val()}${$("#distrYear").val()}`;
                         //alert(targetUrl);
                         document.location = targetUrl;
                     }

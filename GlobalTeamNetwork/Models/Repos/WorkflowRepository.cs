@@ -166,9 +166,9 @@ namespace GlobalTeamNetwork.Models
             SessionDistSetRepository sdsetRepo = new SessionDistSetRepository(_appDbContext);
             SessionDistributionRepository sdRepo = new SessionDistributionRepository(_appDbContext);
             IEnumerable<SessionDistSet> sdsList = sdsetRepo.AllSessionDistSets;
-            IEnumerable<SessionDistSet> existingDsdList = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate);
+            IEnumerable<SessionDistSet> existingDsdList = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate).OrderByDescending(sd=>sd.sessionDistID);
             if (existingDsdList.Count() > 0) {
-                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.First().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')};
+                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.Last().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')}";
             }
             else
             {
@@ -178,7 +178,13 @@ namespace GlobalTeamNetwork.Models
             SessionDistSet newSessDistSet = new SessionDistSet()
             {
                 sessionDistID = 0,
-                DistMonthYear = sdIndex
+                DistMonthYear = sdIndex,
+                mediaTypeIDs = pSessDistr.mediaTypeIDs,
+                locID = nLocID,
+                ArchiveFormat = pSessDistr.ArchiveType,
+                personID = pSessDistr.personID == 0 ? null : pSessDistr.personID,
+                Masters = pSessDistr.Masters,
+                Notes = pSessDistr.Notes
             };
 
             if (sdsetRepo.InsertSessionDistSet(newSessDistSet) != EntityState.Added)
@@ -186,22 +192,22 @@ namespace GlobalTeamNetwork.Models
                 throw new Exception($"The SessionDistubutionSet {sdIndex} could not be added.");
             }
             IEnumerable<SessionDistSet> newSdsList = sdsetRepo.AllSessionDistSets;
-            SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate).First();
+
+            //pickup gen'd sessionDistID
+            SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear == sdIndex).First();
 
             foreach (int nSessionID in pSessDistr.Sessions) {
                 SessionDistribution newDist = new SessionDistribution()
                 {
                     sessionDistID = newDss.sessionDistID,
                     sessionID = nSessionID,
-                    mediaTypeIDs = pSessDistr.mediaTypeIDs,
-                    locID = nLocID,
-                    ArchiveFormat = pSessDistr.ArchiveType,
-                    personID = pSessDistr.personID,
-                    Masters = pSessDistr.Masters,
-                    Notes = pSessDistr.Notes
                 };
                 EntityState addState = sdRepo.InsertSessionDistribution(newDist);
-                if (addState != EntityState.Added) { addCount++; }
+                if (addState == EntityState.Added) { addCount++; }
+                else
+                {
+                    throw new Exception($"Unable to add Session Distribution for distribution set {newDss.DistMonthYear} for Session {newDist.sessionID}.");
+                }
 
             }
             return addCount;

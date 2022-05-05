@@ -215,10 +215,10 @@ namespace GlobalTeamNetwork.Controllers
             return Json(retVal);
         }
 
-        public JsonResult SaveDistribution([FromBody] SessionDistrLoc pSessDist)
+        public JsonResult SaveDistribution([FromBody] SessionDistLoc pSessDist)
         {
-            string retVal = "";
-
+            int retVal = 0;
+            retVal = _workflowRepository.SaveSessionDistribution(pSessDist);
             return Json(retVal);
         }
     }

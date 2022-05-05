@@ -77,7 +77,9 @@
                             </td>
                             <td id="@(" tr" + @item.locID)" >
                                 @*note: the "&nbsp;&nbsp;" sequence is used to parse the values later in this page*@
-                                @item.City,&nbsp;&nbsp;<br>@item.State&nbsp;&nbsp;@item.Country
+                                @if((item.City ?? "").Length > 0 ) {
+                                    @Html.Raw($"{item.City},&nbsp;&nbsp;<br>{item.State}&nbsp;&nbsp;{item.Country}");
+                                }
                             </td>
                             <td id="@(" tr" + @item.orgID)">
                                 @Html.DisplayFor(model => item.Organization)
@@ -132,9 +134,9 @@
 
                         <td id="locEdit" nowrap align="right" style="background-color: #fafafa">
                             <form autocomplete="off">
-                                <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass" size="20" autocomplete="off"/></div>
-                                <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" autocomplete="off"/></div>
-                                <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" autocomplete="off"/></div>
+                                <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
+                                <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
+                                <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
                             </form>
                         </td>
 
@@ -306,7 +308,6 @@
                 $("#txtFullName").val().length == 0 &&
                 $("#txtPhone").val().length == 0 &&
                 $("#txtEmail").val().length == 0 &&
-                //$("#txtLocation").val().length == 0 &&
                 $("#ddlCities").val().length == 0 &&
                 $("#ddlStates").val().length == 0 &&
                 $("#ddlCountries").val().length == 0 &&
@@ -348,8 +349,8 @@
                         alert("Please input a phone number with at least 10 digits before proceeding.");
                     }
                 }
-                //If any location values entered, City and Country are required (State is optional)
-                if(!validateLocationInput()){
+
+                if(!validateLocationInput(false)){
                     inputValid = false;
                     return;
                 }
@@ -384,7 +385,7 @@
             }
         });
 
-        //Add another item - validate input
+        //Add another item if input is valid
         $("body").on("click", "#btnAdd", function () {
 
             if (!allBlank()) {
@@ -409,9 +410,11 @@
 
                     cell = $(row.insertCell(-1));
 
-                    //location note: this format is important for parsing later
-                    cell.html(`${$("#ddlCities").val()},&nbsp;&nbsp;<br>${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
-                    //initLocationAutocompletes();
+                    if ( $("#ddlCities").val().trim().length > 0 )
+                    {
+                        //location note: this format is important for parsing later
+                        cell.html(`${$("#ddlCities").val()},&nbsp;&nbsp;<br>${$("#ddlStates").val()}&nbsp;&nbsp;${$("#ddlCountries").val()} `);
+                    }
 
                     cell = $(row.insertCell(-1));
                     if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
@@ -444,6 +447,7 @@
 
                     //now there is something to save
                     $("#btnSave").prop('disabled', false);
+                    clearLocationAutocompletes();
                 }
             }
         });
@@ -451,6 +455,7 @@
         //Save all added rows
         $("body").on("click", "#btnSave", function () {
 
+            clearLocationAutocompletes();
             //Validate any unsaved input. Click returns false if entered data is invalid. validateInput sets inputValid boolean
             validateInput(inputValid);
 
@@ -473,9 +478,14 @@
                                 Person.FullName = row.find("input").eq(0).val();
                                 Person.Phone = row.find("input").eq(1).val();
                                 Person.Email = row.find("input").eq(2).val();
-                                Person.City = row.find("input").eq(3).val();
-                                Person.State = row.find("input").eq(4).val();
-                                Person.Country = row.find("input").eq(5).val();
+                                
+                                //location is optional
+                                let newPersonCity = row.find("input").eq(3).val().trim();
+                                if (newPersonCity.length > 0) {
+                                    Person.City = row.find("input").eq(3).val();
+                                    Person.State = row.find("input").eq(4).val();
+                                    Person.Country = row.find("input").eq(5).val();
+                                }
 
                                 if ($('#orgDDL option').filter(':selected').val() != NOSELECTION) {
                                     Person.orgID = parseInt($('#orgDDL option').filter(':selected').val());
@@ -498,10 +508,14 @@
                             Person.Email = row.find("TD").eq(2).html();
 
                             let loc = row.find("TD").eq(3).html();
+                            
+                            //location is optional for persons
+                            if (loc.trim().length > 0) {
                             let locItemArray = loc.trim().split('&nbsp;&nbsp;');
-                            Person.city = removeTail(locItemArray[0]);
-                            Person.state = locItemArray[1].replace('<br>', '');
-                            Person.country = locItemArray[2];
+                                Person.city = removeTail(locItemArray[0]);
+                                Person.state = locItemArray[1].replace('<br>', '');
+                                Person.country = locItemArray[2];
+                            }
 
                             if (row.find("TD").eq(4).html().trim().length > 0) {
                                 Person.orgID = parseInt(organizations.find(organization => organization.OrgName === decodeHtml(row.find("TD").eq(4).html())).orgID);
@@ -513,6 +527,9 @@
                         }
                     }
                 });
+
+                alert(JSON.stringify(persons));
+
 
                 //Serialize the object array and send the JSON to the Controller using AJAX.
                 $.ajax({
@@ -573,6 +590,7 @@
         //Edit an item
         editItem = function editItem(itemId, button) {
 
+            clearLocationAutocompletes();
             var editRow = $(button).closest("TR");
             //var selectedVal;
 
@@ -581,9 +599,6 @@
 
             //Hide row getting edited
             editRow.hide();
-
-            //set up location autocompletes
-            //initLocationAutocompletes();
 
             //set up the Org ddl html, set to current value if exists
             //alert(JSON.stringify(organizations));

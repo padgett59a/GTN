@@ -56,6 +56,8 @@ const GTNErrors = {
 }
 
 const NOSELECTION = "??";
+const REQUIRED = true;
+const OPTIONAL = false;
 
 //Sort Arrow enum
 const sortArrow = {
@@ -593,7 +595,7 @@ $('#ddlCountries').on('autocompleteselect', function (e, ui) {
     countryVal = ui.item.value;
 });
 
-function validateLocationInput() {
+function validateLocationInput(pRequired) {
 
     //if any entered, all must be entered
     //because of autocomplete, could be a selection or a typed in value
@@ -601,13 +603,25 @@ function validateLocationInput() {
     let stateValue = getLocationVal(addressPart.State);
     let countryValue = getLocationVal(addressPart.Country);
 
-    if ((cityValue.length > 0 || stateValue.length > 0 || countryValue.length > 0)
-        && (cityValue.length === 0 || stateValue.length === 0 || countryValue.length === 0)) {
-        alert("Please fill all location values before proceeding");
-        return false;
+    if (pRequired) {
+        if (cityValue.length === 0 || stateValue.length === 0 || countryValue.length === 0) {
+            alert("Please fill all location values before proceeding");
+            return false;
+        }
+        else {
+            return true;
+        }
     }
     else {
-        return true;
+
+        if ((cityValue.length > 0 || stateValue.length > 0 || countryValue.length > 0)
+            && (cityValue.length === 0 || stateValue.length === 0 || countryValue.length === 0)) {
+            alert("Please fill all location values before proceeding");
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
 
@@ -626,6 +640,7 @@ function getLocationVal(idx) {
             retVal = $('#ddlCountries').val().trim().length === 0 ? countryVal.trim() : $('#ddlCountries').val().trim();
             break;
     }
+    //alert(idx + ': ' + retVal)
     return retVal;
 }
 

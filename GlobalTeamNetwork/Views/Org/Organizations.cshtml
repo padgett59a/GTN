@@ -141,7 +141,7 @@
                         inputValid = false;
                         return;
                     }
-                    if ( !validateLocationInput() ) {
+                    if ( !validateLocationInput(true) ) {
                         inputValid = false;
                         return;
                     }
@@ -193,8 +193,6 @@
                             //Clear the TextBoxes.
                             txtOrgName.val("");
                             clearLocationAutocompletes();
-                            alert('2 ' + getLocationVal(addressPart.City).length);
-
                         }
                     }
                 }

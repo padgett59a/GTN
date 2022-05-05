@@ -32,12 +32,11 @@
         <tbody>
             <tr>
                 <td style="text-align:center;vertical-align:middle" width="90%" nowrap>
-                    Distribution Date<br>
+                    Distribution Date:<br>
                     <div style="align-content:center">
-                        <input class='controlAlign' type="checkbox" id="cbDateToday" checked>&nbsp;Current Month/Year<br><br>
                         <div id="distrMonthYear" style="text-align:center">
-                            Month: <input id="distrMonth" type="text" size="2">&nbsp;&nbsp;&nbsp;
-                            Year: <input id="distrYear" type="text" size="4">
+                            Month: <input id="distrMonth" type="text" size="2" disabled>&nbsp;&nbsp;&nbsp;
+                            Year: <input id="distrYear" type="text" size="4" disabled>
                         </div>
                     </div>
                 </td>
@@ -60,9 +59,9 @@
                 </td>
                 <td style="text-align:right;vertical-align:middle" nowrap>
                     <form autocomplete="off">
-                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass" size="20" /></div>
-                        <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass" size="20" /></div>
-                        <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass locationSet" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass locationSet" size="20" /></div>
+                        <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass locationSet" size="20" /></div>
                     </form>
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
@@ -74,8 +73,8 @@
                     <input type="text" id=txtNotesCb size="25">
                 </td>
                 <td style="text-align:center;vertical-align:middle" nowrap>
-                    Checked rows:<br>
-                    <input type="button" value="Save" id=buttonApplyCb onclick="saveDSs();"><br>[visible rows only]
+                    <input type="button" value="Save" id="buttonApplyCb" onclick="saveDSs();"><br><br>
+                    <input type="button" value="Cancel" id="buttonCancel">
                 </td>
             </tr>
         </tbody>
@@ -139,7 +138,12 @@
             //pFilter is passed to the page via query string for page refresh, etc.
             var cFilter = (new URL(location.href)).searchParams.get('cfilter');
             var lFilter = (new URL(location.href)).searchParams.get('langID');
+            var courseCodes = (new URL(location.href)).searchParams.get('courseCodes');
+            var distDate = (new URL(location.href)).searchParams.get('distDate');
             let mediaTypes = null;
+
+            $("#distrMonth").val(distDate.substr(0,2));
+            $("#distrYear").val(distDate.substr(2));
 
             //Set up the drop down value arrays
             var inputValid = false;
@@ -247,22 +251,10 @@
                 }));
             }
 
-            //Set up distribution date
-            let dateNow = new Date();
-            let dateStrArray = (dateNow.toLocaleDateString()).split("/");
-            $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
-            $("#distrYear").val(dateStrArray[2]);
-
-            $("#cbDateToday").click(function () {
-                if (this.checked) {
-                    $("#distrMonth").val(zeroPad(dateStrArray[0], 2));
-                    $("#distrYear").val(dateStrArray[2]);
-                }
-                else {
-                    $("#distrMonth").val('');
-                    $("#distrYear").val('');
-                }
+            $("#buttonCancel").click(function () {
+                window.location.href = '@Url.Action("DistributionManagement", "WorkFlow")';
             });
+
 
             let mediaText = '';
             let mediaTypeList = '';
@@ -277,22 +269,6 @@
                 archText = '';
                 notesText = '';
 
-                //Distribution Date: Month length = 2, Year length = 4, numeric
-                if ($("#distrMonth").val().length != 2 || $("#distrYear").val().length != 4) {
-                    alert('Please enter a two digit month and a four digit year before proceeding. (e.g. 04 - 2022)');
-                    return;
-                }
-
-                let hundYr = parseInt( $("#distrYear").val().substr(0,2) );
-                if (isNaN(hundYr)) {hundYr = 0;}
-                let dMo = parseInt( $("#distrMonth").val() );
-                if (isNaN(dMo)) {dMo = 0;}
-
-                if ( (dMo > 12 || dMo < 1) || ( hundYr < 19 || hundYr > 20 )) {
-                    alert('Please enter a valid numeric month and year before proceeding. (e.g. 04 - 2022)');
-                    return;
-                }
-
                 //select one or more media type
                 if ($('.mediaCbs:checked').length === 0) {
                     alert('Please select at least one media type before proceeding.');
@@ -300,7 +276,7 @@
                 }
 
                 //location must be valid
-                if(!validateLocationInput()){
+                if(!validateLocationInput(true)){
                     return;
                 }
 
@@ -377,7 +353,7 @@
                     dSessions.push(parseInt($(this).attr("id")));
                 });
                 sessionDistribution.Sessions = dSessions;
-                sessionDistribution.MediaTypes = mediaTypeList;
+                sessionDistribution.mediaTypeIDs = mediaTypeList;
                 sessionDistribution.City = getLocationVal(addressPart.City);
                 sessionDistribution.State = getLocationVal(addressPart.State);
                 sessionDistribution.Country = getLocationVal(addressPart.Country);
@@ -387,7 +363,7 @@
                 sessionDistribution.Masters = $("#MasterCopies").is(':checked');
                 sessionDistribution.Notes = notesText;
                
-                alert(JSON.stringify(sessionDistribution));
+                //alert(JSON.stringify(sessionDistribution));
 
                     $.ajax({
                     type: "POST",
@@ -398,7 +374,7 @@
                     async: false,
                     contentType: "application/json; charset=utf-8",
                     success: function (r) {
-                        alert(`Session Distribution ${r} has been saved.`);
+                        alert(`${r} Session(s) Distributions have been saved.`);
                     }
                 });
 
@@ -407,8 +383,7 @@
 
                 //Give the db a minute to recognize the new records
                 waitSeconds(delayMils);
-                //Refresh the page
-                refreshMe();
+                window.location.href = '@Url.Action("DistributionManagement", "WorkFlow")';
             }
 
             $('#selectAll').change(function () {
@@ -445,7 +420,8 @@
 
             function refreshMe() {
                 //Refresh the page
-                var url = '@Url.Action("DistributeSessions", "WorkFlow")' + "?cfilter=" + $('#corsFilter option').filter(':selected').val();
+                var url = '@Url.Action("DistributeSessions", "WorkFlow")' + "?courseCodes=" + courseCodes;
+                url += '&cfilter=' + $('#corsFilter option').filter(':selected').val();
                 url += '&langID=' + $('#langFilter option').filter(':selected').val();
                 //alert(url);
                 window.location.href = url;
