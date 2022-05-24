@@ -168,7 +168,7 @@ namespace GlobalTeamNetwork.Models
             IEnumerable<SessionDistSet> sdsList = sdsetRepo.AllSessionDistSets;
             IEnumerable<SessionDistSet> existingDsdList = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate).OrderByDescending(sd=>sd.sessionDistID);
             if (existingDsdList.Count() > 0) {
-                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.Last().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')}";
+                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.First().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')}";
             }
             else
             {

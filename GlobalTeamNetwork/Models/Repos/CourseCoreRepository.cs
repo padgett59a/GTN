@@ -67,14 +67,7 @@ namespace GlobalTeamNetwork.Models
                 newSemCname.HasWorkbook = Course.HasWorkbook;
                 newSemCname.HasVideoText = Course.HasVideoText;
                 //Instructor Name
-                if (Course.InstructorID != null)
-                {
-                    newSemCname.InstructorName = personsList.First(p => p.personID == Course.InstructorID).FullName;
-                }
-                else
-                {
-                    var stop = "stop";
-                }
+                newSemCname.InstructorName = personsList.First(p => p.personID == Course.InstructorID).FullName;
                 newSemCname.VideosInHand = Course.VideosInHand;
                 newSemCname.MasteringFilesInHand = Course.MasteringFilesInHand;
                 newSemCname.TextFilesInHand = Course.TextFilesInHand;
