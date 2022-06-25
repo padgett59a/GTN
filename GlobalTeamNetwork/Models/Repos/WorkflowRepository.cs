@@ -160,25 +160,14 @@ namespace GlobalTeamNetwork.Models
             loc.Country = pSessDistr.Country;
             int nLocID = GTNCommonRepository.LocationCoalesce(loc, locRepo);
 
-            //Resolve SessionDistID
-            //If not exists, add index else increment the index
-            string sdIndex = String.Empty;
             SessionDistSetRepository sdsetRepo = new SessionDistSetRepository(_appDbContext);
             SessionDistributionRepository sdRepo = new SessionDistributionRepository(_appDbContext);
             IEnumerable<SessionDistSet> sdsList = sdsetRepo.AllSessionDistSets;
-            IEnumerable<SessionDistSet> existingDsdList = sdsList.Where(sd => sd.DistMonthYear.Substring(0, 6) == pSessDistr.DistrDate).OrderByDescending(sd=>sd.sessionDistID);
-            if (existingDsdList.Count() > 0) {
-                sdIndex = $"{pSessDistr.DistrDate}-{(Int16.Parse(existingDsdList.First().DistMonthYear.Substring(7)) + 1).ToString().PadLeft(3,'0')}";
-            }
-            else
-            {
-                sdIndex = $"{pSessDistr.DistrDate}-001";
-            }
-            //insert new SessDistSet 
+
             SessionDistSet newSessDistSet = new SessionDistSet()
             {
                 sessionDistID = 0,
-                DistMonthYear = sdIndex,
+                DistMonthYear = pSessDistr.DistrDate,
                 mediaTypeIDs = pSessDistr.mediaTypeIDs,
                 locID = nLocID,
                 ArchiveFormat = pSessDistr.ArchiveType,
@@ -187,14 +176,23 @@ namespace GlobalTeamNetwork.Models
                 Notes = pSessDistr.Notes
             };
 
+            SessionDistSet tempDistSet = sdsList.Where(s => s.DistMonthYear == pSessDistr.DistrDate).First();
+
+            //Delete the temp record
+            if (sdsetRepo.DeleteSessionDistSet(tempDistSet) != EntityState.Deleted)
+            {
+                throw new Exception($"The temporary SessionDistubutionSet {pSessDistr.DistrDate} could not be deleted.");
+            }
+
+
             if (sdsetRepo.InsertSessionDistSet(newSessDistSet) != EntityState.Added)
             {
-                throw new Exception($"The SessionDistubutionSet {sdIndex} could not be added.");
+                throw new Exception($"The SessionDistubutionSet {pSessDistr.DistrDate} could not be added.");
             }
             IEnumerable<SessionDistSet> newSdsList = sdsetRepo.AllSessionDistSets;
 
             //pickup gen'd sessionDistID
-            SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear == sdIndex).First();
+            SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear == pSessDistr.DistrDate).First();
 
             foreach (int nSessionID in pSessDistr.Sessions) {
                 SessionDistribution newDist = new SessionDistribution()
@@ -212,6 +210,26 @@ namespace GlobalTeamNetwork.Models
             }
             return addCount;
         }
+        public string GetNextDistIndex (String pMoYear, ApplicationDbContext dbContext)
+        {
+            var paramList = new SqlParameter[] {
+                        new SqlParameter() {
+                            ParameterName = "@mmYear",
+                            SqlDbType =  System.Data.SqlDbType.NVarChar,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = pMoYear
+                        },
+                        new SqlParameter() {
+                            ParameterName = "@nextDistIndex",
+                            SqlDbType =  System.Data.SqlDbType.NVarChar,
+                            Direction = System.Data.ParameterDirection.Output,
+                            Size = 16
+                        }
+            };
+            //execute the SP and capture output param
+            var retVal = dbContext.Database.ExecuteSqlRaw("EXEC SP_GetNext_SessionDistr @mmYear, @nextDistIndex OUTPUT", paramList);
+            return paramList[1].SqlValue.ToString();
+        }
 
     }
-}
+    }

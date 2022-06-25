@@ -221,5 +221,13 @@ namespace GlobalTeamNetwork.Controllers
             retVal = _workflowRepository.SaveSessionDistribution(pSessDist);
             return Json(retVal);
         }
+        
+
+        public JsonResult GetNextDistIndex([FromBody] String pMonthYear)
+        {
+            string retVal = String.Empty;
+            retVal = _workflowRepository.GetNextDistIndex(pMonthYear, _appDbContext);
+            return Json(retVal);
+        }
     }
 }

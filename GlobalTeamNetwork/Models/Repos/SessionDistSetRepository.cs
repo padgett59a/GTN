@@ -32,6 +32,12 @@ namespace GlobalTeamNetwork.Models
             if (retVal == EntityState.Added) { _appDbContext.SaveChanges(); }
             return retVal;
         }
+        public EntityState DeleteSessionDistSet(SessionDistSet pSessDistSet)
+        {
+            var retVal = _appDbContext.SessionDistSets.Remove(pSessDistSet).State;
+            if (retVal == EntityState.Deleted) { _appDbContext.SaveChanges(); }
+            return retVal;
+        }
 
     }
 }

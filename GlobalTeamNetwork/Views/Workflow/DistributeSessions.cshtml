@@ -37,6 +37,8 @@
                         <div id="distrMonthYear" style="text-align:center">
                             Month: <input id="distrMonth" type="text" size="2" disabled>&nbsp;&nbsp;&nbsp;
                             Year: <input id="distrYear" type="text" size="4" disabled>
+                            <br><br>
+                            Distribution Index:&nbsp;<input id="distrIndex" type="text" size="12" disabled>
                         </div>
                     </div>
                 </td>
@@ -140,10 +142,29 @@
             var lFilter = (new URL(location.href)).searchParams.get('langID');
             var courseCodes = (new URL(location.href)).searchParams.get('courseCodes');
             var distDate = (new URL(location.href)).searchParams.get('distDate');
+            var distIndex;
             let mediaTypes = null;
 
+            //Get the index for this distribution set
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetNextDistIndex", "Workflow")',
+                data: JSON.stringify(distDate),
+                dataType: 'JSON',
+                cache: false,
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (retVal) {
+                    //alert(`The next index is ${retVal}.`);
+                    distIndex = retVal;
+                }
+            });
+
+            //populate the Month, Year based on passed values
             $("#distrMonth").val(distDate.substr(0,2));
             $("#distrYear").val(distDate.substr(2));
+            $("#distrIndex").val(distIndex);
+
 
             //Set up the drop down value arrays
             var inputValid = false;
@@ -359,13 +380,11 @@
                 sessionDistribution.Country = getLocationVal(addressPart.Country);
                 sessionDistribution.ArchiveType = archText;
                 sessionDistribution.personID = parseInt( $("#custDDL option:selected" ).val() );
-                sessionDistribution.DistrDate = $("#distrMonth").val() + $("#distrYear").val();
+                sessionDistribution.DistrDate = distIndex;
                 sessionDistribution.Masters = $("#MasterCopies").is(':checked');
                 sessionDistribution.Notes = notesText;
-               
-                //alert(JSON.stringify(sessionDistribution));
 
-                    $.ajax({
+                $.ajax({
                     type: "POST",
                     url: '@Url.Action("SaveDistribution", "Workflow")',
                     data: JSON.stringify(sessionDistribution),

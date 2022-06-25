@@ -20,6 +20,7 @@ namespace GlobalTeamNetwork.Models
         MasteringLog GetMasteringLogById(int mLogID);
         List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext);
         int SaveSessionDistribution(SessionDistLoc pSessDistr);
+        string GetNextDistIndex(String pMoYear, ApplicationDbContext dbContext);
 
     }
 }
