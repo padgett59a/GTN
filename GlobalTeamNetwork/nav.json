@@ -29,6 +29,12 @@
         {
           "title": "Media Types",
           "href": "admin_mediatypes"
+        },
+        {
+          "title": "Organizations",
+          "href": "org_organizations",
+          "icon": "fal fa-sitemap",
+          "environment": "production"
         }
       ]
     },
@@ -101,14 +107,6 @@
         }
       ]
     },
-
-    {
-      "title": "Organizations",
-      "href": "org_organizations",
-      "icon": "fal fa-sitemap",
-      "environment": "production"
-    },
-
 
     {
       "title": "Manage Work",
