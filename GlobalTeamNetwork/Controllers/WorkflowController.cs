@@ -199,10 +199,7 @@ namespace GlobalTeamNetwork.Controllers
             List<DistrSemesterCourse> retVal = _semesterCourseRepository.AllDistrSemesterCourses.ToList();
             return View(retVal);
         }
-        public IActionResult DistributionHistory()
-        {
-            return View();
-        }
+
         public IActionResult DistributeSessions(string courseCodes)
         {
             //It should not be possible to request semesters/courses not already mastered when calling this page
@@ -221,12 +218,27 @@ namespace GlobalTeamNetwork.Controllers
             retVal = _workflowRepository.SaveSessionDistribution(pSessDist);
             return Json(retVal);
         }
-        
+
 
         public JsonResult GetNextDistIndex([FromBody] String pMonthYear)
         {
             string retVal = String.Empty;
             retVal = _workflowRepository.GetNextDistIndex(pMonthYear, _appDbContext);
+            return Json(retVal);
+        }
+        public IActionResult DistributionHistory()
+        {
+            List<SessionDistSetsFull> retVal = _workflowRepository.GetAllSessionDistSetsJoined();
+            return View(retVal);
+        }
+        //public JsonResult GetAllSessionDistSets()
+        //{
+        //    var retVal = _workflowRepository.GetAllSessionDistSetsJoined();
+        //    return Json(retVal);
+        //}
+        public JsonResult GetAllSessionDist()
+        {
+            var retVal = _workflowRepository.GetAllSessionDistJoined();
             return Json(retVal);
         }
     }

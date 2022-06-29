@@ -21,6 +21,8 @@ namespace GlobalTeamNetwork.Models
         List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext);
         int SaveSessionDistribution(SessionDistLoc pSessDistr);
         string GetNextDistIndex(String pMoYear, ApplicationDbContext dbContext);
+        List<SessionDistSetsFull> GetAllSessionDistSetsJoined();
+        List<SessionDistFull> GetAllSessionDistJoined();
 
     }
 }

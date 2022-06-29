@@ -40,6 +40,8 @@ namespace GlobalTeamNetwork.Data
         public DbSet<OrgLoc> OrgLocs { get; set; }
         public DbSet<SessionDistribution> SessionDist { get; set; }
         public DbSet<SessionDistSet> SessionDistSets { get; set; }
+        public DbSet<SessionDistSetsFull> SessionDistSetsJoined { get; set; }
+        public DbSet<SessionDistFull> SessionDistJoined { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

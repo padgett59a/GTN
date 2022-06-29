@@ -1,0 +1,404 @@
+﻿@model IEnumerable<GlobalTeamNetwork.Models.SessionDistSetsFull>
+
+@{
+    ViewData["Title"] = "Distribution History";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DistributionHistory</title>
+</head>
+<body id="bodyMain">
+    <h1>Distribution History</h1>
+@*    <table>
+        <tr>
+            <td nowrap>
+                filter&nbsp;for&nbsp;Language&nbsp;<select id="langFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                filter&nbsp;for&nbsp;Course&nbsp;<select id="corsFilter" style="width:300px;">
+                    <option value='??'>All</option>
+                </select>&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+    </table>
+*@
+
+    <!-- Input controls for updating all checked rows -->
+    <div id="divMain" style="height:100vh;overflow-y:auto">
+        <table id="tblMain" class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th nowrap class="columnSort" width="10%">Distribution ID&nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" align="center" width="12%">Location &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" align="center" width="20%">Contact Name &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" width="20%">Media Types &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" width="6%">Format &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" align="center" width="6%">Masters &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap class="columnSort" align="center" width="25%">Notes &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                </tr>
+            </thead>
+            <tbody class="dataRows">
+                @foreach (var item in Model)
+                {
+                    <tr id="@("tr" + @item.sessionDistID)">
+                        <td data-id="@Html.Raw(item.sessionDistID)">
+                            @Html.DisplayFor(model => item.DistMonthYear)
+                        </td>
+                        <td>
+                            @Html.Raw("<div style = 'text-align: left'>" + @item.City + ", " + @item.State + "<br>" + @item.Country + "</div>")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.FullName)
+                        </td>
+                        <td data-id="@Html.Raw(item.mediaTypeIDs)">
+                            temp
+                        </td>
+                        <td>
+                            <div style = 'text-align:center'>@Html.DisplayFor(model => item.ArchiveFormat)</div>
+                        </td>
+                        <td>
+                            <div style = 'text-align:center'>@Html.DisplayFor(model => item.Masters)</div>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Notes)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+
+    <script type="text/javascript">
+
+    //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
+    //scope functions declared inside of document.ready
+
+        $(document).ready(function () {
+
+
+    //        //pFilter is passed to the page via query string for page refresh, etc.
+    //        var cFilter = (new URL(location.href)).searchParams.get('cfilter');
+    //        var lFilter = (new URL(location.href)).searchParams.get('langID');
+    //        var courseCodes = (new URL(location.href)).searchParams.get('courseCodes');
+    //        var distDate = (new URL(location.href)).searchParams.get('distDate');
+    //        var distIndex;
+    //        let mediaTypes = null;
+
+    //        //Get the index for this distribution set
+    //        $.ajax({
+    //            type: "POST",
+    //            url: '@Url.Action("GetNextDistIndex", "Workflow")',
+    //            data: JSON.stringify(distDate),
+    //            dataType: 'JSON',
+    //            cache: false,
+    //            async: false,
+    //            contentType: "application/json; charset=utf-8",
+    //            success: function (retVal) {
+    //                //alert(`The next index is ${retVal}.`);
+    //                distIndex = retVal;
+    //            }
+    //        });
+
+    //        //populate the Month, Year based on passed values
+    //        $("#distrMonth").val(distDate.substr(0,2));
+    //        $("#distrYear").val(distDate.substr(2));
+    //        $("#distrIndex").val(distIndex);
+
+
+    //        //Set up the drop down value arrays
+    //        var inputValid = false;
+    //        var delayMils = 900;
+    //        var pageObjectLabel = 'Manage Session Distribution';
+
+    //        //Populate Language DDL
+    //        let langArray = [];
+    //        $('.dataRows > tr > td:nth-child(1)').each(function () {
+    //            let newLang = {};
+    //            newLang.langId = $(this).attr('data-id');
+    //            newLang.langName = $(this).text().replace("\n", "").trim();
+    //            if (!langArray.find(l => l.langId === newLang.langId)) {
+    //                langArray.push(newLang);
+    //            }
+    //        });
+    //        langArray.forEach(l =>
+    //            $("#langFilter").append($('<option>', {
+    //                value: l.langId,
+    //                text: l.langName
+    //            }
+    //            )));
+
+    //        //Set up Course drop down
+    //        let corsArray = [], newCourse
+    //        $('.dataRows > tr > td:nth-child(3)').each(function () {
+    //            newCourse = $(this).text().replace("\n", "").trim();
+    //            if (!corsArray.includes(newCourse)) {
+    //                corsArray.push(newCourse);
+    //            }
+    //        });
+    //        for (var key in corsArray) {
+    //            $("#corsFilter").append($('<option>', {
+    //                value: 0,
+    //                text: corsArray[key]
+    //            }
+    //            ));
+    //        }
+
+    //        //langFilter change
+    //        $("#langFilter, #corsFilter").change(function () {
+    //            let langFilter = $('#langFilter option:selected').text();
+    //            let corsFilter = $('#corsFilter option:selected').text();
+
+    //            //show all rows
+    //            $(".dataRows tr").show();
+
+    //            //hide rows not matching langFilter
+    //            if (langFilter != "All") {
+    //                $(".dataRows tr td:nth-child(1):not(:contains('" + langFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
+    //                $(".dataRows tr td:nth-child(1):not(:contains('" + langFilter + "'))").parent().hide();
+    //            }
+
+    //            //hide rows not matching corsFilter
+    //            if (corsFilter != "All") {
+    //                $(".dataRows tr td:nth-child(3):not(:contains('" + corsFilter + "'))").parent().find("input[type=checkbox]").prop("checked", false);
+    //                $(".dataRows tr td:nth-child(3):not(:contains('" + corsFilter + "'))").parent().hide();
+    //            }
+
+    //        });
+
+    //        //MediaTypes
+    //        $.ajax({
+    //            type: "Get",
+    //            url: '@Url.Action("GetMediaTypesJson", "Admin")',
+    //            dataType: 'JSON',
+    //            cache: false,
+    //            async: false,
+    //            contentType: "application/json; charset=utf-8",
+    //            success: function (mt) {
+    //                mediaTypes = mt;
+    //                //alert(JSON.stringify(mt));
+    //            }
+    //        });
+
+    //        //Add checkbox for each type to #mediaTypes td
+    //        let hMediaStr = "";
+    //        for (var key in mediaTypes) {
+    //            hMediaStr += `<div style="vertical-align:middle"><input class='controlAlign mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeID}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
+    //            //hMediaStr += `<div style="vertical-align:middle"><input class='controlAlign mediaCbs' type='checkbox' id='${mediaTypes[key].mediaTypeName}'>&nbsp;&nbsp;${mediaTypes[key].mediaTypeName}</div>`;
+    //        }
+    //        $("#mediaTypes").html(hMediaStr);
+
+    //        //set up Location lists via shared code
+    //        initLocationLists(); //set up location lists in ViewCommon.js
+    //        initLocationAutocompletes();
+
+    //        //set up Customers DDL
+    //        $.ajax({
+    //            type: "Get",
+    //            url: '@Url.Action("GetCustomersJson", "Persons")',
+    //            dataType: 'JSON',
+    //            cache: false,
+    //            async: false,
+    //            contentType: "application/json; charset=utf-8",
+    //            success: function (cust) {
+    //                customers = cust;
+    //            }
+    //        });
+    //        $("#custDDL").append($('<option></option>').val("0").html("None Selected"));
+    //        for (var key in customers) {
+    //            $("#custDDL").append($('<option>', {
+    //                value: customers[key].personID,
+    //                text: customers[key].fullName
+    //            }));
+    //        }
+
+    //        $("#buttonCancel").click(function () {
+    //            window.location.href = '@Url.Action("DistributionManagement", "WorkFlow")';
+    //        });
+
+
+    //        let mediaText = '';
+    //        let mediaTypeList = '';
+    //        let archText = '';
+    //        let notesText = '';
+
+    //        //Save the distributions according to selected values - Validation
+    //        saveDSs = function saveDSs() {
+
+    //            mediaText = '';
+    //            mediaTypeList = '';
+    //            archText = '';
+    //            notesText = '';
+
+    //            //select one or more media type
+    //            if ($('.mediaCbs:checked').length === 0) {
+    //                alert('Please select at least one media type before proceeding.');
+    //                return;
+    //            }
+
+    //            //location must be valid
+    //            if(!validateLocationInput(true)){
+    //                return;
+    //            }
+
+    //            //select one or more session for distribution
+    //            if ($('.itemCB:visible:checked').length == 0) {
+    //                alert('Please select rows before proceeding.');
+    //                return;
+    //            }
+
+    //            let confirmText = "Apply these values to all checked rows?\n";
+    //            let dateText = `Month: ${$("#distrMonth").val()} Year: ${$("#distrYear").val()}`;
+    //            confirmText += '\nDate: ' + dateText;
+
+    //            archText = $("#archFmtB").is(':checked') ? 'B' : 'E';
+    //            confirmText += '\nArchive Format: ' + archText;
+                
+    //            if ( $("#MasterCopies").is(':checked') ) {
+    //                confirmText += '\n*** Distributing Masters ***';
+    //            }
+
+    //            //media types
+    //            $.each ($(".mediaCbs"), function() {
+    //                if ($(this).is(':checked')) {
+    //                    mlid = $(this).attr('id'); 
+    //                    let mt = mediaTypes.find(m => m.mediaTypeID == mlid);  
+    //                    mediaTypeList += mt.mediaTypeID + ',';
+    //                    mediaText += mt.mediaTypeName + ', ';
+    //                };
+    //            });
+    //            mediaTypeList = mediaTypeList.substr(0,mediaTypeList.length - 1);
+    //            mediaText = mediaText.substr(0,mediaText.length - 2);
+    //            confirmText += '\nMedia Types: ' + mediaText;
+
+
+    //            //locations
+    //            if (getLocationVal(addressPart.City).length > 0) {
+    //                confirmText += `\nLocation: ${getLocationVal(addressPart.City)}, ${getLocationVal(addressPart.State)} ${getLocationVal(addressPart.Country)}`; 
+    //            }
+
+    //            //customer
+    //            if ( $("#custDDL option:selected" ).val() > 0 )
+    //            {
+    //                let custText = $("#custDDL option:selected" ).text();
+    //                confirmText += `\nCustomer: ${custText}`; 
+    //            }
+
+    //            //notes
+    //            notesText = $("#txtNotesCb").val().trim();
+    //            if (notesText.length > 0) {
+    //                confirmText += '\nNotes: ' + notesText.substr(0,20);
+    //                if (notesText.length > 20) {confirmText += '...';} 
+    //            }
+    //            confirmText += '\n\n NOTE: Please allow up to 30 seconds for completion when many rows are selected. '
+    //            confirmText += 'If prompted by your browser, select "WAIT" until processing completes.'
+
+    //            if (confirm(confirmText)) {
+    //                document.documentElement.style.cursor = 'wait';
+    //                $("#buttonApplyCb").prop("disabled", true);
+    //                $("#divLoading").show();
+    //                setTimeout(function () {
+    //                    processDSs()
+    //                }, 0);
+    //            }
+    //        }
+
+    //        //Save the distributions according to selected values - Processing
+    //        function processDSs() {
+
+    //            //send list of sessions plus items from the header
+    //            let sessionDistribution = new Object;
+    //            let dSessions = [];
+                
+    //            $('.itemCB:visible:checked').each(function () {
+    //                dSessions.push(parseInt($(this).attr("id")));
+    //            });
+    //            sessionDistribution.Sessions = dSessions;
+    //            sessionDistribution.mediaTypeIDs = mediaTypeList;
+    //            sessionDistribution.City = getLocationVal(addressPart.City);
+    //            sessionDistribution.State = getLocationVal(addressPart.State);
+    //            sessionDistribution.Country = getLocationVal(addressPart.Country);
+    //            sessionDistribution.ArchiveType = archText;
+    //            sessionDistribution.personID = parseInt( $("#custDDL option:selected" ).val() );
+    //            sessionDistribution.DistrDate = distIndex;
+    //            sessionDistribution.Masters = $("#MasterCopies").is(':checked');
+    //            sessionDistribution.Notes = notesText;
+
+    //            $.ajax({
+    //                type: "POST",
+    //                url: '@Url.Action("SaveDistribution", "Workflow")',
+    //                data: JSON.stringify(sessionDistribution),
+    //                dataType: 'JSON',
+    //                cache: false,
+    //                async: false,
+    //                contentType: "application/json; charset=utf-8",
+    //                success: function (r) {
+    //                    alert(`${r} Session(s) Distributions have been saved.`);
+    //                }
+    //            });
+
+    //            $("#divLoading").hide();
+    //            document.documentElement.style.cursor = 'default';
+
+    //            //Give the db a minute to recognize the new records
+    //            waitSeconds(delayMils);
+    //            window.location.href = '@Url.Action("DistributionManagement", "WorkFlow")';
+    //        }
+
+    //        $('#selectAll').change(function () {
+    //            var bCheck = $('#selectAll').prop("checked");
+    //            $('.itemCB:visible').prop('checked', bCheck);
+    //            //$('.itemCB').change();
+    //        });
+
+
+    //        //lFilter gets set from the Language filter passed in via query string
+    //        if (lFilter!= null) {
+    //            var optStr = '#langFilter option[value = "' + lFilter + '"]';
+    //            var boolFilterExists = $(optStr).length != 0;
+    //            //alert('boolFilterExists: '+ boolFilterExists);
+    //            if (boolFilterExists) {
+    //                $('#langFilter').val(lFilter).change();
+    //            }
+    //        }
+
+    //        //select the first course value or passed filter value and show the main table.
+    //        //cFilter gets set from the Course filter passed in via query string
+    //        if (cFilter != null) {
+    //            var optStr = '#corsFilter option[value = "' + cFilter + '"]';
+    //            var boolFilterExists = $(optStr).length != 0;
+    //            //alert('boolFilterExists: '+ boolFilterExists);
+    //            if (boolFilterExists) {
+    //                $('#corsFilter').val(cFilter).change();
+    //            }
+    //        }
+
+
+    //        $('#tblMain').removeAttr('hidden');
+
+
+    //        function refreshMe() {
+    //            //Refresh the page
+    //            var url = '@Url.Action("DistributeSessions", "WorkFlow")' + "?courseCodes=" + courseCodes;
+    //            url += '&cfilter=' + $('#corsFilter option').filter(':selected').val();
+    //            url += '&langID=' + $('#langFilter option').filter(':selected').val();
+    //            //alert(url);
+    //            window.location.href = url;
+    //        }
+
+    //    $('html, body').animate({ scrollTop: '0px' }, 300);
+
+    ///*end document.ready*/
+    });
+
+    </script>
+
+</body>
+</html>

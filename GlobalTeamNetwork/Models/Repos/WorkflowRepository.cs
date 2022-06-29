@@ -73,7 +73,7 @@ namespace GlobalTeamNetwork.Models
             return retVal.ToList();
         }
 
-       public List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext)
+        public List<DistrSession> GetDistributionSessions(string sessionCoreIDs, ApplicationDbContext dbContext)
         {
             var param = new SqlParameter()
             {
@@ -119,7 +119,7 @@ namespace GlobalTeamNetwork.Models
                             Value = trxSem.GenExams
                         }
                 };
-            
+
             //this one can take some time if the db is 'cold'
             dbContext.Database.SetCommandTimeout(60);
             var retVal = dbContext.Set<TxLog>().FromSqlRaw("[dbo].[SP_Trx_Sem] @langID, @semCode, @corsCodes, @genExams", param);
@@ -194,7 +194,8 @@ namespace GlobalTeamNetwork.Models
             //pickup gen'd sessionDistID
             SessionDistSet newDss = sdsList.Where(sd => sd.DistMonthYear == pSessDistr.DistrDate).First();
 
-            foreach (int nSessionID in pSessDistr.Sessions) {
+            foreach (int nSessionID in pSessDistr.Sessions)
+            {
                 SessionDistribution newDist = new SessionDistribution()
                 {
                     sessionDistID = newDss.sessionDistID,
@@ -210,7 +211,7 @@ namespace GlobalTeamNetwork.Models
             }
             return addCount;
         }
-        public string GetNextDistIndex (String pMoYear, ApplicationDbContext dbContext)
+        public string GetNextDistIndex(String pMoYear, ApplicationDbContext dbContext)
         {
             var paramList = new SqlParameter[] {
                         new SqlParameter() {
@@ -230,6 +231,13 @@ namespace GlobalTeamNetwork.Models
             var retVal = dbContext.Database.ExecuteSqlRaw("EXEC SP_GetNext_SessionDistr @mmYear, @nextDistIndex OUTPUT", paramList);
             return paramList[1].SqlValue.ToString();
         }
-
+        public List<SessionDistSetsFull> GetAllSessionDistSetsJoined()
+        {
+            return _appDbContext.SessionDistSetsJoined.ToList();
+        }
+        public List<SessionDistFull> GetAllSessionDistJoined()
+        {
+            return _appDbContext.SessionDistJoined.ToList();
+        }
     }
-    }
+}
