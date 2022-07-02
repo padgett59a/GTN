@@ -233,7 +233,8 @@ namespace GlobalTeamNetwork.Models
         }
         public List<SessionDistSetsFull> GetAllSessionDistSetsJoined()
         {
-            return _appDbContext.SessionDistSetsJoined.ToList();
+            //Don't include TEMP records
+            return _appDbContext.SessionDistSetsJoined.Where(sd => sd.mediaTypeIDs != "TEMP").ToList();
         }
         public List<SessionDistFull> GetAllSessionDistJoined()
         {

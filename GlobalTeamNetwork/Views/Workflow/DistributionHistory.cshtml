@@ -55,8 +55,7 @@
                         <td>
                             @Html.DisplayFor(model => item.FullName)
                         </td>
-                        <td data-id="@Html.Raw(item.mediaTypeIDs)">
-                            temp
+                        <td id="@("mediaTypeTd" + @item.sessionDistID)" data-id="@Html.Raw(item.mediaTypeIDs)">
                         </td>
                         <td>
                             <div style = 'text-align:center'>@Html.DisplayFor(model => item.ArchiveFormat)</div>
@@ -172,20 +171,38 @@
     //            }
 
     //        });
+            
+            let mediaTypes;
 
-    //        //MediaTypes
-    //        $.ajax({
-    //            type: "Get",
-    //            url: '@Url.Action("GetMediaTypesJson", "Admin")',
-    //            dataType: 'JSON',
-    //            cache: false,
-    //            async: false,
-    //            contentType: "application/json; charset=utf-8",
-    //            success: function (mt) {
-    //                mediaTypes = mt;
-    //                //alert(JSON.stringify(mt));
-    //            }
-    //        });
+            //MediaTypes
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("GetMediaTypesJson", "Admin")',
+                dataType: 'JSON',
+                cache: false,
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (mt) {
+                    mediaTypes = mt;
+                }
+            });
+
+            function resolveMediaTypes (typesList) {
+                let retVal = "";
+                let idxArray = typesList.split(',')
+                for (i = 0; i < idxArray.length; i++) {
+                    retVal += mediaTypes.find(mt => mt.mediaTypeID == idxArray[i] ).mediaTypeName;
+                    
+                    if (i < idxArray.length - 1) {retVal += ", " }
+                }
+                return retVal;
+            }
+
+            //Resolve mediaType strings in mediaTypeTDs elements
+            $('[id^="mediaTypeTd"]').each(function () {
+                //alert( $(this).attr('data-id') );
+                $(this).html( resolveMediaTypes($(this).attr('data-id')) );
+            });
 
     //        //Add checkbox for each type to #mediaTypes td
     //        let hMediaStr = "";
