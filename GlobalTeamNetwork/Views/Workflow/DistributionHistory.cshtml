@@ -40,6 +40,7 @@
                     <th nowrap class="columnSort" width="6%">Format &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     <th nowrap class="columnSort" align="center" width="6%">Masters &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
                     <th nowrap class="columnSort" align="center" width="25%">Notes &nbsp;<span class="nobreak sortArrow">&#8593;&#8595;</span></th>
+                    <th nowrap align="center" width="5%">Actions </th>
                 </tr>
             </thead>
             <tbody class="dataRows">
@@ -50,7 +51,7 @@
                             @Html.DisplayFor(model => item.DistMonthYear)
                         </td>
                         <td>
-                            @Html.Raw("<div style = 'text-align: left'>" + @item.City + ", " + @item.State + "<br>" + @item.Country + "</div>")
+                            @Html.Raw(@item.City + ",&nbsp;&nbsp;" + @item.State + "&nbsp;&nbsp;<br>" + @item.Country + "</div>")
                         </td>
                         <td>
                             @Html.DisplayFor(model => item.FullName)
@@ -66,9 +67,52 @@
                         <td>
                             @Html.DisplayFor(model => item.Notes)
                         </td>
+                        <td align="center">
+                            <a onclick="editItem('@item.sessionDistID', this)" href="javascript:void(0)" id="@item.sessionDistID">Edit</a>
+                        </td>
                     </tr>
                 }
             </tbody>
+            <tfoot hidden>
+                <!-- Bottom Labels-->
+                <tr id="bottomLabels" class="bottomLabels">
+                    <th>Distribution ID</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Media Types</th>
+                    <th>Format</th>
+                    <th>Masters</th>
+                    <th>Notes</th>
+                    <th colspan='2' align="center" style="text-align:center;width:10%">Actions</th>
+                </tr>
+
+                @*input controls for adding a new item*@
+                <tr>
+                    <td id="tdDistID" class="DistHistEditClass"></td>
+                    <td id="locEdit" nowrap align="right" style="background-color: #fafafa">
+                        <form autocomplete="off">
+                            <div class="locationDiv"><img src="~/img/City.png" height="20px"><input type="text" id="ddlCities" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
+                            <div class="locationDiv"><img src="~/img/State.png" height="20px"><input type="text" id="ddlStates" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
+                            <div class="locationDiv"><img src="~/img/Country.png" height="20px"><input type="text" id="ddlCountries" class="itemInputClass locationSet" size="20" autocomplete="off"/></div>
+                        </form>
+                    </td>
+                    <td id="personDDL" class="DistHistEditClass"><input type="text" class="itemInputClass" /></td>
+                    <td id="tdMediaTypes" class="DistHistEditClass"></td>
+                    <td id="tdFormat"><input type="text" class="DistHistEditClass" /></td>
+                    <td id="tdMasters" class="DistHistEditClass"></td>
+                    <td><input type="text" id="txtNotes" class="DistHistEditClass" /></td>
+                    @*<td id="tdSelect" class="DistHistEditClass"></td>*@
+                    <td colspan='2' nowrap id="tdBtnCell"><input type="button" id="btnAdd" value="Add" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnCancel" value="Cancel" /></td>
+                </tr>
+                <tr id="trSaveAll">
+                    <td style="white-space:nowrap">
+                        <input type="button" disabled id="btnSave" value="Save All" />&nbsp;&nbsp;&nbsp;
+                        <input type="button" id="btnCancel" value="Cancel" />
+                    </td>
+                    <td colspan="100%"></td>
+                </tr>
+            </tfoot>
+
         </table>
     </div>
 
@@ -79,9 +123,10 @@
 
     //NOTE: common js functions are found in wwwroot/js/ViewCommon.js
     //scope functions declared inside of document.ready
+        
+        var editItem;
 
         $(document).ready(function () {
-
 
     //        //pFilter is passed to the page via query string for page refresh, etc.
     //        var cFilter = (new URL(location.href)).searchParams.get('cfilter');
@@ -173,6 +218,7 @@
     //        });
             
             let mediaTypes;
+            let customers;
 
             //MediaTypes
             $.ajax({
@@ -204,6 +250,98 @@
                 $(this).html( resolveMediaTypes($(this).attr('data-id')) );
             });
 
+            //set up Customers DDL
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("GetCustomersJson", "Persons")',
+                dataType: 'JSON',
+                cache: false,
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                success: function (cust) {
+                    customers = cust;
+                }
+            });
+
+            //$("#custDDL").append($('<option></option>').val("0").html("None Selected"));
+            //for (var key in customers) {
+            //    $("#custDDL").append($('<option>', {
+            //        value: customers[key].personID,
+            //        text: customers[key].fullName
+            //    }));
+            //}
+
+            initLocationLists(); //set up location lists in ViewCommon.js
+            initLocationAutocompletes();
+
+
+        //Edit an item
+        editItem = function editItem(itemId, button) {
+
+            clearLocationAutocompletes();
+            var editRow = $(button).closest("TR");
+
+            //Set up Save Changes button
+            changeSaveButton(buttonType.SAVECHANGES, itemId);
+
+            //Hide edit row
+            editRow.hide();
+
+            //set up the Customer ddl html
+            //setUpDdl(customers, '#personDDL'); //note: this requires a (value, text) array
+            Object.values(customers).forEach(c => {
+                $('#personDDL').append( $('<option>', {
+                    value: c.personID,
+                    text: c.fullName
+                }));
+            });
+
+            //$("#trxlDDL").html(trxlDDLCodeOpt);
+
+            //var trxlrReplVal = "<option value='" + translators.find(trxl => trxl.fullName === decodeHtml(editRow.find("TD").eq(4).html().trim())).personID + "'>";
+            //var trxlrReplValOpt = trxlrReplVal.replace('option value=', 'option selected value=');
+            //var trxlDDLCodeOpt = trxlDDLCode.replace(trxlrReplVal, trxlrReplValOpt);
+
+            ////set up the Status ddl html
+            //$("#statusDDL").html(statusDDLCodeOpt);
+            //var statusReplVal = "<option value='" + statuses.find(status => status.status === decodeHtml(editRow.find("TD").eq(6).html().trim())).statusID + "'>";
+            //var statusReplValOpt = statusReplVal.replace('option value=', 'option selected value=');
+            //var statusDDLCodeOpt = statusDDLCode.replace(statusReplVal, statusReplValOpt);
+
+            $('#tdDistID').html(editRow.find("TD").eq(0).html().trim());
+
+            //location
+            let locStr = editRow.find("TD").eq(1).html().trim().replace('<br>', '');
+            let locItemArray = locStr.split('&nbsp;&nbsp;');
+            //remove trailing comma from city
+            let tCityVal = locItemArray[0].replace('\n', '').trim();
+            tCityVal = tCityVal.substr(0,tCityVal.length - 1);
+            $('#ddlCities').val(tCityVal);
+            $('#ddlStates').val(locItemArray[1].replace('\n', '').replace('<br>','').trim());
+            $('#ddlCountries').val(locItemArray[2].replace('\n', '').trim());
+
+            ////Copy unmodified values to the edit controls
+            //$('#tdLangName').html(editRow.find("TD").eq(0).html().trim());
+            //$('#tdSemesterName').html(editRow.find("TD").eq(1).html().trim());
+            //$('#tdCourseName').html(editRow.find("TD").eq(2).html().trim());
+            //$('#tdSessionName').html(editRow.find("TD").eq(3).html().trim());
+            //$("#trxlDDL").html(trxlDDLCodeOpt);
+            //$('#tdStep').html(editRow.find("TD").eq(5).html().trim());
+            //$("#statusDDL").html(statusDDLCodeOpt);
+            //$('#txtNotes').val(editRow.find("TD").eq(7).html().trim());
+            //$('#tdSelect').val('');
+
+            ////Hide Save ALL button row, show footer
+            $("#trSaveAll").attr("hidden", true);
+            $("#tblMain tfoot>tr").show();
+            $("#tblMain TFOOT").attr("hidden", false);
+
+            ////scroll to bottom
+            //$("#divMain").animate({ scrollTop: $('#divMain').prop("scrollHeight") }, 1000);
+            //$("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        }
+
+
     //        //Add checkbox for each type to #mediaTypes td
     //        let hMediaStr = "";
     //        for (var key in mediaTypes) {
@@ -216,25 +354,6 @@
     //        initLocationLists(); //set up location lists in ViewCommon.js
     //        initLocationAutocompletes();
 
-    //        //set up Customers DDL
-    //        $.ajax({
-    //            type: "Get",
-    //            url: '@Url.Action("GetCustomersJson", "Persons")',
-    //            dataType: 'JSON',
-    //            cache: false,
-    //            async: false,
-    //            contentType: "application/json; charset=utf-8",
-    //            success: function (cust) {
-    //                customers = cust;
-    //            }
-    //        });
-    //        $("#custDDL").append($('<option></option>').val("0").html("None Selected"));
-    //        for (var key in customers) {
-    //            $("#custDDL").append($('<option>', {
-    //                value: customers[key].personID,
-    //                text: customers[key].fullName
-    //            }));
-    //        }
 
     //        $("#buttonCancel").click(function () {
     //            window.location.href = '@Url.Action("DistributionManagement", "WorkFlow")';
